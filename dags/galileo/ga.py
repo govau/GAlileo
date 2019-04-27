@@ -52,4 +52,4 @@ def generate_accounts_views_index():
 
 
 if __name__ == '__main__':
-    main()
+    generate_accounts_views_index()
