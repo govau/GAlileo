@@ -75,7 +75,7 @@ def find_number_one():
 def tell_slack(context):
     o = slack_webhook_operator.SlackWebhookOperator(task_id="tell_slack", http_conn_id='slack_default',
                                                     message="Number one page today is %s (%s hits)" % (find_number_one()))
-    return o.execute()
+    return o.execute(context)
 
 
 with models.DAG(
@@ -91,7 +91,8 @@ with models.DAG(
     # on_success_callback is a hack to delay generating the slack message
     # https://stackoverflow.com/questions/52054427/how-to-integrate-apache-airflow-with-slack
     tell_slack = slack_webhook_operator.SlackWebhookOperator(task_id="tell_slack", http_conn_id='slack_default',
-                                                             message="A new report is out: https://storage.cloud.google.com/us-central1-maxious-airflow-64b78389-bucket/data/tally_69211100_20190425.csv")
+                                                             message="A new report is out: "
+                                                                     "https://storage.cloud.google.com/us-central1-maxious-airflow-64b78389-bucket/data/tally_69211100_20190425.csv")
 
     generate_graph = python_operator.PythonOperator(
         task_id='generate_graph',

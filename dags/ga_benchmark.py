@@ -4,8 +4,6 @@ from airflow import models
 from airflow.contrib.operators import bigquery_to_gcs
 from airflow.contrib.operators import bigquery_operator
 
-# from airflow.contrib.operators import bigquery_get_data
-
 yesterday = datetime.datetime.combine(
     datetime.datetime.today() - datetime.timedelta(1),
     datetime.datetime.min.time())
@@ -57,11 +55,6 @@ with models.DAG(
             'timestamp': timestamp,
             'temp_table': temp_table
         })
-    # get_data = bigquery_get_data.BigQueryGetDataOperator(
-    #     task_id='get_data_from_bq',
-    #     dataset_id='tmp',
-    #     table_id=temp_table,
-    # )
     export_benchmark_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_benchmark_to_gcs',
         source_project_dataset_table="%s.tmp.%s" % (project_id, temp_table),

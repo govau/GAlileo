@@ -2,3 +2,6 @@ google-api-python-client
 tablib
 python-igraph
 plotly
+
+kubernetes
+apache-airflow[gcp,kubernetes]
