@@ -1,0 +1,33 @@
+---
+applications:
+  - name: airflow
+    command: sh cfrun.sh
+    buildpacks:
+      - python_buildpack
+    env:
+      AIRFLOW_HOME: /home/vcap/app
+    services:
+      - airflow-db
+      - airflow-redis
+  - name: airflow-scheduler
+    command: airflow scheduler
+    no-route: true
+    health-check-type: process
+    buildpacks:
+      - python_buildpack
+    services:
+      - airflow-db
+      - airflow-redis
+    env:
+      AIRFLOW_HOME: /home/vcap/app
+  - name: airflow-worker
+    command: airflow worker
+    no-route: true
+    health-check-type: process
+    buildpacks:
+      - python_buildpack
+    services:
+      - airflow-db
+      - airflow-redis
+    env:
+      AIRFLOW_HOME: /home/vcap/app

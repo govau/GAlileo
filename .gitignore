@@ -145,5 +145,6 @@ rsconnect/
 
 /data/credentials.json
 /dags/galileo/*.csv
-/data/*.csv
+/data
 /.idea/
+airflow.cfg
