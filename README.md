@@ -26,3 +26,6 @@ Our favourite operators:
 
 Tips for designing a workflow:
 https://en.wikipedia.org/wiki/SOLID
+
+TODO:
+- check DAGs have valid default values and follow PEP8
