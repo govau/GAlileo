@@ -14,8 +14,10 @@ RUN install2.r --error \
     googleAuthR \
     googleAnalyticsR \
     searchConsoleR \
+    gmailr \
     googleCloudStorageR \
     bigQueryR
+
 
 ## clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/ && rm -rf /tmp/downloaded_packages/ /tmp/*.rds

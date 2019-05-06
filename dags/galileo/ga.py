@@ -29,20 +29,20 @@ def generate_accounts_views_index():
     accounts = service.management().accounts().list().execute()
 
     for account in accounts.get('items'):
-        print 'account', account['id'], account['name']
+        #print 'account', account['id'], account['name']
         # Get a list of all the properties for the first account.
         properties = service.management().webproperties().list(
             accountId=account['id']).execute()
 
         for property in properties.get('items'):
-            print '  property', property['id'],property['name']
+            #print '  property', property['id'],property['name']
             # Get a list of all views (profiles) for the first property.
             profiles = service.management().profiles().list(
                 accountId=account['id'],
                 webPropertyId=property['id']).execute()
 
             for view in profiles.get('items'):
-                print '    view',view['id'], view['name']
+                #print '    view',view['id'], view['name']
                 # return the first view (profile) id.
                 data.append([account['id'], account['name'], property['id'], property['name'],
                              property.get('level'), property.get('websiteUrl'),
