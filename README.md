@@ -44,19 +44,24 @@ default_dag_args = {
 }
 ```
 
-schedule, start date and SLA
+Schedule, start date and SLA
 
 **WARNING: if the start date is in the past, it will try to catch up running jobs for the schedule period (eg. daily) the first time the DAG is loaded **
+
+If the task takes longer than the SLA, an alert email is triggered.
 
 ```
 with models.DAG(
         'ga_quarterly_reporter',
         schedule_interval=datetime.timedelta(days=90),
+        sla=datetime.timedelta(hours=1),
         default_args=default_dag_args) as dag:
 ```
 
  === Variables ===
- Variables are configured via the webserver under Admin -> Variables
+ Variables are configured via the webserver under Admin -> Variables. A variable can be a string, Python list/array or Python dict.
+ The second parameter of the .get() function is the default value if the variable isn't found.
+ You can use variables in the python string formatting functions https://docs.python.org/3/library/string.html#formatexamples 
 ```
 from airflow import models
 
@@ -91,6 +96,7 @@ https://airflow.apache.org/_api/airflow/contrib/operators/kubernetes_pod_operato
 
 - DataFlowOperator
 
+uses the google cloud branded implementation of Apache Beam, another 
 - SlackWebHookOperator
 
 - EmailOperator
