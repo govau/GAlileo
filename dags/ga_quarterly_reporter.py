@@ -25,7 +25,7 @@ def send_report():
     datestamp = datetime.datetime.now().strftime('%d%b%Y')
     report_file = DATA_DIR+'GA360-%s.csv' % datestamp
 
-    table = Dataset().load(open(report_file, 'rt').read().decode('utf-8')).export('df').to_html()
+    table = Dataset().load(open(report_file, 'rt').read()).export('df').to_html()
 
     send_email(
         to=models.Variable.get('QUARTERLY_EMAIL_RECIPIENT', 'alex.sadleir@digital.gov.au'),
@@ -44,13 +44,13 @@ with models.DAG(
         task_id='quarterly-report',
         name='quarterly-report',
         namespace='default',
-        image='gcr.io/api-project-993139374055/galileo:latest',
+        image='gcr.io/%s/galileo' % models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery'),
         cmds=['bash', '-c'],
         image_pull_policy="Always",
-        arguments=['gsutil cp gs://us-central1-maxious-airflow-64b78389-bucket/data/credentials.json . && '
-                   'gsutil cp gs://us-central1-maxious-airflow-64b78389-bucket/dags/r_scripts/extractaccinfo.R . && '
+        arguments=['gsutil cp gs://%s/data/credentials.json . && '% models.Variable.get('AIRFLOW_BUCKET','us-east1-dta-airflow-b3415db4-bucket') +
+                   'gsutil cp gs://%s/dags/r_scripts/extractaccinfo.R . && ' % models.Variable.get('AIRFLOW_BUCKET','us-east1-dta-airflow-b3415db4-bucket') +
                    'R -f extractaccinfo.R && '
-                   'gsutil cp GA360*.csv gs://us-central1-maxious-airflow-64b78389-bucket/data/'])
+                   'gsutil cp GA360*.csv gs://%s/data/' % models.Variable.get('AIRFLOW_BUCKET','us-east1-dta-airflow-b3415db4-bucket') ])
 
     email_summary = PythonOperator(
         task_id='email_summary',

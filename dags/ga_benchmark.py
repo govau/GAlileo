@@ -19,7 +19,7 @@ with models.DAG(
         'ga_benchmark',
         schedule_interval=datetime.timedelta(days=1),
         default_args=default_dag_args) as dag:
-    project_id = 'dta-ga-bigquery'
+    project_id = models.Variable.get('GCP_PROJECT','dta-ga-bigquery')
 
     view_id = '69211100'
     timestamp = '20190425'

@@ -17,10 +17,10 @@ default_dag_args = {
     'start_date': datetime.datetime(2019, 4, 26),
     # http://airflow.apache.org/_api/airflow/contrib/operators/dataflow_operator/index.html
     'dataflow_default_options': {
-        'project': 'api-project-993139374055',
+        'project': models.Variable.get('GCP_PROJECT','dta-ga-bigquery'),
         'region': 'us-central1',
         'zone': 'us-central1-b',
-        'tempLocation': 'gs://staging.api-project-993139374055.appspot.com/'
+        'tempLocation': 'gs://staging.%s.appspot.com/' % models.Variable.get('GCP_PROJECT','dta-ga-bigquery')
     }
 }
 
@@ -33,7 +33,7 @@ def combine_tally():
     from tablib import Dataset
     data = Dataset()
     for f in glob.glob(DATA_DIR+'tally_69211100_20190425.csv-*'):
-        d = Dataset().load(open(f, 'rt').read().decode('utf-8'))
+        d = Dataset().load(open(f, 'rt').read())
         for row in d:
             data.append(row)
 
@@ -45,7 +45,7 @@ def combine_tally():
 def generate_plotly_chart():
     from tablib import Dataset
 
-    df = Dataset().load(open(DATA_DIR+'tally_69211100_20190425.csv', 'r').read().decode('utf-8')).df.sort_values(by=['hits'])
+    df = Dataset().load(open(DATA_DIR+'tally_69211100_20190425.csv', 'r').read()).df.sort_values(by=['hits'])
     df = df[df['hits'] > 30]
 
     import plotly
@@ -67,7 +67,7 @@ def generate_graph():
 def find_number_one():
     from tablib import Dataset
 
-    df = Dataset().load(open(DATA_DIR+'tally_69211100_20190425.csv', 'r').read().decode('utf-8')).df.sort_values(by=['hits'])
+    df = Dataset().load(open(DATA_DIR+'tally_69211100_20190425.csv', 'r').read()).df.sort_values(by=['hits'])
 
     return df.values[-1][0], df.values[-1][1]
 
@@ -108,12 +108,13 @@ with models.DAG(
     task_id='pod-ex-minimum',
     name='pod-ex-minimum',
     namespace='default',
-    image='gcr.io/api-project-993139374055/galileo',
+    image='gcr.io/%s/galileo' % models.Variable.get('GCP_PROJECT','dta-ga-bigquery'),
+    image_pull_policy="Always",
     cmds=['bash', '-c'],
-    arguments=['gsutil cp gs://us-central1-maxious-airflow-64b78389-bucket/data/tally_69211100_20190425.csv . && '
-               'gsutil cp gs://us-central1-maxious-airflow-64b78389-bucket/dags/r_scripts/csvggplot.R . && '
+    arguments=['gsutil cp gs://%s/data/tally_69211100_20190425.csv . && ' % models.Variable.get('AIRFLOW_BUCKET', 'us-east1-dta-airflow-b3415db4-bucket') +
+               'gsutil cp gs://%s/dags/r_scripts/csvggplot.R . && ' % models.Variable.get('AIRFLOW_BUCKET', 'us-east1-dta-airflow-b3415db4-bucket') +
                'R -f csvggplot.R && '
-               'gsutil cp tally_69211100_20190425.png gs://us-central1-maxious-airflow-64b78389-bucket/data/'],)
+               'gsutil cp tally_69211100_20190425.png gs://%s/data/' % models.Variable.get('AIRFLOW_BUCKET', 'us-east1-dta-airflow-b3415db4-bucket') ],)
 
     benchmark_tally >> combine_tally
     combine_tally >> generate_plotly_chart
