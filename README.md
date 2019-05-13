@@ -1,5 +1,7 @@
-= Airflow 101 =
-== Our Environment ==
+# Airflow 101
+
+## Our Environment
+
 Our analytics pipeline runs on open source [Apache Airflow](http://airflow.apache.org/tutorial.html) which is written in Python. This means we can deploy it to other clouds or inhouse if we need.
 
 We have some special configuration:
@@ -10,15 +12,15 @@ We have some special configuration:
 - special docker image that includes google cloud SDK and R with tidyverse/ggplot2
 - sendgrid enabled to allow warning and other messages to be sent.
 
-== Getting Started ==
+## Getting Started 
 To access "Cloud Composer" (the Google branding for Airflow), visit https://console.cloud.google.com/composer/environments
 From this page you can access the Airflow webserver and the DAGs folder
 
 Read https://cloud.google.com/composer/docs/ for more information.
 
-== How to write a new workflow ==
+## How to write a new workflow
 
-=== DAGs ===
+### DAGs
 Each pipeline is defined in a DAG file. (A Directed Acyclical Graph is a graph describing a process that goes step by step forward only with no infinite recursion or "cycles".)
 DAG files are technically Python code but use some special keywords and operators to describe data processes. Each pipeline can have a schedule and a SLA (maximum expected run time).
 
@@ -28,7 +30,7 @@ Tutorials http://airflow.apache.org/tutorial.html and https://cloud.google.com/c
 
 Tips for designing a workflow: https://en.wikipedia.org/wiki/SOLID
 
-=== Header === 
+### Header 
 
  
 Set email_on_failure to True to send an email notification when an operator in the DAG fails. 
@@ -58,7 +60,8 @@ with models.DAG(
         default_args=default_dag_args) as dag:
 ```
 
- === Variables ===
+ ### Variables
+ 
  Variables are configured via the webserver under Admin -> Variables. A variable can be a string, Python list/array or Python dict.
  The second parameter of the .get() function is the default value if the variable isn't found.
  You can use variables in the python string formatting functions https://docs.python.org/3/library/string.html#formatexamples 
@@ -71,7 +74,8 @@ from airflow import models
  }
 ```
 
-=== Operators ===
+### Operators
+
 Full listing at http://airflow.apache.org/_api/airflow/operators/index.html and http://airflow.apache.org/_api/airflow/contrib/operators/index.html includes operators for Bash scripts, JIRA, S3, SQL databases etc. 
 
 **Our favourite operators:**
@@ -103,7 +107,7 @@ uses the google cloud branded implementation of Apache Beam, another
 Gmail seems to take 5 or 6 minutes to virus scan attachments before they appear.
 
 
-== Dependencies and Deployment ===
+## Dependencies and Deployment
 
 At the end of the file, in the indented "with DAG:" section you can define dependencies between operators (else they will all run concurrently):
 ```
