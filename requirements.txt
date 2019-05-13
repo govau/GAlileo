@@ -3,6 +3,7 @@ oauth2client
 tablib
 python-igraph
 plotly
+fastavro
 
 kubernetes
 apache-airflow[celery,gcp_api,google_auth,postgres,redis, s3, slack, kubernetes]
