@@ -1,0 +1,11 @@
+---
+repos:
+  - deb http://au.archive.ubuntu.com/ubuntu/ bionic main universe
+packages:
+  - nginx
+  - r-base
+  - r-base-dev
+  - r-cran-littler
+  - r-cran-dplyr
+  - r-cran-htmlwidgets
+  - r-cran-shiny

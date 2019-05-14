@@ -1,1 +1,0 @@
-based on https://github.com/cloudfoundry/r-buildpack/tree/master/fixtures/shiny

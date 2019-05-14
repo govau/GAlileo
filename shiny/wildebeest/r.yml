@@ -3,3 +3,5 @@ packages:
   - cran_mirror: https://cran.csiro.au
     packages:
       - name: networkD3
+      - name: DT
+      - name: dplyr

@@ -1,4 +1,6 @@
 applications:
   - name: wildebeest
-    buildpack: r_buildpack
-    memory: 1G
+    buildpacks:
+      - apt_buildpack
+      - r_buildpack
+    memory: 2G

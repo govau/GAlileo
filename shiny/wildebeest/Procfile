@@ -1,1 +1,1 @@
-web: R -f code.R
+web: R RHOME && R -f code.R
