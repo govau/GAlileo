@@ -1,1 +1,1 @@
-web: R RHOME && R -f code.R
+web: bash copy-r-library.sh && R -f code.R

@@ -7,5 +7,3 @@ packages:
   - r-base-dev
   - r-cran-littler
   - r-cran-dplyr
-  - r-cran-htmlwidgets
-  - r-cran-shiny

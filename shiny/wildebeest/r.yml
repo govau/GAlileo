@@ -4,4 +4,4 @@ packages:
     packages:
       - name: networkD3
       - name: DT
-      - name: dplyr
+      - name: shiny

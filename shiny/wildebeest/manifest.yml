@@ -1,5 +1,5 @@
 applications:
-  - name: wildebeest
+  - name: wildebeest2
     buildpacks:
       - apt_buildpack
       - r_buildpack

@@ -7,6 +7,7 @@ library(dplyr)
 # User interface ----
 ui <- shinyUI(fluidPage(
 titlePanel(h1("Gov.AU Observatory")),
+
 sidebarLayout(
 position = "left",
 sidebarPanel(width = 3,
@@ -33,19 +34,19 @@ tabPanel("Receiving domain user count", DT::dataTableOutput("receive"))
 
 
 sna_data <- read.csv("bq_data.csv", stringsAsFactors = F)
-sna_data$from_hostname <- gsub("www.", "", sna_data$from_hostname, ignore.case = T)
-sna_data$from_hostname <- gsub("m.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
-sna_data$from_hostname <- gsub("l.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
-sna_data$from_hostname <- gsub("lm.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
-sna_data$to_hostname <- gsub("www.", "", sna_data$to_hostname, ignore.case = T)
+sna_data$from_hostname <- gsub( "www.", "", sna_data$from_hostname, ignore.case = T)
+sna_data$from_hostname <- gsub( "m.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
+sna_data$from_hostname <- gsub( "l.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
+sna_data$from_hostname <- gsub( "lm.facebook.com", "facebook.com", sna_data$from_hostname, ignore.case = T)
+sna_data$to_hostname <- gsub( "www.", "", sna_data$to_hostname, ignore.case = T)
 #filter by user jouney
 
 # Define server logic ----
 server <-
 function(input, output) {
-    networkData <- reactive(subset(sna_data, sna_data$count > input$user, c('from_hostname', 'to_hostname')))
-
-
+    networkData <- reactive(sna_data %>%
+        filter(count > input$user) %>%
+        select(from_hostname, to_hostname))
     refer_domain <- sna_data %>%
         group_by(from_hostname) %>%
         summarise(total = sum(count)) %>%
@@ -60,7 +61,7 @@ function(input, output) {
         simpleNetwork(networkData(), opacity = input$opacity, zoom = T)
     })
     output$table <- DT::renderDataTable({
-        DT::datatable(sna_data[, c("from_hostname", "to_hostname", "count")],
+        DT::datatable(sna_data[,c("from_hostname", "to_hostname", "count")],
         options = list(lengthMenu = c(10, 25, 50, 100), pageLength = 10))
     })
     output$refer <- DT::renderDataTable({
@@ -75,11 +76,7 @@ function(input, output) {
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
-runApp(app, host = "0.0.0.0", port = strtoi(Sys.getenv("PORT")))
-
-
-
-
-
-
-
+if (Sys.getenv("PORT") != "") {
+    runApp(app, host = "0.0.0.0", port = strtoi(Sys.getenv("PORT")))
+} 
+    runApp(app)
