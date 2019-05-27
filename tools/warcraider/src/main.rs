@@ -14,11 +14,9 @@ use rayon::prelude::*;
 // run in prod:
 // RUSTFLAGS="-C target-cpu=native" cargo run --release
 
-
-
-
 fn main() -> Result<(), Error> {
     let ga_regex = Regex::new(r"\bUA-\d{4,10}-\d{1,4}\b|\bGTM-[A-Z0-9]{1,7}\b").unwrap();
+    let whitespace_regex = Regex::new(r"\s+").unwrap();
     let raw_schema = r#"
         {                                                                                                        
     "name": "url_resource",                                                                                                                        
@@ -44,27 +42,29 @@ fn main() -> Result<(), Error> {
     let schema = Schema::parse_str(raw_schema)?;
 
     //println!("{:?}", schema);
-    let file = fs::File::create("test.avro")?;
+    let x = "57";
+    let file = fs::File::create(String::from("")+"dta-report01-"+x+".avro")?;
     let mut writer = Writer::new(&schema, file);
-
-    let f = fs::File::open("D:/warc/dta-report01-57.warc").expect("Unable to open file");
+    let f = fs::File::open(String::from("")+"D:/warc/dta-report01-"+x+".warc").expect("Unable to open file");
     let br = io::BufReader::new(f);
 
     let warc = WarcReader::new(br);
-
+let mut i = 0;
     for item in warc {
         let warc_record = item.unwrap(); // could be IO/malformed error
 
         if warc_record.header.get(&"WARC-Type".into()) == Some(&"response".into()) {
             let mut record = Record::new(writer.schema()).unwrap();
-
-            record.put(
-                "url",
-                warc_record
+let url = warc_record
                     .header
                     .get(&"WARC-Target-URI".into())
-                    .unwrap_or(&String::from(""))
-                    .as_str(),
+                    .unwrap()
+                    .as_str();
+            i += 1;
+            println!("{} {}", i, url);
+            record.put(
+                "url",
+                url
             );
 
             let decoder = Decoder::new(&warc_record.content[..]).unwrap();
@@ -93,70 +93,161 @@ fn main() -> Result<(), Error> {
                 headers
                     .get("Content-Length")
                     .unwrap_or(&String::from(""))
-                    .as_str(),
+                    .as_str()
+                    .parse::<i32>()
+                    .unwrap_or(0),
             );
             record.put(
                 "load_time",
                 headers
                     .get("X-Funnelback-Total-Request-Time-MS")
                     .unwrap_or(&String::from(""))
-                    .as_str(),
+                    .as_str()
+                    .parse::<f32>()
+                    .unwrap_or(0.0)
+                    / 1000.0,
             );
-            dbg!(headers);
+            record.put("headers", to_value(headers).unwrap());
 
             let soup = Soup::new(&raw_html);
+            let text = whitespace_regex
+                .replace_all(
+                    soup.tag("body")
+                        .find()
+                        .unwrap()
+                        .children()
+                        .map(|tag| {
+                            if tag.name().to_string() == "script"
+                                || tag.name().to_string() == "noscript"
+                                || tag.name().to_string() == "style"
+                            {
+                                String::from("")
+                            } else {
+                                tag.text().trim().to_string()
+                            }
+                        })
+                        .collect::<Vec<String>>()
+                        .join("")
+                        .as_str(),
+                    " ",
+                )
+                .to_string();
 
-             record.put(
-                "title",soup.tag("title").find().unwrap().text().trim()
-             );
-                         record.put(
-                "text_content",soup.text()
-             );
-             //https://exercism.io/tracks/rust/exercises/word-count/solutions/9c66e8c00b794856af9f3a43f6208bde
-                         record.put(
-                "word_count",soup.text().par_split_whitespace().count()
-             );
-// {"name": "google_analytics", "type": "string"},                                                                                                     
+            let mut text_wc = String::from("");
+            text_wc.push_str(text.as_str());
+            let mut text_keyword = String::from("");
+            text_keyword.push_str(text.as_str());
+            match soup.tag("title").find() {
+            Some(title) => record.put("title", title.text().trim()),
+            None => record.put("title", "")
+            }
 
-let caps = ga_regex.captures(&raw_html).unwrap();
-record.put("google_analytics",caps.get(0).unwrap().as_str());
-//         {"name": "headings_text", "type": "string"},                                                                                               
- let mut headings_text = String::new();
+
+            record.put("text_content", text);
+            record.put("word_count", text_wc.par_split_whitespace().count() as i32);
+
+            match ga_regex.captures(&raw_html) {
+            Some(caps) =>   record.put("google_analytics", caps.get(0).unwrap().as_str()),
+            None =>                 record.put("google_analytics", "")
+            }
+
+            let mut headings_text = String::new();
             for heading in vec!["h1", "h2", "h3", "h4", "h5", "h6"].iter() {
                 for header in soup.tag(*heading).find_all() {
-                 
-                            let head_text = header.text();
-                            if head_text.len() > 0 {
-                                headings_text.push('\n');
-                                headings_text.push_str(&head_text);
-                            }
+                    let head_text = header.text();
+                    if head_text.len() > 0 {
+                        headings_text.push('\n');
+                        headings_text.push_str(&head_text);
+                    }
                 }
             }
-//         {"name": "links", "type": {"type": "array", "items": "string"}},                                                                           
-record.put("links",to_value(soup.tag("a").find_all().map(|link|
-    match link.get("href"){
-        None => String::from(""),
-        Some(href) => href.as_str().to_string()
-    }
-).collect::<Vec<_>>()).unwrap());
-//         {"name": "resource_urls", "type": {"type": "array", "items": "string"}},       
-let resource_urls: Vec<String>;                                                            
-// resource_urls.append (&mut soup.tag("script").find_all().map(|link|link.get("src").unwrap()).collect::<Vec<_>>());
-// resource_urls.append(&mut soup.tag("link").find_all().map(|link|link.get("href").unwrap()).collect::<Vec<_>>());
-// resource_urls.append(&mut soup.tag("img").find_all().map(|link|link.get("src").unwrap()).collect::<Vec<_>>());
-//record.put("resource_urls",to_value(resource_urls).unwrap());
-//         {"name": "meta_tags", "type": {"type": "map", "values": "string"}},        
+            record.put("headings_text", headings_text);
+
+            record.put(
+                "links",
+                to_value(
+                    soup.tag("a")
+                        .find_all()
+                        .filter_map(|link| link.get("href"))
+                        .collect::<Vec<_>>(),
+                )
+                .unwrap(),
+            );
+
+            let resource_urls: Vec<String> = [
+                soup.tag("script")
+                    .find_all()
+                    .filter_map(|link| link.get("src"))
+                    .collect::<Vec<String>>(),
+                soup.tag("link")
+                    .find_all()
+                    .filter_map(|link| link.get("href"))
+                    .collect::<Vec<String>>(),
+                soup.tag("img")
+                    .find_all()
+                    .filter_map(|link| link.get("src"))
+                    .collect::<Vec<String>>(),
+            ]
+            .concat();
+            record.put("resource_urls", to_value(resource_urls).unwrap());
+
+            let mut meta_tags = HashMap::<String, String>::new();
+            soup.tag("meta").find_all().for_each(|meta| {
+                let attrs = meta.attrs();
+                if attrs.contains_key("name") {
+                    match attrs.get("content") {
+                        Some(i) => {
+                            meta_tags.insert(attrs.get("name").unwrap().to_string(), i.to_string())
+                        }
+                        None => Some(String::from("?")),
+                    };
+                } else if attrs.contains_key("http-equiv") {
+                    //If http-equiv is set, it is a pragma directive — information normally given by the web server about how the web page is served.
+                    match attrs.get("content") {
+                        Some(i) => meta_tags
+                            .insert(attrs.get("http-equiv").unwrap().to_string(), i.to_string()),
+                        None => Some(String::from("?")),
+                    };
+                } else if attrs.contains_key("charset") {
+                    //If charset is set, it is a charset declaration — the character encoding used by the webpage.
+                    meta_tags.insert(
+                        String::from("charset"),
+                        attrs.get("charset").unwrap().to_string(),
+                    );
+                } else if attrs.contains_key("itemprop") {
+                    //If itemprop is set, it is user-defined metadata — transparent for the user-agent as the semantics of the metadata is user-specific.
+                    match attrs.get("content") {
+                        Some(i) => meta_tags
+                            .insert(attrs.get("itemprop").unwrap().to_string(), i.to_string()),
+                        None => Some(String::from("?")),
+                    };
+                } else if attrs.contains_key("property") {
+                    //facebook open graph
+
+                    match attrs.get("content") {
+                        Some(i) => meta_tags
+                            .insert(attrs.get("property").unwrap().to_string(), i.to_string()),
+                        None => Some(String::from("?")),
+                    };
+                }
+            });
+            record.put("meta_tags", to_value(meta_tags).unwrap());
 
             let sw = StopWords::from_file("SmartStoplist.txt").unwrap();
             let r = Rake::new(sw);
-            let keywords = HashMap::<String,f64>::new();
-            r.run(soup.text().as_str()).iter().for_each(|&KeywordScore {
+            let mut keywords = HashMap::<String, f32>::new();
+            r.run(text_keyword.as_str()).iter().for_each(
+                |&KeywordScore {
                      ref keyword,
                      ref score,
-                 }| println!("{}: {}", keyword, score)
+                 }| {
+                    let mut k = String::from("");
+                    k.push_str(keyword.as_str());
+                    keywords.insert(k, *score as f32);
+                },
             );
             record.put("keywords", keywords);
-
+            //dbg!(record);
             writer.append(record)?;
             writer.flush()?;
         }
