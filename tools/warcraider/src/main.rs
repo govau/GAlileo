@@ -2,7 +2,8 @@ use std::io;
 use std::fs;
 use std::path;
 use std::collections::HashMap;
-use std::io::BufRead;
+use std::io::Read;
+use std::env;
 
 use rust_warc::WarcReader;
 use avro_rs::{Schema, Writer, types::Record, to_value};
@@ -20,6 +21,22 @@ use log::{error, info, trace, debug, warn};
 
 fn main() -> Result<(), Error> {
 stackdriver_logger::init_with_cargo!();
+
+let mut warc_number: usize;
+match env::var("WARC_NUMBER") {
+    Ok(val) => warc_number= val.parse::<usize>().unwrap(),
+    Err(_e) => warc_number=1,
+}
+match env::var("OFFSET") {
+    Ok(val) => warc_number=warc_number+ val.parse::<usize>().unwrap(),
+    Err(_e) => warc_number=warc_number+0,
+}
+let offset: usize;
+match env::var("REPLICAS") {
+    Ok(val) => offset= val.parse::<usize>().unwrap(),
+    Err(_e) => offset=1,
+}
+
     let ga_regex = Regex::new(r"\bUA-\d{4,10}-\d{1,4}\b|\bGTM-[A-Z0-9]{1,7}\b").unwrap();
     let whitespace_regex = Regex::new(r"\s+").unwrap();
     let raw_schema = r#"
@@ -46,10 +63,10 @@ stackdriver_logger::init_with_cargo!();
 
     let schema = Schema::parse_str(raw_schema)?;
 
-    //println!("{:?}", schema);
-    let x = "57";
-if x == "59" {
+while warc_number < 86 {
+if warc_number == 59 {
 warn!("404 not found");
+warc_number=warc_number + offset;
 }
 let urls = vec!["https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/75697463-298e-4e98-8e41-b6d364e38e1d/download/dta-report02-1.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/af8159f8-b7e0-4c9b-8086-2b0e5b21cb2c/download/dta-report02-2.warc",
@@ -137,22 +154,25 @@ let urls = vec!["https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a42
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-83.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-84.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-85.warc"];
-let avro_filename = String::from("") + "dta-report02-" + x + ".avro";
+let avro_filename = String::from("") + "dta-report02-" + warc_number.to_string().as_str() + ".avro";
     let file = fs::File::create(&avro_filename)?;
 let avro_gcs_status = Exec::cmd("gsutil").arg("stat").arg(String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")+&avro_filename).join()?;
+info!("");
 if avro_gcs_status == ExitStatus::Exited(0) {
 warn!("avro does exist on gcs {}",avro_filename);
 } else {
 info!("avro does not exist on gcs {}",avro_filename);
-}
+
     let mut writer = Writer::new(&schema, file);
 // download file
-let warc_filename = String::from("") + "dta-report02-" + x + ".warc";
+let warc_filename = String::from("") + "dta-report02-" + warc_number.to_string().as_str() + ".warc";
 if !path::Path::new(&warc_filename).exists() {
-    let mut response = reqwest::get(urls[x.parse::<usize>().unwrap()])?;
 
+    info!("starting download: {}",urls[warc_number]);
+    let mut response = reqwest::get(urls[warc_number])?;
     let mut dest = fs::File::create(&warc_filename)?;
     io::copy(&mut response, &mut dest)?;
+       debug!("downloaded");
 }
     let f = fs::File::open(&warc_filename)
         .expect("Unable to open file");
@@ -162,7 +182,7 @@ if !path::Path::new(&warc_filename).exists() {
     let mut i = 0;
     for item in warc {
         i += 1;
-        if i > 0 {
+        if i < 4 {
             let warc_record = item.unwrap(); // could be IO/malformed error
 
             if warc_record.header.get(&"WARC-Type".into()) == Some(&"response".into()) {
@@ -184,26 +204,18 @@ if !path::Path::new(&warc_filename).exists() {
                 } else {
                     let mut record = Record::new(writer.schema()).unwrap();
                     record.put("url", url);
-                    let decoder = Decoder::new(&warc_record.content[..]).unwrap();
-
-                    let mut raw_html = String::from("");
+		    let mut content = String::new();
+                    let mut decoder = Decoder::new(&warc_record.content[..]).unwrap();
+decoder.read_to_string(&mut content)?;
+                    let parts: Vec<&str> = content.split("\n\r\n").collect();
+                    let raw_html = String::from(parts[1]);
                     let mut headers = HashMap::<String, String>::new();
-                    let br = io::BufReader::new(decoder);
-                    let mut in_header = true;
-                    // TODO optimize this to just find position of first blank line
-                    for line in br.lines() {
-                        let l = line.unwrap();
-                        if in_header == false {
-                            raw_html.push_str(l.as_str());
-                        } else {
-                            if l == "" || l.starts_with("HTTP/") {
-                            } else if l.contains(": ") {
-                                let parts: Vec<&str> = l.split(": ").collect();
+                    for line in parts[0].split("\n") {
+                            if line == "" || line.starts_with("HTTP/") {
+                            } else if line.contains(": ") {
+                                let parts: Vec<&str> = line.split(": ").collect();
                                 headers.insert(String::from(parts[0]), String::from(parts[1]));
-                            } else {
-                                in_header = false;
-                            }
-                        }
+                            } 
                     }
 
                     record.put("size_bytes", size);
@@ -363,10 +375,13 @@ if !path::Path::new(&warc_filename).exists() {
             }
         }
     }
-let upload = Exec::cmd("gsutil").arg("cp").arg(&warc_filename).arg(String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")+&warc_filename)
+let upload = Exec::cmd("gsutil").arg("cp").arg(&avro_filename).arg(String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")+&avro_filename)
             .stdout(Redirection::Pipe)
             .capture().unwrap()
             .stdout_str();
         info!("{:?}", upload);
+}
+warc_number = warc_number + offset;
+}
     Ok(())
 }
