@@ -148,3 +148,5 @@ rsconnect/
 /data
 /.idea/
 airflow.cfg
+*.avro
+/shiny/observatory/htpasswd

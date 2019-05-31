@@ -1,0 +1,6 @@
+applications:
+  - name: observatory
+    buildpacks:
+      - apt_buildpack
+      - r_buildpack
+    memory: 2G

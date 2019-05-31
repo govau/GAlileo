@@ -5,9 +5,12 @@ RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s
 RUN sudo apt install -y curl gnupg
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 RUN sudo apt-get update
+## install cloudfoundry tools
+RUN curl -v -L -o cf-cli_amd64.deb 'https://cli.run.pivotal.io/stable?release=debian64&source=github'
+RUN sudo dpkg -i cf-cli_amd64.deb
 
 ## install google cloud SDK and common R packages
-RUN sudo apt install -y google-cloud-sdk r-cran-ggplot2 r-cran-stringr
+RUN sudo apt install -y google-cloud-sdk r-cran-ggplot2 r-cran-stringr apache2-utils
 ## install some R packages directly from CRAN
 RUN install2.r --error \
     -r 'http://cran.rstudio.com' \
@@ -16,7 +19,10 @@ RUN install2.r --error \
     searchConsoleR \
     gmailr \
     googleCloudStorageR \
-    bigQueryR
+    bigQueryR \
+RUN install2.r --error \
+     -r 'http://cran.rstudio.com' \
+     rsconnect
 
 
 ## clean up
