@@ -9,7 +9,6 @@ today = pd.datetime.today()
 
 from airflow import models
 from airflow.contrib.kubernetes.secret import Secret
-from airflow.hooks.base_hook import BaseHook
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 default_dag_args = {
@@ -20,19 +19,18 @@ default_dag_args = {
 DOCKER_IMAGE = 'gcr.io/dta-ga-bigquery/galileo'
 DATA_DIR = '/home/airflow/gcs/data/'
 GCS_BUCKET = 'us-east1-dta-airflow-b3415db4-bucket'
-connection = BaseHook.get_connection("cloudfoundry_default")
-cf_username = Secret('env', 'CF_USERNAME', 'airflow-secrets', connection.username)
-cf_password = Secret('env', 'CF_PASSWORD', 'airflow-secrets', connection.password)
+cf_username = Secret('env', 'CF_USERNAME', 'airflow-secrets', 'CF_USERNAME')
+cf_password = Secret('env', 'CF_PASSWORD', 'airflow-secrets', 'CF_PASSWORD')
 htpasswd = models.Variable.get('HTPASSWD', '')
 
 with models.DAG(
         'observatory',
         schedule_interval=datetime.timedelta(days=7),
         default_args=default_dag_args) as dag:
-
-
-        graph_my_data = KubernetesPodOperator(task_id='graph-my-data',name='graph-my-data',namespace='default', secrets=[cf_username,cf_password],
-                                              image=DOCKER_IMAGE, cmds=['bash', '-c'],
-                                              arguments=['gsutil cp gs://{GCS_BUCKET}/data/{NAME}.csv . && '
-                                                         'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
-                                                         'cf login -a https://api.system.b.cld.gov.au -o dta -s marketplace -u $CF_USERNAME -p $CF_PASSWORD'])
+    deploy_shiny = KubernetesPodOperator(task_id='deploy-shiny', name='deploy-shiny', namespace='default',
+                                         secrets=[cf_username, cf_password],
+                                         image=DOCKER_IMAGE, cmds=['bash', '-c'],
+                                         arguments=['gsutil cp gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
+                                                    'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
+                                                    'cf login -a https://api.system.y.cld.gov.au -u $CF_USERNAME -p $CF_PASSWORD && '
+                                                    'cf push observatory'.format(GCS_BUCKET=GCS_BUCKET,HTPASSWD=htpasswd)])
