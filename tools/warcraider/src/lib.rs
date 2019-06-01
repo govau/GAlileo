@@ -6,11 +6,12 @@ use std::fs;
 use std::io;
 use std::path;
 
-use log::{debug, error, info, trace, warn};
+use log::{debug, info, warn};
 use rake::*;
 use regex::*;
 use soup::*;
 use subprocess::{Exec, ExitStatus};
+use rayon::prelude::*;
 lazy_static! {
 static ref URLS : Vec<&'static str> = vec!["https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/75697463-298e-4e98-8e41-b6d364e38e1d/download/dta-report02-1.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/af8159f8-b7e0-4c9b-8086-2b0e5b21cb2c/download/dta-report02-2.warc",
@@ -104,14 +105,12 @@ lazy_static! {
 }
 
 pub fn check_present_avro(avro_filename: &str) -> bool {
-    let avro_gcs_status = Exec::cmd("gsutil")
+    let avro_gcs_status = Exec::shell("gsutil")
         .arg("stat")
-        .arg(
-            String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/") + avro_filename,
-        )
+        .arg(String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/") + avro_filename)
         .join()
         .unwrap();
-    info!("");
+    println!();
     if avro_gcs_status == ExitStatus::Exited(0) {
         warn!("avro does exist on gcs {}", avro_filename);
         true
@@ -139,10 +138,7 @@ pub fn parse_html_to_text(soup: &Soup) -> String {
                 .unwrap()
                 .children()
                 .map(|tag| {
-                    if tag.name() == "script"
-                        || tag.name() == "noscript"
-                        || tag.name() == "style"
-                    {
+                    if tag.name() == "script" || tag.name() == "noscript" || tag.name() == "style" {
                         String::from("")
                     } else {
                         tag.text().trim().to_string()
