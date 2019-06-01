@@ -29,8 +29,12 @@ with models.DAG(
         default_args=default_dag_args) as dag:
     deploy_shiny = KubernetesPodOperator(task_id='deploy-shiny', name='deploy-shiny', namespace='default',
                                          secrets=[cf_username, cf_password],
-                                         image=DOCKER_IMAGE, cmds=['bash', '-c'],
-                                         arguments=['gsutil cp gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
+                                         image_pull_policy="Always",
+                                         image=DOCKER_IMAGE,
+                                         cmds=['bash', '-c'],
+                                         arguments=['mkdir deploy && '
+                                                    'cd deploy && '
+                                                    'gsutil cp gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
                                                     'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
                                                     'cf login -a https://api.system.y.cld.gov.au -u $CF_USERNAME -p $CF_PASSWORD && '
                                                     'cf push observatory'.format(GCS_BUCKET=GCS_BUCKET,HTPASSWD=htpasswd)])
