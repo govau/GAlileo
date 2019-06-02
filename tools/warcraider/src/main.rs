@@ -45,6 +45,7 @@ fn main() -> Result<(), Error> {
     }
 
     let ga_regex = Regex::new(r"\bUA-\d{4,10}-\d{1,4}\b|\bGTM-[A-Z0-9]{1,7}\b").unwrap();
+    let p_regex = Regex::new(r"</*p/*>").unwrap();
     let raw_schema = r#"
         {                                                                                                        
     "name": "url_resource",                                                                                                                        
@@ -250,13 +251,14 @@ fn main() -> Result<(), Error> {
                                         Ok(_e) => {
                                             let parts: Vec<&str> =
                                                 content.split("\n\r\n").collect();
-                                            let raw_html = String::from(parts[1]);
+                                            let mut raw_html = String::from(parts[1]);
                                             if raw_html.contains("<p/>") && raw_html.matches("<p>").count() > 10000 {
                                                 error!(
                                                     "{} {} contains too many <p> tags ({}), ignoring",
                                                     i, item.url, raw_html.matches("<p>").count()
                                                 );
-                                                return None;
+                                                raw_html = p_regex.replace_all(raw_html.as_str(),"").to_string();
+                                                //return None;
                                             }
                                             let mut headers = HashMap::<String, String>::new();
                                             for line in parts[0].split("\n") {
@@ -296,7 +298,7 @@ fn main() -> Result<(), Error> {
                                                 }
                                                 None => record.put("title", ""),
                                             }
-                                            //debug!("headers");
+                                            //debug!("title");
                                             record.put("text_content", text);
                                             //debug!("text-c");
                                             record.put(
@@ -353,8 +355,19 @@ fn main() -> Result<(), Error> {
             writer.flush()?;
             let upload = Exec::shell("gsutil")
                 .arg("cp")
-                .arg(&avro_filename)
                 .arg(&first_avro_filename)
+                .arg(
+                    String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")
+                        + &first_avro_filename,
+                )
+                .stdout(Redirection::Pipe)
+                .capture()
+                .unwrap()
+                .stdout_str();
+            info!("{:?}", upload);
+            let upload2 = Exec::shell("gsutil")
+                .arg("cp")
+                .arg(&avro_filename)
                 .arg(
                     String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")
                         + &avro_filename,
@@ -363,7 +376,7 @@ fn main() -> Result<(), Error> {
                 .capture()
                 .unwrap()
                 .stdout_str();
-            info!("{:?}", upload);
+            info!("{:?}", upload2);
         }
         warc_number += offset;
     }
