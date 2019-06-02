@@ -73,7 +73,8 @@ fn main() -> Result<(), Error> {
         // let mut first_half = true;
         let mut avro_filename =
             String::from("") + "dta-report02-" + warc_number.to_string().as_str() + "-0.avro";
-        let first_avro_filename = String::from("") + "dta-report02-" + warc_number.to_string().as_str() + "-0.avro";
+        let first_avro_filename =
+            String::from("") + "dta-report02-" + warc_number.to_string().as_str() + "-0.avro";
         if warc_number == 59 {
             warn!("404 not found");
             warc_number += offset;
@@ -92,6 +93,7 @@ fn main() -> Result<(), Error> {
             let mut warc = WarcReader::new(br);
             let mut i = 0;
             let mut first_half = true;
+            warc.next();
             loop {
                 let items: Vec<WarcResult> = [
                     match warc.next() {
@@ -181,10 +183,10 @@ fn main() -> Result<(), Error> {
                             .unwrap_or(&String::from("0"))
                             .parse::<i32>()
                             .unwrap();
-                        if size > 1_000_000 || warc_record.content.len() > 1_000_000 {
-                            warn!("{} too big {}", i, url);
+                        if size > 2_000_000 || warc_record.content.len() > 2_000_000 {
+                            warn!("{} too big ({} bytes > 2MB) {}", i, size, url);
                             None
-                        }  else if url == "https://www.wgea.gov.au/sites/default/files/Workplace-profile-worksheets-2017.xlsx" {
+                        }  else if url == "" || url == "https://www.wgea.gov.au/sites/default/files/Workplace-profile-worksheets-2017.xlsx" {
                             warn!("{} bad url {}", i, url);
                             None
                             }else {
@@ -211,7 +213,7 @@ fn main() -> Result<(), Error> {
                         + "dta-report02-"
                         + warc_number.to_string().as_str()
                         + "-50000.avro";
-                    
+
                     info!("{} starting new avro file {}", i, avro_filename);
                     writer.flush()?;
                     file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
@@ -237,18 +239,25 @@ fn main() -> Result<(), Error> {
                             match Decoder::new(&item.bytes[..]) {
                                 Err(_e) => {
                                     error!("{} {} not valid gzip", i, item.url);
-                                    return None
+                                    return None;
                                 }
                                 Ok(mut decoder) => {
                                     match decoder.read_to_string(&mut content) {
                                         Err(_e) => {
                                             error!("{} {} not valid utf8 string", i, item.url);
-                                            return None
+                                            return None;
                                         }
                                         Ok(_e) => {
                                             let parts: Vec<&str> =
                                                 content.split("\n\r\n").collect();
                                             let raw_html = String::from(parts[1]);
+                                            if raw_html.contains("<p/>") && raw_html.matches("<p>").count() > 10000 {
+                                                error!(
+                                                    "{} {} contains too many <p> tags ({}), ignoring",
+                                                    i, item.url, raw_html.matches("<p>").count()
+                                                );
+                                                return None;
+                                            }
                                             let mut headers = HashMap::<String, String>::new();
                                             for line in parts[0].split("\n") {
                                                 if line == "" || line.starts_with("HTTP/") {
@@ -263,7 +272,7 @@ fn main() -> Result<(), Error> {
                                             }
 
                                             record.put("size_bytes", item.size);
-
+                                            //debug!("size-b");
                                             record.put(
                                                 "load_time",
                                                 headers
@@ -274,7 +283,10 @@ fn main() -> Result<(), Error> {
                                                     .unwrap_or(0.0)
                                                     / 1000.0,
                                             );
+                                            // debug!("load");
                                             record.put("headers", to_value(headers).unwrap());
+                                            //debug!("headers");
+                                            //debug!("{}",raw_html);
                                             let soup = Soup::new(&raw_html);
                                             let text = parse_html_to_text(&soup);
                                             let text_words = String::from("") + text.as_str();
@@ -284,13 +296,14 @@ fn main() -> Result<(), Error> {
                                                 }
                                                 None => record.put("title", ""),
                                             }
-
+                                            //debug!("headers");
                                             record.put("text_content", text);
+                                            //debug!("text-c");
                                             record.put(
                                                 "word_count",
                                                 text_words.par_split_whitespace().count() as i32,
                                             );
-
+                                            //debug!("Wordc");
                                             match ga_regex.captures(&raw_html) {
                                                 Some(caps) => record.put(
                                                     "google_analytics",
@@ -298,9 +311,9 @@ fn main() -> Result<(), Error> {
                                                 ),
                                                 None => record.put("google_analytics", ""),
                                             }
-
+                                            //debug!("ga");
                                             record.put("headings_text", headings_text(&soup));
-
+                                            //debug!("headingt");
                                             record.put(
                                                 "links",
                                                 to_value(
@@ -311,18 +324,19 @@ fn main() -> Result<(), Error> {
                                                 )
                                                 .unwrap(),
                                             );
-
+                                            //debug!("links");
                                             record.put(
                                                 "resource_urls",
                                                 to_value(resource_urls(&soup)).unwrap(),
                                             );
-
+                                            //debug!("resource");
                                             record.put(
                                                 "meta_tags",
                                                 to_value(meta_tags(&soup)).unwrap(),
                                             );
-
+                                            //debug!("meta" );
                                             record.put("keywords", keywords(text_words));
+                                            //                                          debug!("keywords")
                                             //dbg!(record);
                                         }
                                     }

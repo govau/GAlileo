@@ -236,12 +236,14 @@ lazy_static! {
 }
 pub fn keywords(text_words: String) -> HashMap<String, f32> {
     let mut keywords = HashMap::<String, f32>::new();
+    // debug!("{} words to be raked", text_words.split_whitespace().count());
     R.run(text_words.as_str()).iter().for_each(
         |&KeywordScore {
              ref keyword,
              ref score,
          }| {
             keywords.insert(String::from("") + keyword.as_str(), *score as f32);
+            // debug!("{} {}", keywords.len(), keyword.as_str());
         },
     );
     keywords
