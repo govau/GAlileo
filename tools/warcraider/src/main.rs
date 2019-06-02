@@ -71,8 +71,9 @@ fn main() -> Result<(), Error> {
 
     while warc_number < 86 {
         // let mut first_half = true;
-        let avro_filename =
-            String::from("") + "dta-report02-" + warc_number.to_string().as_str() + ".avro";
+        let mut avro_filename =
+            String::from("") + "dta-report02-" + warc_number.to_string().as_str() + "-0.avro";
+        let first_avro_filename = String::from("") + "dta-report02-" + warc_number.to_string().as_str() + "-0.avro";
         if warc_number == 59 {
             warn!("404 not found");
             warc_number += offset;
@@ -80,7 +81,7 @@ fn main() -> Result<(), Error> {
             warn!("{} already in google storage bucket", &avro_filename);
             warc_number += offset;
         } else {
-            let file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
+            let mut file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
             let mut writer = Writer::new(&schema, file);
             let warc_filename =
                 String::from("") + "dta-report02-" + warc_number.to_string().as_str() + ".warc";
@@ -90,6 +91,7 @@ fn main() -> Result<(), Error> {
 
             let mut warc = WarcReader::new(br);
             let mut i = 0;
+            let mut first_half = true;
             loop {
                 let items: Vec<WarcResult> = [
                     match warc.next() {
@@ -203,16 +205,18 @@ fn main() -> Result<(), Error> {
                     break;
                 }
                 i += items.len();
-                // if first_half && i > 50000 {
-                //     first_half = false;
-                //     avro_filename = String::from("")
-                //         + "dta-report02-"
-                //         + warc_number.to_string().as_str()
-                //         + "-50000.avro";
-                //     info!("{} starting new avro file {}", i, avro_filename);
-                //     file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
-                //     writer = Writer::new(&schema, file);
-                // }
+                if first_half && i > 50000 {
+                    first_half = false;
+                    avro_filename = String::from("")
+                        + "dta-report02-"
+                        + warc_number.to_string().as_str()
+                        + "-50000.avro";
+                    
+                    info!("{} starting new avro file {}", i, avro_filename);
+                    writer.flush()?;
+                    file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
+                    writer = Writer::new(&schema, file);
+                }
                 if i % 1000 < 10 {
                     writer.flush()?;
                 }
@@ -222,7 +226,7 @@ fn main() -> Result<(), Error> {
                         .filter_map(|item| {
                             let mut record = Record::new(writer.schema()).unwrap();
                             let url = String::from("") + item.url.as_str();
-                            if i % 100 < 5 {
+                            if i % 500 < 5 {
                                 info!("{} {} ({} bytes)", i, url, item.size);
                             } else {
                                 debug!("{} {} ({} bytes)", i, url, item.size);
@@ -231,11 +235,15 @@ fn main() -> Result<(), Error> {
                             record.put("url", url);
                             let mut content = String::new();
                             match Decoder::new(&item.bytes[..]) {
-                                Err(_e) => error!("{} {} not valid gzip", i, item.url),
+                                Err(_e) => {
+                                    error!("{} {} not valid gzip", i, item.url);
+                                    return None
+                                }
                                 Ok(mut decoder) => {
                                     match decoder.read_to_string(&mut content) {
                                         Err(_e) => {
-                                            error!("{} {} not valid utf8 string", i, item.url)
+                                            error!("{} {} not valid utf8 string", i, item.url);
+                                            return None
                                         }
                                         Ok(_e) => {
                                             let parts: Vec<&str> =
@@ -316,12 +324,11 @@ fn main() -> Result<(), Error> {
 
                                             record.put("keywords", keywords(text_words));
                                             //dbg!(record);
-                                            Some(record);
                                         }
                                     }
                                 }
                             }
-                            None
+                            Some(record)
                         })
                         .collect();
                     for record in records {
@@ -333,6 +340,7 @@ fn main() -> Result<(), Error> {
             let upload = Exec::shell("gsutil")
                 .arg("cp")
                 .arg(&avro_filename)
+                .arg(&first_avro_filename)
                 .arg(
                     String::from("gs://us-east1-dta-airflow-b3415db4-bucket/data/bqload/")
                         + &avro_filename,
