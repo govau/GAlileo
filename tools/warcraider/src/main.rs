@@ -16,9 +16,12 @@ use rust_warc::WarcReader;
 use soup::*;
 use stackdriver_logger;
 use subprocess::{Exec, Redirection};
-// run in prod:
-// RUSTFLAGS="-C target-cpu=native" cargo run --release
 
+struct WarcResult {
+    url: String,
+    size: i32,
+    bytes: Vec<u8>,
+}
 fn main() -> Result<(), Error> {
     stackdriver_logger::init_with_cargo!();
     info!(
@@ -67,6 +70,7 @@ fn main() -> Result<(), Error> {
     let schema = Schema::parse_str(raw_schema)?;
 
     while warc_number < 86 {
+        // let mut first_half = true;
         let avro_filename =
             String::from("") + "dta-report02-" + warc_number.to_string().as_str() + ".avro";
         if warc_number == 59 {
@@ -84,121 +88,248 @@ fn main() -> Result<(), Error> {
             let f = fs::File::open(&warc_filename).expect("Unable to open file");
             let br = io::BufReader::new(f);
 
-            let warc = WarcReader::new(br);
+            let mut warc = WarcReader::new(br);
             let mut i = 0;
-            // todo beat 3500 urls/min
-            for item in warc {
-                i += 1;
-                if i % 1000 == 0 {
-                    writer.flush()?;
-                }
-                if i > 0 {
-                    let warc_record = item.unwrap(); // could be IO/malformed error
-
-                    if warc_record.header.get(&"WARC-Type".into()) == Some(&"response".into()) {
-                        let url = warc_record
-                            .header
-                            .get(&"WARC-Target-URI".into())
-                            .unwrap()
-                            .as_str();
+            loop {
+                let items: Vec<WarcResult> = [
+                    match warc.next() {
+                        None => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            },
+                        Some(w) => {match w {
+                        Ok(w) => w,
+                        Err(_e) => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            }
+                        }
+                        }
+                    },
+                 match warc.next() {
+                        None => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            },
+                        Some(w) => {match w {
+                        Ok(w) => w,
+                        Err(_e) => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            }
+                        }
+                        }
+                    },  match warc.next() {
+                        None => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            },
+                        Some(w) => {match w {
+                        Ok(w) => w,
+                        Err(_e) => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            }
+                        }
+                        }
+                    }, match warc.next() {
+                        None => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            },
+                        Some(w) => {match w {
+                        Ok(w) => w,
+                        Err(_e) => rust_warc::WarcRecord {
+                version: String::from("0"),
+                header: HashMap::<rust_warc::CaseString, String>::new(),
+                /// Record content block
+                content: Vec::<u8>::new(),
+            }
+                        }
+                        }
+                    },
+                ]
+                .iter()
+                .filter_map(move |item| {
+                    let warc_record = item;
+                    if warc_record.version != "0" && warc_record.header.get(&"WARC-Type".into()) == Some(&"response".into()) {
+                        let url = String::from("")
+                            + warc_record
+                                .header
+                                .get(&"WARC-Target-URI".into())
+                                .unwrap()
+                                .as_str();
                         let size = warc_record
                             .header
                             .get(&"Uncompressed-Content-Length".into())
                             .unwrap_or(&String::from("0"))
                             .parse::<i32>()
                             .unwrap();
-                        if i % 100 == 0 {
-                            info!("{} {} ({} bytes)", i, url, size);
-                        } else {
-                            debug!("{} {} ({} bytes)", i, url, size);
+                        if size > 1_000_000 || warc_record.content.len() > 1_000_000 {
+                            warn!("{} too big {}", i, url);
+                            None
+                        }  else if url == "https://www.wgea.gov.au/sites/default/files/Workplace-profile-worksheets-2017.xlsx" {
+                            warn!("{} bad url {}", i, url);
+                            None
+                            }else {
+                            Some(WarcResult {
+                                url: url,
+                                size: size,
+                                bytes: warc_record.content[..].to_vec(),
+                            })
                         }
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+                if items.len() == 0 {
+                    info!("no more warc records");
 
-                        if size > 1_000_000 {
-                            warn!("too big {}", url);
-                        } else {
+                    break;
+                }
+                i += items.len();
+                // if first_half && i > 50000 {
+                //     first_half = false;
+                //     avro_filename = String::from("")
+                //         + "dta-report02-"
+                //         + warc_number.to_string().as_str()
+                //         + "-50000.avro";
+                //     info!("{} starting new avro file {}", i, avro_filename);
+                //     file = io::BufWriter::new(fs::File::create(&avro_filename).unwrap());
+                //     writer = Writer::new(&schema, file);
+                // }
+                if i % 1000 < 10 {
+                    writer.flush()?;
+                }
+                if i > 0 {
+                    let records: Vec<Record> = items
+                        .par_iter()
+                        .filter_map(|item| {
                             let mut record = Record::new(writer.schema()).unwrap();
+                            let url = String::from("") + item.url.as_str();
+                            if i % 100 < 5 {
+                                info!("{} {} ({} bytes)", i, url, item.size);
+                            } else {
+                                debug!("{} {} ({} bytes)", i, url, item.size);
+                            }
+
                             record.put("url", url);
                             let mut content = String::new();
-                            let mut decoder = Decoder::new(&warc_record.content[..]).unwrap();
-                            match decoder.read_to_string(&mut content) {
-                                Err(_e) => error!("{} not valid utf8 string", url),
-                                Ok(_e) => {
-                                    let parts: Vec<&str> = content.split("\n\r\n").collect();
-                                    let raw_html = String::from(parts[1]);
-                                    let mut headers = HashMap::<String, String>::new();
-                                    for line in parts[0].split("\n") {
-                                        if line == "" || line.starts_with("HTTP/") {
-                                        } else if line.contains(": ") {
-                                            let parts: Vec<&str> = line.split(": ").collect();
-                                            headers.insert(
-                                                String::from(parts[0]),
-                                                String::from(parts[1]),
+                            match Decoder::new(&item.bytes[..]) {
+                                Err(_e) => error!("{} {} not valid gzip", i, item.url),
+                                Ok(mut decoder) => {
+                                    match decoder.read_to_string(&mut content) {
+                                        Err(_e) => {
+                                            error!("{} {} not valid utf8 string", i, item.url)
+                                        }
+                                        Ok(_e) => {
+                                            let parts: Vec<&str> =
+                                                content.split("\n\r\n").collect();
+                                            let raw_html = String::from(parts[1]);
+                                            let mut headers = HashMap::<String, String>::new();
+                                            for line in parts[0].split("\n") {
+                                                if line == "" || line.starts_with("HTTP/") {
+                                                } else if line.contains(": ") {
+                                                    let parts: Vec<&str> =
+                                                        line.split(": ").collect();
+                                                    headers.insert(
+                                                        String::from(parts[0]),
+                                                        String::from(parts[1]),
+                                                    );
+                                                }
+                                            }
+
+                                            record.put("size_bytes", item.size);
+
+                                            record.put(
+                                                "load_time",
+                                                headers
+                                                    .get("X-Funnelback-Total-Request-Time-MS")
+                                                    .unwrap_or(&String::from(""))
+                                                    .as_str()
+                                                    .parse::<f32>()
+                                                    .unwrap_or(0.0)
+                                                    / 1000.0,
                                             );
+                                            record.put("headers", to_value(headers).unwrap());
+                                            let soup = Soup::new(&raw_html);
+                                            let text = parse_html_to_text(&soup);
+                                            let text_words = String::from("") + text.as_str();
+                                            match soup.tag("title").find() {
+                                                Some(title) => {
+                                                    record.put("title", title.text().trim())
+                                                }
+                                                None => record.put("title", ""),
+                                            }
+
+                                            record.put("text_content", text);
+                                            record.put(
+                                                "word_count",
+                                                text_words.par_split_whitespace().count() as i32,
+                                            );
+
+                                            match ga_regex.captures(&raw_html) {
+                                                Some(caps) => record.put(
+                                                    "google_analytics",
+                                                    caps.get(0).unwrap().as_str(),
+                                                ),
+                                                None => record.put("google_analytics", ""),
+                                            }
+
+                                            record.put("headings_text", headings_text(&soup));
+
+                                            record.put(
+                                                "links",
+                                                to_value(
+                                                    soup.tag("a")
+                                                        .find_all()
+                                                        .filter_map(|link| link.get("href"))
+                                                        .collect::<Vec<_>>(),
+                                                )
+                                                .unwrap(),
+                                            );
+
+                                            record.put(
+                                                "resource_urls",
+                                                to_value(resource_urls(&soup)).unwrap(),
+                                            );
+
+                                            record.put(
+                                                "meta_tags",
+                                                to_value(meta_tags(&soup)).unwrap(),
+                                            );
+
+                                            record.put("keywords", keywords(text_words));
+                                            //dbg!(record);
+                                            Some(record);
                                         }
                                     }
-
-                                    record.put("size_bytes", size);
-
-                                    record.put(
-                                        "load_time",
-                                        headers
-                                            .get("X-Funnelback-Total-Request-Time-MS")
-                                            .unwrap_or(&String::from(""))
-                                            .as_str()
-                                            .parse::<f32>()
-                                            .unwrap_or(0.0)
-                                            / 1000.0,
-                                    );
-                                    record.put("headers", to_value(headers).unwrap());
-                                    let soup = Soup::new(&raw_html);
-                                    let text = parse_html_to_text(&soup);
-                                    let text_words = String::from("") + text.as_str();
-                                    match soup.tag("title").find() {
-                                        Some(title) => record.put("title", title.text().trim()),
-                                        None => record.put("title", ""),
-                                    }
-
-                                    record.put("text_content", text);
-                                    record.put(
-                                        "word_count",
-                                        text_words.par_split_whitespace().count() as i32,
-                                    );
-
-                                    match ga_regex.captures(&raw_html) {
-                                        Some(caps) => record
-                                            .put("google_analytics", caps.get(0).unwrap().as_str()),
-                                        None => record.put("google_analytics", ""),
-                                    }
-
-                                    record.put("headings_text", headings_text(&soup));
-
-                                    record.put(
-                                        "links",
-                                        to_value(
-                                            soup.tag("a")
-                                                .find_all()
-                                                .filter_map(|link| link.get("href"))
-                                                .collect::<Vec<_>>(),
-                                        )
-                                        .unwrap(),
-                                    );
-
-                                    record.put(
-                                        "resource_urls",
-                                        to_value(resource_urls(&soup)).unwrap(),
-                                    );
-
-                                    record.put("meta_tags", to_value(meta_tags(&soup)).unwrap());
-
-                                    record.put("keywords", keywords(text_words));
-                                    //dbg!(record);
-                                    writer.append(record)?;
                                 }
                             }
-                        }
+                            None
+                        })
+                        .collect();
+                    for record in records {
+                        writer.append(record)?;
                     }
                 }
             }
+            writer.flush()?;
             let upload = Exec::shell("gsutil")
                 .arg("cp")
                 .arg(&avro_filename)

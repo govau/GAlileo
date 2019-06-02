@@ -11,7 +11,6 @@ use rake::*;
 use regex::*;
 use soup::*;
 use subprocess::{Exec, ExitStatus};
-use rayon::prelude::*;
 lazy_static! {
 static ref URLS : Vec<&'static str> = vec!["https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/75697463-298e-4e98-8e41-b6d364e38e1d/download/dta-report02-1.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/af8159f8-b7e0-4c9b-8086-2b0e5b21cb2c/download/dta-report02-2.warc",
@@ -131,25 +130,28 @@ pub fn download_warc(warc_filename: &str, warc_number: usize) {
 }
 
 pub fn parse_html_to_text(soup: &Soup) -> String {
-    WHITESPACE_REGEX
-        .replace_all(
-            soup.tag("body")
-                .find()
-                .unwrap()
-                .children()
-                .map(|tag| {
-                    if tag.name() == "script" || tag.name() == "noscript" || tag.name() == "style" {
-                        String::from("")
-                    } else {
-                        tag.text().trim().to_string()
-                    }
-                })
-                .collect::<Vec<String>>()
-                .join("")
-                .as_str(),
-            " ",
-        )
-        .to_string()
+    match soup.tag("body").find() {
+        Some(body) => WHITESPACE_REGEX
+            .replace_all(
+                body.children()
+                    .map(|tag| {
+                        if tag.name() == "script"
+                            || tag.name() == "noscript"
+                            || tag.name() == "style"
+                        {
+                            String::from("")
+                        } else {
+                            tag.text().trim().to_string()
+                        }
+                    })
+                    .collect::<Vec<String>>()
+                    .join("")
+                    .as_str(),
+                " ",
+            )
+            .to_string(),
+        None => String::from(""),
+    }
 }
 
 pub fn headings_text(soup: &Soup) -> String {

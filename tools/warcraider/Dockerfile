@@ -18,7 +18,7 @@ COPY ./src ./src
 
 # build for release
 RUN rm ./target/release/deps/warcraider*
-RUN RUSTFLAGS="-C target-cpu=native" cargo build --release
+RUN RUSTFLAGS="-C target-cpu=native -C link-args=-Wl,-zstack-size=4194304" cargo build --release
 
 # our final base
 FROM google/cloud-sdk:alpine
