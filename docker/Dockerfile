@@ -19,7 +19,7 @@ RUN install2.r --error \
     searchConsoleR \
     gmailr \
     googleCloudStorageR \
-    bigQueryR \
+    bigQueryR
 RUN install2.r --error \
      -r 'http://cran.rstudio.com' \
      rsconnect
