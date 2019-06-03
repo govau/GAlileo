@@ -9,6 +9,7 @@ ui <-  htmlTemplate(
   # Application title
   title = "Observatory",
   subline = "To quantify interactions with every government service",
+  keepalive= textOutput("keepAlive"),
   # Sidebar with a slider input for number of bins
   # Sidebar layout with input and output definitions ----
   sidebar = sidebarLayout(
@@ -44,8 +45,8 @@ ui <-  htmlTemplate(
       # Output: Verbatim text for data summary ----
       verbatimTextOutput("summary"),
       # Output: HTML table with requested number of observations ----
-      tableOutput("view"),
-      textOutput("keepAlive")
+      tableOutput("view")
+      
     )
   )
 )

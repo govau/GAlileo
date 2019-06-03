@@ -9,4 +9,5 @@ done
 
 /home/vcap/deps/0/apt/usr/sbin/nginx -V
 /home/vcap/deps/0/apt/usr/sbin/nginx -p . -c nginx.conf &
-R R -e "options(shiny.port = 3838); shiny::runApp(getwd())"
+chmod -Rv 777 www
+R -e "options(shiny.port = 3838); shiny::runApp(getwd())"
