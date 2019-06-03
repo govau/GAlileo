@@ -34,7 +34,7 @@ with models.DAG(
                                          cmds=['bash', '-c'],
                                          arguments=['mkdir deploy && '
                                                     'cd deploy && '
-                                                    'gsutil cp gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
+                                                    'gsutil cp -r gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
                                                     'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
                                                     'cf login -a https://api.system.y.cld.gov.au -u $CF_USERNAME -p $CF_PASSWORD && '
                                                     'cf push observatory'.format(GCS_BUCKET=GCS_BUCKET,HTPASSWD=htpasswd)])
