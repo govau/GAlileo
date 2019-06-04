@@ -156,8 +156,12 @@ pub fn parse_html_to_text(soup: &Soup) -> String {
 
 pub fn headings_text(soup: &Soup) -> String {
     let mut headings_text = String::new();
+    //let mut i = 0;
     for heading in vec!["h1", "h2", "h3", "h4", "h5", "h6"].iter() {
+        //debug!("heading {}", *heading);
         for header in soup.tag(*heading).find_all() {
+            //i += 1;
+            //debug!("heading {} {} {}", *heading, i, header.text());
             let head_text = header.text();
             if !head_text.is_empty() {
                 headings_text.push('\n');

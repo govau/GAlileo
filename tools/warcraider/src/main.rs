@@ -28,6 +28,9 @@ lazy_static! {
     static ref P_REGEX: Regex = Regex::new(r"</*p/*>").unwrap();
 }
 lazy_static! {
+    static ref TD_REGEX: Regex = Regex::new(r"</*t(r|h|d)/*>").unwrap();
+}
+lazy_static! {
 
     static ref SCHEMA : Schema = Schema::parse_str(r#"
         {                                                                                                        
@@ -63,6 +66,10 @@ fn main() -> Result<(), Error> {
         Ok(val) => warc_number = val.parse::<usize>().unwrap(),
         Err(_e) => warc_number = 1,
     }
+    let args: Vec<_> = env::args().collect();
+    if args.len() > 1 {
+        warc_number = args[1].parse::<usize>().unwrap();
+    }
     match env::var("OFFSET") {
         Ok(val) => warc_number += val.parse::<usize>().unwrap(),
         Err(_e) => warc_number += 0,
@@ -84,6 +91,7 @@ fn main() -> Result<(), Error> {
             warc_number += offset;
         }
     }
+    info!("all warcs done!");
     Ok(())
 }
 
@@ -158,6 +166,14 @@ fn process_warc(warc_number: usize, start_at: usize, finish_at: usize) -> Result
                                     Ok(_e) => {
                                         let parts: Vec<&str> = content.split("\n\r\n").collect();
                                         let mut raw_html = String::from(parts[1]);
+                                        if raw_html.matches("<").count() > 30000 {
+                                            warn!(
+                                                "{} {} contains too many html tags ({})",
+                                                i,
+                                                url,
+                                                raw_html.matches("<").count()
+                                            );
+                                        }
                                         if raw_html.contains("<p/>")
                                             && raw_html.matches("<p>").count() > 10000
                                         {
@@ -168,7 +184,19 @@ fn process_warc(warc_number: usize, start_at: usize, finish_at: usize) -> Result
                                                 raw_html.matches("<p>").count()
                                             );
                                             raw_html = P_REGEX
-                                                .replace_all(raw_html.as_str(), "")
+                                                .replace_all(&raw_html, "")
+                                                .to_string();
+                                        }
+                                        let td_tags = TD_REGEX.find_iter(&raw_html).count();
+                                        if td_tags > 10000 {
+                                            error!(
+                                                "{} {} contains too many <td>/<tr>/<th> tags ({}), fixing",
+                                                i,
+                                                url,
+                                                td_tags
+                                            );
+                                            raw_html = TD_REGEX
+                                                .replace_all(&raw_html, "")
                                                 .to_string();
                                         }
                                         let mut headers = HashMap::<String, String>::new();
@@ -195,7 +223,7 @@ fn process_warc(warc_number: usize, start_at: usize, finish_at: usize) -> Result
                                                 .unwrap_or(0.0)
                                                 / 1000.0,
                                         );
-                                        // debug!("load");
+                                        //debug!("load");
                                         record.put("headers", to_value(headers).unwrap());
                                         //debug!("headers");
                                         //debug!("{}",raw_html);
@@ -242,9 +270,9 @@ fn process_warc(warc_number: usize, start_at: usize, finish_at: usize) -> Result
                                         //debug!("resource");
                                         record
                                             .put("meta_tags", to_value(meta_tags(&soup)).unwrap());
-                                        //debug!("meta" );
+                                        //debug!("meta");
                                         record.put("keywords", keywords(text_words));
-                                        //                                          debug!("keywords")
+                                        //debug!("keywords");
                                         //dbg!(record);
                                         record.put("url", url);
                                         writer.append(record)?;

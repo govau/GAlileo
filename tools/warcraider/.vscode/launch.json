@@ -17,7 +17,7 @@
         { "name": "RUST_BACKTRACE", "value": "1" },
         { "name": "RUST_LOG", "value": "warcraider" },
         { "name": "REPLICAS", "value": "1" },
-        { "name": "WARC_NUMBER", "value": "1" },
+        { "name": "WARC_NUMBER", "value": "2" },
         { "name": "OFFSET", "value": "0" },
       ],
       "externalConsole": true
