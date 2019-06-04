@@ -25,7 +25,13 @@ lazy_static! {
         Regex::new(r"\bUA-\d{4,10}-\d{1,4}\b|\bGTM-[A-Z0-9]{1,7}\b").unwrap();
 }
 lazy_static! {
-    static ref P_REGEX: Regex = Regex::new(r"</*p/*>").unwrap();
+    static ref A_REGEX: Regex = Regex::new(r"</*a *.*?>").unwrap();
+}
+lazy_static! {
+    static ref P_REGEX: Regex = Regex::new(r"</*p *.*?>").unwrap();
+}
+lazy_static! {
+    static ref BR_REGEX: Regex = Regex::new(r"</*br/*>").unwrap();
 }
 lazy_static! {
     static ref TD_REGEX: Regex = Regex::new(r"</*t(r|h|d)/*>").unwrap();
@@ -61,37 +67,41 @@ fn main() -> Result<(), Error> {
         git_version!(),
         env::current_dir()?.display()
     );
-    let mut warc_number: usize;
-    match env::var("WARC_NUMBER") {
-        Ok(val) => warc_number = val.parse::<usize>().unwrap(),
-        Err(_e) => warc_number = 1,
+    let mut warc_number: usize = 0;
+    let mut replica: usize;
+    match env::var("REPLICA") {
+        Ok(val) => replica = val.parse::<usize>().unwrap(),
+        Err(_e) => replica = 1,
     }
     let args: Vec<_> = env::args().collect();
     if args.len() > 1 {
-        warc_number = args[1].parse::<usize>().unwrap();
+        replica = args[1].parse::<usize>().unwrap();
+    }
+    warc_number += replica;
+    let replicas: usize;
+    match env::var("REPLICAS") {
+        Ok(val) => replicas = val.parse::<usize>().unwrap(),
+        Err(_e) => replicas = 1,
     }
     match env::var("OFFSET") {
-        Ok(val) => warc_number += val.parse::<usize>().unwrap(),
+        Ok(val) => warc_number += val.parse::<usize>().unwrap() - 1,
         Err(_e) => warc_number += 0,
     }
-    let offset: usize;
-    match env::var("REPLICAS") {
-        Ok(val) => offset = val.parse::<usize>().unwrap(),
-        Err(_e) => offset = 1,
-    }
 
-    while warc_number < 86 {
+    while warc_number <= 85 {
         if warc_number == 59 {
             warn!("404 not found");
-            warc_number += offset;
+            warc_number += replicas;
         } else {
-            process_warc(warc_number, 0, 50_000)?;
-            process_warc(warc_number, 50_000, 100_000)?;
-
-            warc_number += offset;
+            
+                info!("processing warc {}", warc_number);
+                process_warc(warc_number, 0, 50_000)?;
+                process_warc(warc_number, 50_000, 100_000)?;
+            
+            warc_number += replicas;
         }
     }
-    info!("all warcs done!");
+    info!("all warcs done for replica {}!", replica);
     Ok(())
 }
 
@@ -143,61 +153,83 @@ fn process_warc(warc_number: usize, start_at: usize, finish_at: usize) -> Result
                         .parse::<i32>()
                         .unwrap();
                     if size > 2_000_000 || warc_record.content.len() > 2_000_000 {
-                        warn!("{} too big ({} bytes > 2MB) {}", i, size, url);
-                    } else {
+                        warn!("{}:{} too big ({} bytes > 2MB) {}", warc_number, i, size, url);
+                    } else if url == "http://www.nepc.gov.au/system/files/resources/45fee0f3-1266-a944-91d7-3b98439de8f8/files/dve-prepwk-project2-1-diesel-complex-cuedc.xls" ||
+                    url == "https://www.ncver.edu.au/__data/assets/word_doc/0013/3046/2221s.doc" {
+                        warn!("{}:{} bad url {}", warc_number, i, url);
+                        } else {
                         let mut record = Record::new(writer.schema()).unwrap();
                         let url = String::from("") + url.as_str();
                         if i % 500 < 5 {
-                            info!("{} {} ({} bytes)", i, url, size);
+                            info!("{}:{} {} ({} bytes)", warc_number, i, url, size);
                         } else {
-                            debug!("{} {} ({} bytes)", i, url, size);
+                            debug!("{}:{} {} ({} bytes)", warc_number, i, url, size);
                         }
 
                         let mut content = String::new();
                         match Decoder::new(&warc_record.content[..]) {
                             Err(_e) => {
-                                error!("{} {} not valid gzip", i, url);
+                                error!("{}:{} {} not valid gzip", warc_number, i, url);
                             }
                             Ok(mut decoder) => {
                                 match decoder.read_to_string(&mut content) {
                                     Err(_e) => {
-                                        error!("{} {} not valid utf8 string", i, url);
+                                        error!(
+                                            "{}:{} {} not valid utf8 string",
+                                            warc_number, i, url
+                                        );
                                     }
                                     Ok(_e) => {
                                         let parts: Vec<&str> = content.split("\n\r\n").collect();
-                                        let mut raw_html = String::from(parts[1]);
+                                        let mut raw_html =
+                                            BR_REGEX.replace_all(parts[1], "").to_string();
                                         if raw_html.matches("<").count() > 30000 {
                                             warn!(
-                                                "{} {} contains too many html tags ({})",
+                                                "{}:{} {} contains too many html tags ({})",
+                                                warc_number,
                                                 i,
                                                 url,
                                                 raw_html.matches("<").count()
                                             );
+                                            fs::write(
+                                                format!("{}-{}.htm", warc_number, i),
+                                                &content,
+                                            )?;
+                                        }
+                                        if raw_html.matches("<a ").count() > 9500 {
+                                            error!(
+                                                "{}:{} {} contains too many <a> tags ({}), fixing",
+                                                warc_number,
+                                                i,
+                                                url,
+                                                raw_html.matches("<a ").count()
+                                            );
+                                            raw_html =
+                                                A_REGEX.replace_all(&raw_html, "").to_string();
                                         }
                                         if raw_html.contains("<p/>")
                                             && raw_html.matches("<p>").count() > 10000
                                         {
                                             error!(
-                                                "{} {} contains too many <p> tags ({}), fixing",
+                                                "{}:{} {} contains too many <p> tags ({}), fixing",
+                                                warc_number,
                                                 i,
                                                 url,
                                                 raw_html.matches("<p>").count()
                                             );
-                                            raw_html = P_REGEX
-                                                .replace_all(&raw_html, "")
-                                                .to_string();
+                                            raw_html =
+                                                P_REGEX.replace_all(&raw_html, "").to_string();
                                         }
                                         let td_tags = TD_REGEX.find_iter(&raw_html).count();
                                         if td_tags > 10000 {
                                             error!(
-                                                "{} {} contains too many <td>/<tr>/<th> tags ({}), fixing",
-                                                i,
+                                                "{}:{} {} contains too many <td>/<tr>/<th> tags ({}), fixing",
+                                                warc_number,i,
                                                 url,
                                                 td_tags
                                             );
-                                            raw_html = TD_REGEX
-                                                .replace_all(&raw_html, "")
-                                                .to_string();
+                                            raw_html =
+                                                TD_REGEX.replace_all(&raw_html, "").to_string();
                                         }
                                         let mut headers = HashMap::<String, String>::new();
                                         for line in parts[0].split("\n") {

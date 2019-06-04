@@ -25,7 +25,7 @@ FROM google/cloud-sdk:alpine
 
 # copy the build artifact from the build stage
 COPY --from=build /warcraider/target/release/warcraider .
-ARG RUST_LOG=warcraider
+ARG RUST_LOG=warcraider=info
 ENV RUST_LOG $RUST_LOG
 # set the startup command to run your binary
 CMD ["./warcraider"]

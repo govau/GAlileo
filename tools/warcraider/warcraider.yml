@@ -1,9 +1,23 @@
---- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: warcraider
+  labels:
+    app: warcraider
+spec:
+  clusterIP: None
+  selector:
+    app: warcraider
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata: 
   name: warcraider
 spec: 
+  serviceName: warcraider
+  selector:
+    matchLabels:
+      app: warcraider  
   minReadySeconds: 5
   replicas: 1
   strategy: 
@@ -33,12 +47,9 @@ spec:
               value: warcraider
             - 
               name: REPLICAS
-              value: 3
+              value: "3"
             - 
-              name: OFFSET
-              value: 0
-            - 
-              name: POD_ORDINAL
+              name: REPLICA
               valueFrom: 
                 fieldRef: 
                   fieldPath: "metadata.labels['statefulset.kubernetes.io/pod-ordinal']"

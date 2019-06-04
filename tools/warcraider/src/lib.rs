@@ -12,7 +12,7 @@ use regex::*;
 use soup::*;
 use subprocess::{Exec, ExitStatus};
 lazy_static! {
-static ref URLS : Vec<&'static str> = vec!["https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/75697463-298e-4e98-8e41-b6d364e38e1d/download/dta-report02-1.warc",
+static ref URLS : Vec<&'static str> = vec!["","https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/75697463-298e-4e98-8e41-b6d364e38e1d/download/dta-report02-1.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/af8159f8-b7e0-4c9b-8086-2b0e5b21cb2c/download/dta-report02-2.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/5d10be96-2974-494f-af9a-7e66a093c2ed/download/dta-report02-3.warc",
 "https://data.gov.au/data/dataset/99f43557-1d3d-40e7-bc0c-665a4275d625/resource/720f3cb2-f4e3-4f52-9557-7d919aef5b8d/download/dta-report02-4.warc",
@@ -71,7 +71,6 @@ static ref URLS : Vec<&'static str> = vec!["https://data.gov.au/data/dataset/99f
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-56.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-57.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-58.warc",
-"",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-60.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-61.warc",
 "https://datagovau.s3.ap-southeast-2.amazonaws.com/cd574697-6734-4443-b350-9cf9eae427a2/99f43557-1d3d-40e7-bc0c-665a4275d625/dta-report02-62.warc",
@@ -173,7 +172,7 @@ pub fn headings_text(soup: &Soup) -> String {
 }
 
 pub fn resource_urls(soup: &Soup) -> Vec<String> {
-    let resource_urls: Vec<String> = [
+    let mut resource_urls: Vec<String> = [
         soup.tag("script")
             .find_all()
             .filter_map(|link| link.get("src"))
@@ -188,6 +187,8 @@ pub fn resource_urls(soup: &Soup) -> Vec<String> {
             .collect::<Vec<String>>(),
     ]
     .concat();
+    resource_urls.sort();
+    resource_urls.dedup();
     resource_urls
 }
 
