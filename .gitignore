@@ -151,3 +151,4 @@ airflow.cfg
 *.avro
 /shiny/observatory/htpasswd
 /tools/warcraider/*.warc
+/shiny/observatory/*.csv
