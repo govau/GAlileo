@@ -1,4 +1,5 @@
 library(shiny)
+library(r2d3)
 
 # Define UI ----
 # User interface ----
@@ -13,7 +14,7 @@ ui <- function() {
   subline = "To quantify interactions with every government service",
   # https://support.dominodatalab.com/hc/en-us/articles/360015932932-Increasing-the-timeout-for-Shiny-Server
   keepalive= textOutput("keepAlive"),
-  main = navbarPage("", shinyTester, painPoints, userJourneys)
+  main = navbarPage("", userJourneys, shinyTester, painPoints )
 )
 }
 
