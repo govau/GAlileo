@@ -5,3 +5,5 @@ packages:
   - nginx-core
   - r-base
   - r-base-dev
+  - r-cran-littler
+  - r-cran-dplyr

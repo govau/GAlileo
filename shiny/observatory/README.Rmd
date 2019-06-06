@@ -1,0 +1,18 @@
+# Observatory
+
+## Getting started
+Run the app from app.R
+Put submodules in their own R files then include into app.R, adding the component to UI and the server function to Server.
+
+## Adding new R packages
+First check if there is an "r-cran" APT package for the package by searching on https://packages.ubuntu.com/search?keywords=r-cran&searchon=names&suite=bionic&section=all which you can add to apt.yml:
+```
+packages:
+  - r-cran-shiny
+```
+
+Otherwise add new R packages to r.yml:
+```
+    packages:
+      - name: shiny
+```
