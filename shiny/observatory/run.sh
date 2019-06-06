@@ -9,4 +9,5 @@ if [ ! -f setup_complete ]; then
 	/home/vcap/deps/0/apt/usr/sbin/nginx -V
 	touch setup_complete
 fi
-/home/vcap/deps/0/apt/usr/sbin/nginx -p . -c nginx.conf & && R -e "options(shiny.port = 3838); shiny::runApp(getwd())"
+/home/vcap/deps/0/apt/usr/sbin/nginx -p . -c nginx.conf &
+R -e "options(shiny.port = 3838); shiny::runApp(getwd())"
