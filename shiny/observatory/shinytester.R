@@ -4,28 +4,19 @@ shinyTester <- tabPanel(
  sidebarLayout(
     # Sidebar panel for inputs ----
     sidebarPanel(
-      # Input: Text for providing a caption ----
-      # Note: Changes made to the caption in the textInput control
-      # are updated in the output area immediately as you type
-      textInput(
-        inputId = "caption",
-        label = "Caption:",
-        
-        value = "Data Summary"
-      ),
       # Input: Selector for choosing dataset ----
       selectInput(
-        inputId = "dataset",
-        label = "Choose a dataset:",
-        choices = c("rock", "pressure", "cars")
+        inputId = "agencies",
+        label = "Choose an agency:",
+        choices = c("dta.gov.au", "humanservices.gov.au", "casa.gov.au")
       ),
-      # Input: Numeric entry for number of obs to view ----
-      numericInput(
-        inputId = "obs",
-        label = "Number of observations to view:",
-        value = 10
+      
+      selectInput(
+        inputId = "groups",
+        label = "Compare with:",
+        choices = c("small", "medium", "large", "all")
       )
-    )
+     )
     ,
     # Main panel for displaying outputs ----
     main = mainPanel(
@@ -34,8 +25,9 @@ shinyTester <- tabPanel(
       # Output: Verbatim text for data summary ----
       verbatimTextOutput("summary"),
       # Output: HTML table with requested number of observations ----
-      tableOutput("view")
-      
+      fluidRow(
+        splitLayout(cellWidths = c("50%", "50%"), plotOutput("view1"), plotOutput("view2"))
+        )
     )
   )
 )
@@ -48,48 +40,60 @@ shinytester_server <- function (input, output) {
   # 1. It is only called when the inputs it depends on changes
   # 2. The computation and result are shared by all the callers,
   #    i.e. it only executes a single time
+  group_filter <- reactive({
+    switch(input$groups,
+           "small" = small_agencies$hostnames,
+           "medium" = med_agencies$hostnames, 
+           "large"= large_agencies$hostnames, 
+           "all" = all_agencies$hostnames)})
+  
   datasetInput <- reactive({
-    switch(
-      input$dataset,
-      "rock" = rock,
-      "pressure" = pressure,
-      "cars" = cars
-    )
+      data %>% filter(hostname == input$agencies) %>% 
+      group_by(hostname, source, city) %>%
+      summarise(total = n()) 
   })
   
-  # Create caption ----
-  # The output$caption is computed based on a reactive expression
-  # that returns input$caption. When the user changes the
-  # "caption" field:
-  #
-  # 1. This function is automatically called to recompute the output
-  # 2. New caption is pushed back to the browser for re-display
-  #
-  # Note that because the data-oriented reactive expressions
-  # below don't depend on input$caption, those expressions are
-  # NOT called when input$caption changes
+  DatasetCompare <- reactive({
+    data %>% 
+      filter(hostname %in% group_filter()) %>% 
+      group_by(hostname, source, city) %>%
+      summarise(total = n()) 
+  })
+
   output$caption <- renderText({
-    input$caption
+    paste(input$agencies, " compared to", input$groups, "agencies")
+  }) 
+  
+
+  output$view1 <- renderPlot({
+    datasetInput() %>% 
+      group_by(source) %>% 
+      summarise(tot_source=sum(total)) %>% 
+      top_n(5) %>% 
+      ggplot(aes(x="", y=tot_source, fill = source)) +
+      geom_bar(width = 1, stat = "identity")+
+      coord_polar("y", start = 0)+
+      theme_minimal() +
+      labs(title = NULL)
+      
+  })
+
+  output$view2 <- renderPlot({
+    DatasetCompare() %>% 
+      group_by(source) %>% 
+      summarise(tot_source=sum(total)) %>% 
+      top_n(5) %>% 
+      ggplot(aes(x="", y=tot_source, fill = source)) +
+      geom_bar(width = 1, stat = "identity")+
+      coord_polar("y", start = 0)+
+      theme_minimal()+
+      labs(title = NULL)
   })
   
-  # Generate a summary of the dataset ----
-  # The output$summary depends on the datasetInput reactive
-  # expression, so will be re-executed whenever datasetInput is
-  # invalidated, i.e. whenever the input$dataset changes
-  output$summary <- renderPrint({
-    dataset <- datasetInput()
-    summary(dataset)
-  })
-  
-  # Show the first "n" observations ----
-  # The output$view depends on both the databaseInput reactive
-  # expression and input$obs, so it will be re-executed whenever
-  # input$dataset or input$obs is changed
-  output$view <- renderTable({
-    head(datasetInput(), n = input$obs)
-  })
-  output$keepAlive <- renderText({
+    output$keepAlive <- renderText({
     req(input$count)
     paste("keep alive ", input$count)
   })
 }
+
+
