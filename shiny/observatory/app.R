@@ -7,6 +7,7 @@ source("shinytester.R");
 source("painpoints.R");
 source("userjourneys.R");
 ui <- function() {
+  suppressDependencies("bootstrap");
   htmlTemplate(
   "template.html",
   # Application title

@@ -27,7 +27,7 @@
 
 <body class="au-grid">
     <header class="au-header au-header--dark" role="banner">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <div class="col-md-9">
                     <a class="au-header__brand" href="#">
@@ -41,13 +41,19 @@
                         </div>
                     </a>
                 </div>
-                <!-- <div class="col-md-3">Extras</div> -->
             </div>
         </div>
     </header>
     <span style="display: none;">{{ keepalive }}</span>
+	<!-- MAIN BODY -->
+	<main>
+		<!--CONTENT-->
+		<section class="au-body">
+			<div class="container">
     {{ main }}
-
+    </div>
+    </section>
+</main>
     <footer class="au-footer au-footer--dark au-body au-body--dark" role="contentinfo">
         <div class="container">
             <nav class="au-footer__navigation row" aria-label="footer">
