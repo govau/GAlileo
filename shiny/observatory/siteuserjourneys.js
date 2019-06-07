@@ -1,4 +1,4 @@
-// !preview r2d3 data=list(data.frame(title = c("","","")), data.frame(title = c("","",""))),height=800
+// !preview r2d3 data=list(data.frame(title = c("DTA","About Us","Join Our Team","Recruiterbox"),                      href=c("https://google.com","https://google.com","https://google.com","")),           data.frame(title = c("DTA","Blogs", "Help and Advice"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Domain Names","Guidelines", "Name Server Change"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Design System","Components", "Templates"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Design System","Get Started", "Download", "Community"),                      href=c("https://google.com","https://google.com","https://google.com", ""))      ),height=800,width="100%"
 //
 // r2d3: https://rstudio.github.io/r2d3
 //
@@ -8,10 +8,10 @@ var g = r2d3.svg.selectAll()
     .data(data)
   .enter()
   .append("g")
-    .attr("transform", function(d, i) {return "translate(" + 10 + "," + (i*140) + ")"});
+    .attr("transform", function(d, i) {return "translate(" + 15 + "," + (i*140) + ")"});
 
 function dx(d,i) {
-   return (i * 125) + 50;
+   return (i * 145) + 50;
 }
 function dy(d,i) {
    return 90;
@@ -27,7 +27,7 @@ var line = g.append("path")
                             .attr("fill", "white");
 
 var circles = g.selectAll().data(function (d) {
-  return HTMLWidgets.dataframeToD3(d)
+  return HTMLWidgets.dataframeToD3(d);
 });
 circles.enter()
     .append('circle')
@@ -72,8 +72,10 @@ function wrap(text, width) {
         }
     });
 }
-var texts = g.selectAll().data(function(d) { return d.title}).enter().append("text")
-      .text(function(d) { return d })
+var texts = g.selectAll().data(function(d) { return HTMLWidgets.dataframeToD3(d)}).enter()
+      .append("a").attr("href",function(d) { return d.href })
+      .append("text")
+      .text(function(d) { return d.title })
       .style("font-size", function(d,i) { return Math.min(20, dy(d,i)/ this.getComputedTextLength() * 20) + "px"; })
       .attr("dx", function(d,i) {return dx(d,i)-this.getComputedTextLength()/2})
       .attr("dy", "160px");
