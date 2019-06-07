@@ -14,9 +14,9 @@ shinyTester <- tabPanel(
       selectInput(
         inputId = "groups",
         label = "Compare with:",
-        choices = c("small", "medium", "large", "all")
-      )
-     )
+        choices = c("small", "medium", "large", "all"),
+     ), 
+     width = 3)
     ,
     # Main panel for displaying outputs ----
     main = mainPanel(
