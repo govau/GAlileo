@@ -1,5 +1,5 @@
 if (!exists("agency")){
-  agency <- read.csv("agency.csv", stringsAsFactors = FALSE)[,-1]
+  agency <- read.csv("agency-1000plus.csv", stringsAsFactors = FALSE)[,-1]
 }
 
 if (!exists("all_agencies")){
@@ -24,7 +24,7 @@ if (!exists("small_agencies")){
 }
 
 
-shinyTester <- tabPanel(
+agencyComparison <- tabPanel(
   "Agency Comparison", # Sidebar with a slider input for number of bins
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -36,20 +36,20 @@ shinyTester <- tabPanel(
         label = "Choose an agency:",
         choices = c("dta.gov.au", "humanservices.gov.au", "casa.gov.au")
       ),
-      
+
       selectInput(
         inputId = "groups",
         label = "Compare with:",
         choices = c("small", "medium", "large", "all"),
-      ), 
+      ),
       width = 3)
     ,
     # Main panel for displaying outputs ----
     main = mainPanel(
       # Output: Formatted text for caption ----
-      h3(textOutput("caption", container = span)),
+      h3(textOutput("ac_caption", container = span)),
       # Output: Verbatim text for data summary ----
-      verbatimTextOutput("summary"),
+      verbatimTextOutput("ac_summary"),
       # Output: HTML table with requested number of observations ----
       fluidRow(
         splitLayout(cellWidths = c("50%", "50%"), plotOutput("view1"), plotOutput("view2"))
@@ -58,7 +58,8 @@ shinyTester <- tabPanel(
   )
 )
 
-shinytester_server <- function (input, output) {
+
+agencycomparison_server <- function (input, output) {
   # Return the requested dataset ----
   # By declaring datasetInput as a reactive expression we ensure
   # that:
@@ -69,50 +70,49 @@ shinytester_server <- function (input, output) {
   group_filter <- reactive({
     switch(input$groups,
            "small" = small_agencies$hostnames,
-           "medium" = med_agencies$hostnames, 
-           "large"= large_agencies$hostnames, 
+           "medium" = med_agencies$hostnames,
+           "large"= large_agencies$hostnames,
            "all" = all_agencies$hostnames)})
-  
+
   datasetInput <- reactive({
-    agency1  <- filter(agency, hostname == input$agencies) %>% 
-      group_by(sourceurl) %>%
-      arrange(desc(tot_source))
-  })
-  
-  DatasetCompare <- reactive({
-    agency <- filter(agency, hostname %in% group_filter()) %>% 
+    agency1  <- filter(agency, hostname == input$agencies) %>%
       group_by(sourceurl) %>%
       arrange(desc(tot_source))
   })
 
-  output$caption <- renderText({
+  DatasetCompare <- reactive({
+    agency <- filter(agency, hostname %in% group_filter()) %>%
+      group_by(sourceurl) %>%
+      arrange(desc(tot_source))
+  })
+
+  output$ac_caption <- renderText({
     paste(input$agencies, " compared to", input$groups, "agencies")
-  }) 
-  
-  
+  })
+
+
   output$view1 <- renderPlot({
     datasetInput() %>%
-      top_n(5) %>% 
-      ggplot(aes(x="", y=tot_source)) +
+      top_n(5) %>%
+      ggplot(aes(x="", y=tot_source, color=sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
       theme_minimal() +
       labs(title = NULL)
-    
+
   })
-  
+
   output$view2 <- renderPlot({
     DatasetCompare() %>%
-      top_n(5) %>% 
+      top_n(5) %>%
       ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
       theme_minimal()+
       labs(title = NULL)
   })
-  
-  output$keepAlive <- renderText({
-    req(input$count)
-    paste("keep alive ", input$count)
-  })
+
+
 }
+
+shinyApp(ui = agencyComparison, server = agencycomparison_server)
