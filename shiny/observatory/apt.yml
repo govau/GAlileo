@@ -7,3 +7,10 @@ packages:
   - r-base-dev
   - r-cran-littler
   - r-cran-dplyr
+  - r-cran-magrittr
+  - r-cran-ggplot2
+  - r-cran-lubridate
+  - r-cran-stringr
+  - r-cran-readxl
+  - r-cran-igraph
+  - r-cran-lazyeval
