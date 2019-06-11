@@ -32,7 +32,8 @@ with models.DAG(
                                          image_pull_policy="Always",
                                          image=DOCKER_IMAGE,
                                          cmds=['bash', '-c'],
-                                         arguments=['mkdir deploy && '
+                                         arguments=['git clone https://github.com/govau/GAlileo --depth=1 && '
+                                                    'cp -rv GAlileo/shiny/observatory deploy &&'
                                                     'cd deploy && '
                                                     'gsutil cp -r gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
                                                     'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
