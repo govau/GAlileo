@@ -1,5 +1,5 @@
 if (!exists("agency")){
-  agency <- read.csv("agency.csv", stringsAsFactors = FALSE)
+  agency <- read.csv("agency.csv", stringsAsFactors = FALSE)[,-1]
 }
 
 if (!exists("all_agencies")){
@@ -25,7 +25,7 @@ if (!exists("small_agencies")){
 
 
 shinyTester <- tabPanel(
-  "Shiny Tester", # Sidebar with a slider input for number of bins
+  "Agency Comparison", # Sidebar with a slider input for number of bins
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
@@ -74,16 +74,15 @@ shinytester_server <- function (input, output) {
            "all" = all_agencies$hostnames)})
   
   datasetInput <- reactive({
-    agency  <- filter(agency, hostname == input$agencies) 
-    agency %>% 
-      group_by(sourceurl) %>% 
-      summarise_(tot_source= interp(~sum(x), x = as.name(total))) %>% 
-      top_n(5)
+    agency1  <- filter(agency, hostname == input$agencies) %>% 
+      group_by(sourceurl) %>%
+      arrange(desc(tot_source))
   })
   
   DatasetCompare <- reactive({
-    agency <- filter(agency, hostname %in% group_filter()) 
-
+    agency <- filter(agency, hostname %in% group_filter()) %>% 
+      group_by(sourceurl) %>%
+      arrange(desc(tot_source))
   })
 
   output$caption <- renderText({
@@ -93,6 +92,7 @@ shinytester_server <- function (input, output) {
   
   output$view1 <- renderPlot({
     datasetInput() %>%
+      top_n(5) %>% 
       ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
@@ -102,7 +102,8 @@ shinytester_server <- function (input, output) {
   })
   
   output$view2 <- renderPlot({
-    DatasetCompare() %>% 
+    DatasetCompare() %>%
+      top_n(5) %>% 
       ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+

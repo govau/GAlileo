@@ -11,8 +11,8 @@ Encoding: UTF-8
 
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
-
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
 
 QuitChildProcessesOnExit: Yes
+
