@@ -1,5 +1,5 @@
-// !preview r2d3 data=list(data.frame(title = c("DTA","About Us","Join Our Team","Recruiterbox"), href=c("https://google.com","https://google.com","https://google.com","")),           data.frame(title = c("DTA","Blogs", "Help and Advice"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Domain Names","Guidelines", "Name Server Change"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Design System","Components", "Templates"),                      href=c("https://google.com","https://google.com","https://google.com")),           data.frame(title = c("Design System","Get Started", "Download", "Community"),                      href=c("https://google.com","https://google.com","https://google.com", ""))      ),height=800,width="100%"
-//
+// !preview r2d3 data=list(data.frame(title = c("DTA","About Us","Join Our Team","Recruiterbox"),href=c("https://google.com","https://google.com","https://google.com","")), data.frame(title = c("DTA","Blogs", "Help and Advice"),href=c("https://google.com","https://google.com","https://google.com")), data.frame(title = c("Domain Names","Guidelines", "Name Server Change"),href=c("https://google.com","https://google.com","https://google.com")), data.frame(title = c("Design System","Components", "Templates"),href=c("https://google.com","https://google.com","https://google.com")), data.frame(title = c("Design System","Get Started", "Download", "Community"),href=c("https://google.com","https://google.com","https://google.com", ""))),height=800,width="100%"
+
 
 r2d3.svg.selectAll("svg > *").remove();
 var g = r2d3.svg
@@ -69,7 +69,7 @@ var texts = g
     return dy(d, i);
     })
   .attr("height", function(d, i) {
-    return dy(d, i)/2;
+    return dy(d, i)/1.5;
     })
   .append("xhtml:p")
   .style("text-align","center")
