@@ -1,6 +1,21 @@
+---
+defaults: &defaults
+  buildpacks:
+    - apt_buildpack
+    - r_buildpack
+  memory: 2G
+  health-check-type: http
+  health-check-http-endpoint: /shared/shiny.css
+  sidecars:
+    - name: nginx
+      process_types: [ 'web' ]
+      command: "/home/vcap/deps/0/apt/usr/sbin/nginx -p . -c nginx.conf"
 applications:
-  - name: observatory
-    buildpacks:
-      - apt_buildpack
-      - r_buildpack
-    memory: 2G
+  - name: observatory-green
+    routes:
+      - route: observatory-green.apps.y.cld.gov.au
+    <<: *defaults
+  - name: observatory-blue
+    routes:
+      - route: observatory-blue.apps.y.cld.gov.au
+    <<: *defaults
