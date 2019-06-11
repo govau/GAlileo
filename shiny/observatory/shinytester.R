@@ -1,7 +1,33 @@
+if (!exists("agency")){
+  agency <- read.csv("agency.csv", stringsAsFactors = FALSE)
+}
+
+if (!exists("all_agencies")){
+  all_agencies <- read_xlsx("hostnames.xlsx", sheet = 1, col_names = F,  col_types = "text")
+  colnames(all_agencies) <- c("hostnames")
+}
+
+
+if (!exists("large_agencies")){
+  large_agencies <- read_xlsx("hostnames.xlsx", sheet = 2, col_names = F, col_types = "text")
+  colnames(large_agencies) <- c("hostnames")
+}
+
+if (!exists("med_agencies")){
+  med_agencies <- read_xlsx("hostnames.xlsx", sheet = 3, col_names = F, col_types = "text")
+  colnames(med_agencies) <- c("hostnames")
+}
+
+if (!exists("small_agencies")){
+  small_agencies <- read_xlsx("hostnames.xlsx", sheet = 4, col_names = F, col_types = "text")
+  colnames(small_agencies) <- c("hostnames")
+}
+
+
 shinyTester <- tabPanel(
   "Shiny Tester", # Sidebar with a slider input for number of bins
   # Sidebar layout with input and output definitions ----
- sidebarLayout(
+  sidebarLayout(
     # Sidebar panel for inputs ----
     sidebarPanel(
       # Input: Selector for choosing dataset ----
@@ -15,8 +41,8 @@ shinyTester <- tabPanel(
         inputId = "groups",
         label = "Compare with:",
         choices = c("small", "medium", "large", "all"),
-     ), 
-     width = 3)
+      ), 
+      width = 3)
     ,
     # Main panel for displaying outputs ----
     main = mainPanel(
@@ -27,7 +53,7 @@ shinyTester <- tabPanel(
       # Output: HTML table with requested number of observations ----
       fluidRow(
         splitLayout(cellWidths = c("50%", "50%"), plotOutput("view1"), plotOutput("view2"))
-        )
+      )
     )
   )
 )
@@ -48,52 +74,50 @@ shinytester_server <- function (input, output) {
            "all" = all_agencies$hostnames)})
   
   datasetInput <- reactive({
-      data %>% filter(hostname == input$agencies) %>% 
-      group_by(hostname, source, city) %>%
-      summarise(total = n()) 
+    agency  <- filter(agency, hostname == input$agencies) 
+    agency %>% 
+      group_by(sourceurl) %>% 
+      summarise_(tot_source= interp(~sum(x), x = as.name(total))) %>% 
+      top_n(5)
   })
   
   DatasetCompare <- reactive({
-    data %>% 
-      filter(hostname %in% group_filter()) %>% 
-      group_by(hostname, source, city) %>%
-      summarise(total = n()) 
+    agency <- filter(agency, hostname %in% group_filter()) 
+
   })
 
   output$caption <- renderText({
     paste(input$agencies, " compared to", input$groups, "agencies")
   }) 
   
-
+  
   output$view1 <- renderPlot({
-    datasetInput() %>% 
-      group_by(source) %>% 
-      summarise(tot_source=sum(total)) %>% 
+    datasetInput() %>%
+      group_by(sourceurl) %>% 
+      summarise(tot_source= sum(.$total)) %>% 
       top_n(5) %>% 
-      ggplot(aes(x="", y=tot_source, fill = source)) +
+      ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
       theme_minimal() +
       labs(title = NULL)
-      
+    
   })
-
+  
   output$view2 <- renderPlot({
     DatasetCompare() %>% 
-      group_by(source) %>% 
-      summarise(tot_source=sum(total)) %>% 
+      group_by(sourceurl) %>% 
+      summarise(tot_source= sum(.$total)) %>% 
       top_n(5) %>% 
-      ggplot(aes(x="", y=tot_source, fill = source)) +
+      ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
       theme_minimal()+
       labs(title = NULL)
   })
   
-    output$keepAlive <- renderText({
+  output$keepAlive <- renderText({
     req(input$count)
     paste("keep alive ", input$count)
   })
 }
-
-
