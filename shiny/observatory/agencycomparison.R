@@ -94,8 +94,9 @@ agencycomparison_server <- function (input, output) {
   output$view1 <- renderPlot({
     datasetInput() %>%
       top_n(5) %>%
-      ggplot(aes(x="", y=tot_source, color=sourceurl)) +
+      ggplot(aes(x="", y=tot_source, fill=sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
+      ylab(NULL)+
       coord_polar("y", start = 0)+
       theme_minimal() +
       labs(title = NULL)
@@ -104,11 +105,14 @@ agencycomparison_server <- function (input, output) {
 
   output$view2 <- renderPlot({
     DatasetCompare() %>%
+      group_by(sourceurl) %>%
       top_n(5) %>%
-      ggplot(aes(x="", y=tot_source)) +
+      ggplot(aes(x="", y=tot_source, fill = sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
+      ylab(NULL)+
       theme_minimal()+
+      theme(legend.position = "none")+
       labs(title = NULL)
   })
 
