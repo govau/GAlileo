@@ -144,11 +144,16 @@ vignettes/*.pdf
 rsconnect/
 
 /dags/r_scripts/credentials.json
-/dags/galileo/*.csv
+*.csv
 /data
 /.idea/
 airflow.cfg
 *.avro
 /shiny/observatory/htpasswd
-/tools/warcraider/*.warc
-/shiny/observatory/*.csv
+htpasswd
+.htpasswd
+*.warc
+*.csv
+*.rdata
+*.xls
+*.xlsx
