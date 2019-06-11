@@ -43,7 +43,7 @@ userjourneys_server <- function (input, output) {
     forceNetwork(Links = graph_data()$links, Nodes = graph_data()$nodes,
                  Source = "source", Target = "target",
                  Value = "value", NodeID = "name",
-                 Group = "group", zoom = TRUE, linkWidth = (graph_data()$links$value)/50, opacity = .8)
+                 Group = "group", zoom = TRUE, linkWidth = (graph_data()$links$value)/500, opacity = .4)
   })
 }
 
