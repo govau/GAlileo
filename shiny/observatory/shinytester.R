@@ -93,9 +93,6 @@ shinytester_server <- function (input, output) {
   
   output$view1 <- renderPlot({
     datasetInput() %>%
-      group_by(sourceurl) %>% 
-      summarise(tot_source= sum(.$total)) %>% 
-      top_n(5) %>% 
       ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
@@ -106,9 +103,6 @@ shinytester_server <- function (input, output) {
   
   output$view2 <- renderPlot({
     DatasetCompare() %>% 
-      group_by(sourceurl) %>% 
-      summarise(tot_source= sum(.$total)) %>% 
-      top_n(5) %>% 
       ggplot(aes(x="", y=tot_source)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
