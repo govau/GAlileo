@@ -2,5 +2,6 @@
 packages:
   - cran_mirror: https://cran.csiro.au
     packages:
+      - name: networkD3
       - name: shiny
       - name: r2d3
