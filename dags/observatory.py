@@ -35,7 +35,7 @@ with models.DAG(
                                          arguments=['git clone https://github.com/govau/GAlileo --depth=1 && '
                                                     'cp -rv GAlileo/shiny/observatory deploy &&'
                                                     'cd deploy && '
-                                                    'gsutil cp -r gs://{GCS_BUCKET}/dags/shiny/observatory/* . && '
+                                                    'gsutil cp -r gs://{GCS_BUCKET}/data/observatory/* . && '
                                                     'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
                                                     'cf login -a https://api.system.y.cld.gov.au -u $CF_USERNAME -p $CF_PASSWORD && '
                                                     'cf unmap-route observatory-green apps.y.cld.gov.au -n observatory &&'
@@ -44,5 +44,6 @@ with models.DAG(
                                                     'cf map-route observatory-green apps.y.cld.gov.au -n observatory &&'
                                                     'cf unmap-route observatory-blue apps.y.cld.gov.au -n observatory &&'
                                                     'cf v3-push observatory-blue &&'
-                                                    'cf map-route observatory-blue apps.y.cld.gov.au -n observatory'
+                                                    'cf map-route observatory-blue apps.y.cld.gov.au -n observatory &&'
+                                                    'cf unmap-route observatory-blue apps.y.cld.gov.au -n observatory-green'
                                                     .format(GCS_BUCKET=GCS_BUCKET, HTPASSWD=htpasswd)])
