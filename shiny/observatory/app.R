@@ -9,11 +9,6 @@ library(igraph)
 library(networkD3)
 library(lazyeval)
 library(r2d3)
-library(dplyr)
-library(magrittr)
-library(ggplot2)
-library(lubridate)
-library(stringr)
 
 # Define UI ----
 # User interface ----

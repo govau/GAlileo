@@ -1,0 +1,2 @@
+# R wants HTML files to have UNIX line endings ie. just \n or LF 
+*.html text eol=lf
