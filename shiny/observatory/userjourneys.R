@@ -10,7 +10,7 @@ userJourneys <- tabPanel(
       # Input: Selector for choosing dataset ----
       selectInput(
         inputId = "journeys",
-        label = "Choose an agency:",
+        label = "Choose a life event journey:",
         choices = c("business", "all")
       ),
       width = 3 ),
@@ -37,6 +37,9 @@ userjourneys_server <- function (input, output) {
 
   graph_data <- reactive({igraph_to_networkD3(dataSet(), group = members())})
 
+  output$uj_caption <- renderText({
+    paste("Showing ",input$journeys, " life event journeys across .gov.au from May 1 2019 - May 15 2019")
+  })
 
 
   output$force <- renderForceNetwork({
