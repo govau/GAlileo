@@ -97,10 +97,11 @@ agencycomparison_server <- function (input, output) {
       ggplot(aes(x="", y=tot_source, fill=sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0) +
+      ylab(NULL)+
       theme(axis.text = element_blank(),
             axis.ticks = element_blank(),
             panel.grid  = element_blank()) +
-      ggtitle("Single Agency referal souurces") +
+      ggtitle("Single Agency referal sources") +
       theme(legend.position = "none")
   })
 
@@ -111,10 +112,11 @@ agencycomparison_server <- function (input, output) {
       ggplot(aes(x="", y=tot_source, fill = sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
+      ylab(NULL)+
       theme(axis.text = element_blank(),
             axis.ticks = element_blank(),
             panel.grid  = element_blank()) +
-      ggtitle("Cohort Agencies referal souurces") +
+      ggtitle("Cohort Agencies referal sources") +
       theme(legend.position = "none")
   })
 
