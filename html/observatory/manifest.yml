@@ -1,0 +1,5 @@
+---
+applications:
+  - name: observatory-html
+    buildpacks:
+      - staticfile_buildpack

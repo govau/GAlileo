@@ -157,3 +157,6 @@ htpasswd
 *.rdata
 *.xls
 *.xlsx
+*.gexf
+*.graphml
+Staticfile.auth
