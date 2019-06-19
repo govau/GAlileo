@@ -54,7 +54,11 @@
       type="text/javascript"
       language="javascript"
     ></script>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/js/all.min.js"
+      integrity="sha256-JgGtkjMEDh4dZj7UtWqSbUcftdwTFLNR3ih7FH80RHs="
+      crossorigin="anonymous"
+    ></script>
     <link
       rel="stylesheet"
       type="text/css"
@@ -92,7 +96,8 @@
               />
               <div class="au-header__text">
                 <h1 class="au-header__heading">Observatory</h1>
-                <div class="au-header__subline">To quantify interactions with every government service
+                <div class="au-header__subline">
+                  To quantify interactions with every government service
                 </div>
               </div>
             </a>
@@ -105,12 +110,45 @@
       <!--CONTENT-->
       <section class="au-body au-grid">
         <div class="container-fluid">
-
           <div id="mainpanel" class="col-xs-4">
             <div class="col">
               <div id="legend">
                 <div class="box">
-                  <h2>Legend:</h2>
+                  <h2>Agency name:</h2>
+                  <div id="agencyName"></div>
+                </div>
+                <div class="box">
+                  <h2>
+                    Agency websites: <small><a href="#">edit</a></small>
+                  </h2>
+                  <ul id="websites"></div>
+                </div>
+                <div class="box">
+                  <h2>Date range shown:</h2>
+                  <label for="text-input">from</label>
+                  <i class="far fa-calendar input-icon" aria-hidden="true"></i
+                  ><input
+                    class="au-text-input au-text-input--width-xs"
+                    name="text-input"
+                    id="text-input"
+                    type="text"
+                    value=""
+                  />
+                  <label for="text-input">to</label>
+                  <i class="far fa-calendar input-icon" aria-hidden="true"></i
+                  ><input
+                    class="au-text-input au-text-input--width-xs"
+                    name="text-input"
+                    id="text-input"
+                    type="text"
+                    value=""
+                  />
+                </div>
+                <div class="box">
+                  <label for="select1"><h2>User journeys shown:</h2></label>
+                  <select id="select1" class="au-select">
+                    <option value="">Please select</option>
+                  </select>
                 </div>
               </div>
               <div class="b1">
@@ -133,17 +171,20 @@
                   </div>
                 </form>
               </div>
+              <small>Data last updated: today</small>
             </div>
             <div id="information"></div>
-          </div>
           <div class="sigma-parent col-xs-8">
-              <div class="sigma-expand" id="sigma-canvas"></div>
+            <div class="sigma-expand" id="sigma-canvas"></div>
+            <div id="zoom">
+              <div class="z" rel="out"><i class="fa fa-minus"></i></div>
+              <div class="z" rel="in"><i class="fa fa-plus"></i></div>
+              <div class="z" rel="center">
+                <i class=" fa fa-arrows-alt"></i>
+              </div>
             </div>
-          <div id="zoom">
-            <div class="z" rel="in"></div>
-            <div class="z" rel="out"></div>
-            <div class="z" rel="center"></div>
           </div>
+
           <div id="attributepane">
             <div class="text">
               <div title="Close" class="left-close returntext">
@@ -166,41 +207,50 @@
       </section>
     </main>
     <footer
-      class="au-footer au-footer--dark au-body au-body--dark"
+      class="au-footer footer au-body au-body--dark au-footer--dark "
       role="contentinfo"
     >
-      <div class="container">
-        <nav class="au-footer__navigation row" aria-label="footer">
-          <div class="col-md-3 col-sm-6">
-            <h3 class="au-display-lg">Section</h3>
-            <ul class="au-link-list">
-              <li><a href="#">Link 1</a></li>
-              <li><a href="#">Link 2</a></li>
-              <li><a href="#">Link 3</a></li>
+      <div class="container-fluid">
+        <nav class="au-footer__navigation " aria-label="footer">
+          <div class="col-md-offset-1 col-md-8 col-md-push-3">
+
+            <ul class="au-link-list footer__legal-links">
+              <li><a href="/support">About the Observatory</a></li>
+              <li>
+                <a href="https://www.dta.gov.au/privacy-statement">Privacy</a>
+              </li>
+              <li><a href="/support">Training and Support</a></li>
+              <li><a href="/support">Contact</a></li>
             </ul>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <h3 class="au-display-lg">Section</h3>
-            <ul class="au-link-list">
-              <li><a href="#">Link 1</a></li>
-              <li><a href="#">Link 2</a></li>
-              <li><a href="#">Link 3</a></li>
-            </ul>
-          </div>
-        </nav>
-        <div class="row">
-          <div class="col-sm-12">
             <div class="au-footer__end">
-              <p>
-                <small
-                  >© Commonwealth of Australia. With the exception of the
+              <div class="footer__content footer__legal">
+                <p>
+                  © Commonwealth of Australia. With the exception of the
                   Commonwealth Coat of Arms and where otherwise noted, this work
-                  is licensed under the CC BY 4.0 license
-                </small>
-              </p>
+                  is licensed under the
+                  <a
+                    href="https://github.com/govau/design-system-components/blob/master/LICENSE"
+                    rel="external"
+                    >MIT license</a
+                  >
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+          <div class="col-md-3 col-md-pull-9 footer__logo">
+            <p class="footer__affiliate">
+              <span>An initiative of the </span
+              ><span>Digital Transformation Agency </span
+              ><span class="footer__affiliate-link"
+                ><a
+                  class="au-cta-link  au-cta-link--dark"
+                  href="https://www.dta.gov.au/our-projects"
+                  >More projects</a
+                ></span
+              >
+            </p>
+          </div>
+        </nav>
       </div>
     </footer>
   </body>
