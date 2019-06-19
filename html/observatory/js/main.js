@@ -46,7 +46,8 @@ Object.size = function(obj) {
 function initSigma(config) {
 	var data=config.data
 	
-	var drawProps, graphProps,mouseProps;
+    var drawProps, graphProps,mouseProps;
+    // https://github.com/jacomyal/sigma.js/wiki/Settings
 	if (config.sigma && config.sigma.drawingProperties) 
 		drawProps=config.sigma.drawingProperties;
 	else
@@ -58,6 +59,7 @@ function initSigma(config) {
         defaultLabelHoverColor: "#fff",
         labelThreshold: 100,
         defaultEdgeType: "curve",
+        edgeColor:"target",
         hoverFontStyle: "bold",
         fontStyle: "bold",
         activeFontStyle: "bold"
@@ -121,23 +123,7 @@ function initSigma(config) {
 
 function setupGUI(config) {
 	// Initialise main interface elements
-
-	// #title
-	$("#title").html("<h2>"+config.text.title+"</h2>");
-
-	// #titletext
-	$("#titletext").html(config.text.intro);
-
-	// More information
-	if (config.text.more) {
-		$("#information").html(config.text.more);
-	} else {
-		//hide more information link
-		$("#moreinformation").hide();
-	}
-
-	// Legend
-
+	$("#agencyName").html(config.agency.name);
 	// Node
 	if (config.legend.nodeLabel) {
 		$(".node").next().html(config.legend.nodeLabel);
@@ -159,7 +145,17 @@ function setupGUI(config) {
 		//hide more information link
 		$(".colours").hide();
 	}
-
+    $.each(config.agency.websites, function(i)
+    {
+        var li = $('<li/>')
+            .addClass('ui-menu-item')
+            .attr('role', 'menuitem')
+            .appendTo($("#websites"));
+        var aaa = $('<a/>')
+            .addClass('ui-all')
+            .text(config.agency.websites[i])
+            .appendTo(li);
+    })
 	$GP = {
 		calculating: !1,
 		showgroup: !1
