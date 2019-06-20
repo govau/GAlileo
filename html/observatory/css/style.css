@@ -458,3 +458,18 @@ display: none;
 	padding-bottom: 10%;
 
 }
+
+#websites {
+	list-style: none; /* Remove default bullets */
+}
+#websites li {
+	list-style: none;
+}
+#websites li::before {
+  content: "\2588 ";  /* Add content: \2022 is the CSS Code/unicode for a square block */
+  color: red; /* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */ 
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
