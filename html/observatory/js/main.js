@@ -51,91 +51,48 @@ function initSigma(config) {
 
   var drawProps, graphProps, mouseProps;
   // https://github.com/jacomyal/sigma.js/wiki/Settings
+
   if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-	if (config.sigma && config.sigma.drawingProperties) 
-  if (config.sigma && config.sigma.drawingProperties)
-    if (config.sigma && config.sigma.drawingProperties)
-      if (config.sigma && config.sigma.drawingProperties)
-        drawProps = config.sigma.drawingProperties;
-      else
-        drawProps = {
-          defaultLabelColor: "#000",
-          defaultLabelSize: 0,
-          defaultLabelBGColor: "#ddd",
-          defaultHoverLabelBGColor: "#002147",
-          defaultLabelHoverColor: "#fff",
-          labelThreshold: 100,
-          defaultEdgeType: "curve",
-          edgeColor: "target",
-          hoverFontStyle: "bold",
-          fontStyle: "bold",
-          activeFontStyle: "bold"
-        };
+    drawProps = config.sigma.drawingProperties;
+  else
+    drawProps = {
+      defaultLabelColor: "#000",
+      defaultLabelSize: 10,
+      defaultLabelBGColor: "#ddd",
+      defaultHoverLabelBGColor: "#002147",
+      defaultLabelHoverColor: "#fff",
+      labelThreshold: 100,
+      defaultEdgeType: "curve",
+      edgeColor: "target",
+      hoverFontStyle: "bold",
+      fontStyle: "bold",
+      activeFontStyle: "bold"
+    };
 
   if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)	
-  if (config.sigma && config.sigma.graphProperties)
-    if (config.sigma && config.sigma.graphProperties)
-      if (config.sigma && config.sigma.graphProperties)
-        graphProps = config.sigma.graphProperties;
-      else
-        graphProps = {
-          minNodeSize: 1,
-          maxNodeSize: 20,
-          minEdgeSize: 0.2,
-          maxEdgeSize: 0.5
-        };
+    graphProps = config.sigma.graphProperties;
+  else
+    graphProps = {
+      minNodeSize: 1,
+      maxNodeSize: 20,
+      minEdgeSize: 0.2,
+      maxEdgeSize: 0.5
+    };
 
   if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-	if (config.sigma && config.sigma.mouseProperties) 
-  if (config.sigma && config.sigma.mouseProperties)
-    if (config.sigma && config.sigma.mouseProperties)
-      if (config.sigma && config.sigma.mouseProperties)
-        mouseProps = config.sigma.mouseProperties;
-      else
-        mouseProps = {
-          minRatio: 0.75, // How far can we zoom out?
-          maxRatio: 20 // How far can we zoom in?
-        };
+    mouseProps = config.sigma.mouseProperties;
+  else
+    mouseProps = {
+      minRatio: 0.75, // How far can we zoom out?
+      maxRatio: 20 // How far can we zoom in?
+    };
 
-    var a = sigma.init(document.getElementById("sigma-canvas")).drawingProperties(drawProps).graphProperties(graphProps).mouseProperties(mouseProps);
-    sigInst = a;
+  var a = sigma
+    .init(document.getElementById("sigma-canvas"))
+    .drawingProperties(drawProps)
+    .graphProperties(graphProps)
+    .mouseProperties(mouseProps);
+  sigInst = a;
   a.active = false;
   a.neighbors = {};
   a.detail = false;
@@ -149,24 +106,10 @@ function initSigma(config) {
 
       // note: index may not be consistent for all nodes. Should calculate each time.
       // note: index may not be consistent for all nodes. Should calculate each time.
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
-				// note: index may not be consistent for all nodes. Should calculate each time. 
-      // note: index may not be consistent for all nodes. Should calculate each time.
       // alert(JSON.stringify(b.attr.attributes[5].val));
       // alert(b.x);
-      a.clusters[b.attr.attributes.domain] || (a.clusters[b.attr.attributes.domain] = []);
+      a.clusters[b.attr.attributes.domain] ||
+        (a.clusters[b.attr.attributes.domain] = []);
       a.clusters[b.attr.attributes.domain].push(b.id); //SAH: push id not label
     });
 
@@ -178,11 +121,10 @@ function initSigma(config) {
     configSigmaElements(config);
   };
 
-    if (data.indexOf("gexf")>0 || data.indexOf("xml")>0)
-        a.parseGexf("data/"+data,dataReady);
-    else
-	    a.parseJson("data/"+data,dataReady);
-    gexf = sigmaInst = null;
+  if (data.indexOf("gexf") > 0 || data.indexOf("xml") > 0)
+    a.parseGexf("data/" + data, dataReady);
+  else a.parseJson("data/" + data, dataReady);
+  gexf = sigmaInst = null;
 }
 
 function setupGUI(config) {
@@ -224,9 +166,9 @@ function setupGUI(config) {
     var aaa = $("<a/>")
       .addClass("ui-all")
       .text(config.agency.websites[i])
-      .attr('href','#'+config.agency.websites[i])
+      .attr("href", "#" + config.agency.websites[i])
       .click(function() {
-          nodeActive(config.agency.websites[i]+'/')
+        showCluster(config.agency.websites[i]);
       })
       .appendTo(li);
   });
@@ -350,10 +292,10 @@ function configSigmaElements(config) {
     clusterDomain;
   for (clusterDomain in sigInst.clusters) {
     clusterList.push(
-      '<div style="line-height:12px"><a href="#' +
+      '<div style=""><a href="#' +
         clusterDomain +
         '"><div style="width:40px;height:12px;border:1px solid #fff;background:' +
-        clusterDomain +
+        sigInst._core.graph.nodesIndex[sigInst.clusters[clusterDomain][0]].color +
         ';display:inline-block"></div> ' +
         clusterDomain +
         " (" +
@@ -498,10 +440,7 @@ function Cluster(a) {
   this.display = false;
   this.list = this.cluster.find(".list");
   this.list.empty();
-  this.select = this.cluster.find(".select");
-  this.select.click(function() {
-    $GP.cluster.toggle();
-  });
+
   this.toggle = function() {
     this.display ? this.hide() : this.show();
   };
@@ -514,16 +453,7 @@ function Cluster(a) {
       showCluster(a);
     });
   };
-  this.hide = function() {
-    this.display = false;
-    this.list.hide();
-    this.select.removeClass("close");
-  };
-  this.show = function() {
-    this.display = true;
-    this.list.show();
-    this.select.addClass("close");
-  };
+  
 }
 function showGroups(a) {
   a
@@ -544,11 +474,11 @@ function nodeNormal() {
     ($GP.calculating = true),
     (sigInst.detail = true),
     $GP.info.delay(400).animate({ width: "hide" }, 350),
-    $GP.cluster.hide(),
     sigInst.iterEdges(function(a) {
       a.attr.color = false;
       a.hidden = false;
     }),
+    sigInst.drawingProperties('edgeColor',"source"),
     sigInst.iterNodes(function(a) {
       a.hidden = false;
       a.attr.color = false;
@@ -571,14 +501,16 @@ function nodeActive(a) {
     groupByDirection = true;
 
   sigInst.neighbors = {};
-    sigInst.detail = !0;
-    var b = sigInst._core.graph.nodesIndex[a];
-    showGroups(!1);
-	var outgoing={},incoming={},mutual={};//SAH
-    sigInst.iterEdges(function (b) {
-        b.attr.lineWidth = !1;
-        b.hidden = !0;
-        
+  sigInst.detail = !0;
+  var b = sigInst._core.graph.nodesIndex[a];
+  showGroups(!1);
+  var outgoing = {},
+    incoming = {},
+    mutual = {}; //SAH
+  sigInst.iterEdges(function(b) {
+    b.attr.lineWidth = !1;
+    b.hidden = !0;
+
     n = {
       name: b.label,
       colour: b.color
@@ -592,6 +524,7 @@ function nodeActive(a) {
     (b.hidden = false), (b.attr.color = "rgba(0, 0, 0, 1)");
   });
   var f = [];
+  sigInst.drawingProperties('edgeColor',"source");
   sigInst.iterNodes(function(a) {
     a.hidden = true;
     a.attr.lineWidth = false;
@@ -616,10 +549,10 @@ function nodeActive(a) {
       //c = sigInst.neighbors,
       g;
     for (g in c) {
-        var d = sigInst._core.graph.nodesIndex[g];
-        d.hidden = !1;
-        d.attr.lineWidth = !1;
-        d.attr.color = c[g].colour;
+      var d = sigInst._core.graph.nodesIndex[g];
+      d.hidden = !1;
+      d.attr.lineWidth = !1;
+      d.attr.color = c[g].colour;
       a != g &&
         e.push({
           id: g,
@@ -642,9 +575,19 @@ function nodeActive(a) {
 				d = c.group;
 				f.push('<li class="cf" rel="' + c.color + '"><div class=""></div><div class="">' + d + "</div></li>");
 			}*/
-			f.push('<li class="membership"><a href="#' + c.name + '" onmouseover="sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex[\'' + c.id + '\'])\" onclick=\"nodeActive(\'' + c.id + '\')" onmouseout="sigInst.refresh()">' + c.name + "</a></li>");
-		}
-		return f;
+      f.push(
+        '<li class="membership"><a href="#' +
+          c.name +
+          '" onmouseover="sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex[\'' +
+          c.id +
+          "'])\" onclick=\"nodeActive('" +
+          c.id +
+          '\')" onmouseout="sigInst.refresh()">' +
+          c.name +
+          "</a></li>"
+      );
+    }
+    return f;
   };
 
   /*console.log("mutual:");
@@ -711,11 +654,25 @@ function nodeActive(a) {
 
     if (image_attribute) {
       //image_index = jQuery.inArray(image_attribute, temp_array);
-        	$GP.info_name.html("<div><img src=" + f.attributes[image_attribute] + " style=\"vertical-align:middle\" /> <span onmouseover=\"sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex['" + b.id + '\'])" onmouseout="sigInst.refresh()">' + b.label + "</span></div>");
-        } else {
-        	$GP.info_name.html("<div><span onmouseover=\"sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex['" + b.id + '\'])" onmouseout="sigInst.refresh()">' + b.label + "</span></div>");
-        }
-        // Image field for attribute pane
+      $GP.info_name.html(
+        "<div><img src=" +
+          f.attributes[image_attribute] +
+          ' style="vertical-align:middle" /> <span onmouseover="sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex[\'' +
+          b.id +
+          '\'])" onmouseout="sigInst.refresh()">' +
+          b.label +
+          "</span></div>"
+      );
+    } else {
+      $GP.info_name.html(
+        "<div><span onmouseover=\"sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex['" +
+          b.id +
+          '\'])" onmouseout="sigInst.refresh()">' +
+          b.label +
+          "</span></div>"
+      );
+    }
+    // Image field for attribute pane
     $GP.info_data.html(e.join("<br/>"));
   }
   $GP.info_data.show();
@@ -728,6 +685,7 @@ function nodeActive(a) {
 }
 
 function showCluster(a) {
+  sigInst.drawingProperties('edgeColor',"default");
   var b = sigInst.clusters[a];
   if (b && 0 < b.length) {
     //showGroups(false);
@@ -743,10 +701,10 @@ function showCluster(a) {
     });
     for (var f = [], clusters = [], c = 0, g = b.length; c < g; c++) {
       var d = sigInst._core.graph.nodesIndex[b[c]];
-      if (d.hidden) { 
+      if (d.hidden) {
         clusters.push(b[c]);
         d.hidden = false;
-        d.attr.lineWidth = false;
+        d.attr.lineWidth = true;
         d.attr.color = d.color;
         f.push(
           '<li class="membership"><a href="#' +
@@ -756,7 +714,7 @@ function showCluster(a) {
             "'])\" onclick=\"nodeActive('" +
             d.id +
             '\')" onmouseout="sigInst.refresh()">' +
-           d.attr.attributes.domain +
+            d.label.replace(d.attr.attributes.domain,"").replace(/\/\//g,"/") +
             "</a></li>"
         );
       }
@@ -769,9 +727,7 @@ function showCluster(a) {
     $GP.info_link.find("ul").html(f.join(""));
     $GP.info.animate({ width: "show" }, 350);
     $GP.search.clean();
-    $GP.cluster.hide();
     return true;
   }
   return false;
 }
-
