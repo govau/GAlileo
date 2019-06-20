@@ -39,7 +39,7 @@ with models.DAG(
                                                     'htpasswd -b -c htpasswd observatory {HTPASSWD} && '
                                                     'cf login -a https://api.system.y.cld.gov.au -u $CF_USERNAME -p $CF_PASSWORD && '
                                                     'cf unmap-route observatory-green apps.y.cld.gov.au -n observatory &&'
-                                                    'cf v3-apply-manifest -f manifest.yml'
+                                                    'cf v3-apply-manifest -f manifest.yml &&'
                                                     'cf v3-push observatory-green &&'
                                                     'cf map-route observatory-green apps.y.cld.gov.au -n observatory &&'
                                                     'cf unmap-route observatory-blue apps.y.cld.gov.au -n observatory &&'

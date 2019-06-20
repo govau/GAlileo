@@ -87,7 +87,7 @@ agencycomparison_server <- function (input, output) {
   })
 
   output$ac_caption <- renderText({
-    paste(input$agencies, " compared to", input$groups, "agencies")
+    paste("Comparing referral sources from",input$agencies, " with ", input$groups, "agencies")
   })
 
 
@@ -96,11 +96,13 @@ agencycomparison_server <- function (input, output) {
       top_n(5) %>%
       ggplot(aes(x="", y=tot_source, fill=sourceurl)) +
       geom_bar(width = 1, stat = "identity")+
+      coord_polar("y", start = 0) +
       ylab(NULL)+
-      coord_polar("y", start = 0)+
-      theme_minimal() +
-      labs(title = NULL)
-
+      theme(axis.text = element_blank(),
+            axis.ticks = element_blank(),
+            panel.grid  = element_blank()) +
+      ggtitle("Single Agency referal sources") +
+      theme(legend.position = "none")
   })
 
   output$view2 <- renderPlot({
@@ -111,9 +113,11 @@ agencycomparison_server <- function (input, output) {
       geom_bar(width = 1, stat = "identity")+
       coord_polar("y", start = 0)+
       ylab(NULL)+
-      theme_minimal()+
-      theme(legend.position = "none")+
-      labs(title = NULL)
+      theme(axis.text = element_blank(),
+            axis.ticks = element_blank(),
+            panel.grid  = element_blank()) +
+      ggtitle("Cohort Agencies referal sources") +
+      theme(legend.position = "none")
   })
 
 
