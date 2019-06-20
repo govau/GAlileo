@@ -1,0 +1,30 @@
+{
+    "type": "network",
+	"data":"augov.gexf",
+    "version": "1.0",
+    "agency": {
+        "name": "Digital Transformation Agency",
+        "lifeEvents": [],
+        "websites":[
+            "www.dta.gov.au"
+        ]
+    },
+
+    "legend": {
+		"nodeLabel":"Government website",
+		"edgeLabel":"Link between two government websites",
+		"colorLabel":"Color is an automated grouping of sites"
+    },
+    "features": {
+        "search": {
+            "enabled": true
+        },
+        "hoverBehaviour": "dim",
+        "groupSelector": {
+            "enabled": true
+        }
+    },
+    "informationPanel": {
+        "groupByEdgeDirection": false
+    }
+}
