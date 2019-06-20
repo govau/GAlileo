@@ -6,10 +6,7 @@
         "name": "Digital Transformation Agency",
         "lifeEvents": [],
         "websites":[
-            "www.dta.gov.au",
-            "www.designsystem.gov.au",
-            "www.guides.service.gov.au",
-            "www.domainname.gov.au"
+            "www.dta.gov.au"
         ]
     },
 
@@ -24,8 +21,7 @@
         },
         "hoverBehaviour": "dim",
         "groupSelector": {
-            "enabled": false,
-            "attribute": "whatAttributeShouldWeGroupBy"
+            "enabled": true
         }
     },
     "informationPanel": {
