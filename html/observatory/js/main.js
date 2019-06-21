@@ -696,14 +696,22 @@ function showCluster(a) {
       a.attr.lineWidth = false;
       a.attr.color = false;
     });
-    sigInst.iterNodes(function(a) {
-      a.hidden = true;
+    
+      sigInst.iterNodes(function(n) {
+     
+        if (!n.attr["grey"]) {
+          n.attr["true_color"] = n.color;
+          n.color = "#ccc";
+          n.attr["grey"] = 1;
+        }
+    
     });
+
     for (var f = [], clusters = [], c = 0, g = b.length; c < g; c++) {
       var d = sigInst._core.graph.nodesIndex[b[c]];
-      if (d.hidden) {
+      if (d.attr["grey"]) {
         clusters.push(b[c]);
-        d.hidden = false;
+       
         d.attr.lineWidth = true;
         d.attr.color = d.color;
         f.push(
@@ -717,6 +725,10 @@ function showCluster(a) {
             d.label.replace(d.attr.attributes.domain,"").replace(/\/\//g,"/") +
             "</a></li>"
         );
+      
+     
+        d.color = d.attr["grey"] ? d.attr["true_color"] : d.color;
+        d.attr["grey"] = 0;
       }
     }
     sigInst.clusters[a] = clusters;
