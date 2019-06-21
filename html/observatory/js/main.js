@@ -66,7 +66,12 @@ function initSigma(config) {
       edgeColor: "target",
       hoverFontStyle: "bold",
       fontStyle: "bold",
-      activeFontStyle: "bold"
+      activeFontStyle: "bold",
+      "borderSize": 2,//Something other than 0
+      "nodeBorderColor": "default",//exactly like this
+      "defaultNodeBorderColor": "#000",//Any color of your choice
+      "defaultBorderView": "always"//apply the default color to all nodes always (normal+hover)
+
     };
 
   if (config.sigma && config.sigma.graphProperties)
@@ -108,6 +113,7 @@ function initSigma(config) {
       // note: index may not be consistent for all nodes. Should calculate each time.
       // alert(JSON.stringify(b.attr.attributes[5].val));
       // alert(b.x);
+b.attr.attributes['true_color'] = b.color;
       a.clusters[b.attr.attributes.domain] ||
         (a.clusters[b.attr.attributes.domain] = []);
       a.clusters[b.attr.attributes.domain].push(b.id); //SAH: push id not label
@@ -205,87 +211,7 @@ function setupGUI(config) {
 function configSigmaElements(config) {
   $GP = config.GP;
 
-  // Node hover behaviour
-  if (config.features.hoverBehaviour == "dim") {
-    var greyColor = "#ccc";
-    sigInst
-      .bind("overnodes", function(event) {
-        var nodes = event.content;
-        var neighbors = {};
-        sigInst
-          .iterEdges(function(e) {
-            if (nodes.indexOf(e.source) < 0 && nodes.indexOf(e.target) < 0) {
-              if (!e.attr["grey"]) {
-                e.attr["true_color"] = e.color;
-                e.color = greyColor;
-                e.attr["grey"] = 1;
-              }
-            } else {
-              e.color = e.attr["grey"] ? e.attr["true_color"] : e.color;
-              e.attr["grey"] = 0;
-
-              neighbors[e.source] = 1;
-              neighbors[e.target] = 1;
-            }
-          })
-          .iterNodes(function(n) {
-            if (!neighbors[n.id]) {
-              if (!n.attr["grey"]) {
-                n.attr["true_color"] = n.color;
-                n.color = greyColor;
-                n.attr["grey"] = 1;
-              }
-            } else {
-              n.color = n.attr["grey"] ? n.attr["true_color"] : n.color;
-              n.attr["grey"] = 0;
-            }
-          })
-          .draw(2, 2, 2);
-      })
-      .bind("outnodes", function() {
-        sigInst
-          .iterEdges(function(e) {
-            e.color = e.attr["grey"] ? e.attr["true_color"] : e.color;
-            e.attr["grey"] = 0;
-          })
-          .iterNodes(function(n) {
-            n.color = n.attr["grey"] ? n.attr["true_color"] : n.color;
-            n.attr["grey"] = 0;
-          })
-          .draw(2, 2, 2);
-      });
-  } else if (config.features.hoverBehaviour == "hide") {
-    sigInst
-      .bind("overnodes", function(event) {
-        var nodes = event.content;
-        var neighbors = {};
-        sigInst
-          .iterEdges(function(e) {
-            if (nodes.indexOf(e.source) >= 0 || nodes.indexOf(e.target) >= 0) {
-              neighbors[e.source] = 1;
-              neighbors[e.target] = 1;
-            }
-          })
-          .iterNodes(function(n) {
-            if (!neighbors[n.id]) {
-              n.hidden = 1;
-            } else {
-              n.hidden = 0;
-            }
-          })
-          .draw(2, 2, 2);
-      })
-      .bind("outnodes", function() {
-        sigInst
-          .iterEdges(function(e) {
-            e.hidden = 0;
-          })
-          .iterNodes(function(n) {
-            n.hidden = 0;
-          })
-          .draw(2, 2, 2);
-      });
-  }
+ 
   $GP.bg = $(sigInst._core.domElements.bg);
   $GP.bg2 = $(sigInst._core.domElements.bg2);
   var clusterList = [],
@@ -468,28 +394,32 @@ function showGroups(a) {
 }
 
 function nodeNormal() {
-  true != $GP.calculating &&
-    false != sigInst.detail &&
-    (showGroups(false),
-    ($GP.calculating = true),
-    (sigInst.detail = true),
-    $GP.info.delay(400).animate({ width: "hide" }, 350),
+  if (true != $GP.calculating &&
+    false != sigInst.detail) {
+    showGroups(false);
+    $GP.calculating = true;
+    sigInst.detail = true;
+    $GP.info.delay(400).animate({ width: "hide" }, 350);
     sigInst.iterEdges(function(a) {
       a.attr.color = false;
       a.hidden = false;
-    }),
-    sigInst.drawingProperties('edgeColor',"source"),
+    });
+    sigInst.drawingProperties('edgeColor',"source");
     sigInst.iterNodes(function(a) {
+      a.attr.attributes['drawBorder'] = false;
       a.hidden = false;
       a.attr.color = false;
       a.attr.lineWidth = false;
       a.attr.size = false;
-    }),
-    sigInst.draw(2, 2, 2, 2),
-    (sigInst.neighbors = {}),
-    (sigInst.active = false),
-    ($GP.calculating = false),
-    (window.location.hash = ""));
+      a.color = a.attr.attributes['true_color'];
+      a.attr["grey"] = false;
+    });
+    sigInst.draw(2, 2, 2, 2);
+    sigInst.neighbors = {};
+    sigInst.active = false;
+    $GP.calculating = false;
+    window.location.hash = "";
+  }
 }
 
 function nodeActive(a) {
@@ -699,21 +629,18 @@ function showCluster(a) {
     
       sigInst.iterNodes(function(n) {
      
-        if (!n.attr["grey"]) {
-          n.attr["true_color"] = n.color;
-          n.color = "#ccc";
           n.attr["grey"] = 1;
-        }
+          n.attr.attributes['drawBorder'] = true;
+     
     
     });
-
+    var toBeMoved = []
     for (var f = [], clusters = [], c = 0, g = b.length; c < g; c++) {
       var d = sigInst._core.graph.nodesIndex[b[c]];
       if (d.attr["grey"]) {
         clusters.push(b[c]);
        
         d.attr.lineWidth = true;
-        d.attr.color = d.color;
         f.push(
           '<li class="membership"><a href="#' +
             d.label +
@@ -726,12 +653,20 @@ function showCluster(a) {
             "</a></li>"
         );
       
-     
-        d.color = d.attr["grey"] ? d.attr["true_color"] : d.color;
-        d.attr["grey"] = 0;
+       d.attr.attributes['drawBorder'] = false;
+        d.color = d.attr.attributes["true_color"];
+        d.attr["grey"] = false;
+        toBeMoved.push(sigInst._core.graph.nodes.findIndex(function(e) {return e.id == d.id}));
       }
     }
+    toBeMoved.forEach( function(m) {
+      moved = sigInst._core.graph.nodes.splice(m, 1);
+      sigInst._core.graph.nodes.unshift(moved[0]);
+      //sigInst._core.graph.nodesIndex[moved[0].id] = sigInst._core.graph.nodes.length;
+    });
+    
     sigInst.clusters[a] = clusters;
+    sigInst.refresh()
     sigInst.draw(2, 2, 2, 2);
     $GP.info_name.html("<b>" + a + "</b>");
     $GP.info_data.hide();
