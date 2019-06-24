@@ -96,11 +96,11 @@
       </div>
     </header>
     <!-- MAIN BODY -->
-    <main>
+    <main class="HolyGrail">
       <!--CONTENT-->
-      <section class="au-body au-grid">
-        <div class="container-fluid">
-          <div id="mainpanel" class="col-xs-4">
+      <section class="au-body HolyGrail-body">
+       
+        <nav class="HolyGrail-nav">
             <div class="col">
               <div id="legend">
                 <!-- <div class="box">
@@ -167,8 +167,9 @@
                   <div title="Close" class="left-close returntext">
                     <div class="c cf"><span>&nbsp;</span></div>
                   </div>
+                  
+                  <div class="name"></div>
                   <div class="nodeattributes">
-                    <div class="name"></div>
                     <div class="data"></div>
                     <div class="p">Connections:</div>
                     <div class="link">
@@ -179,14 +180,11 @@
               </div>
           </div>
             </div>
-            <div id="information"></div>
-          <div class="col-xs-8">
-              <section class="au-callout">
-                  <p>This diagram shows the pathways created by people as they move between .gov.au webpages. Each circle represents a webpage and each line is a link between those pages<br/>
-                     Select a website from the <i>Agency websites</i> list to better understand how people are coming to those webpages, and where they are going to after they visit.<br/>
-                    Pages from that website are have the same colored circle and hovering over circles will show you their webpage address</p>
-              </section>
-              
+            </nav>
+            <main class="HolyGrail-content">
+<h1>User pathways across .gov.au</h1>
+<hr/>
+            <div>
               <div class="sigma-parent">
               <div class="sigma-expand" id="sigma-canvas"></div>
             <div id="zoom">
@@ -196,8 +194,14 @@
                 <i class=" fa fa-arrows-alt"></i>
               </span>
             </div>
+          </div>  
+            <section class="au-callout">
+              <p>This diagram shows the pathways created by people as they move between .gov.au webpages. Each circle represents a webpage and each line is a link between those pages<br/>
+                 Select a website from the <i>Agency websites</i> list to better understand how people are coming to those webpages, and where they are going to after they visit.<br/>
+                Pages from that website are have the same colored circle and hovering over circles will show you their webpage address</p>
+          </section>
           </div>
-        </div>
+        </main>
       </section>
     </main>
     <footer

@@ -7,6 +7,7 @@ html,body {
 }
 main .au-body {
 	background: #eee !important;
+	padding: 0 20px 0 20px;
 }
 .sigma-parent {
 	position: relative;
@@ -43,6 +44,7 @@ canvas#sigma_bg_1 {
 	background-color:rgba(255,255,255,0.8);
 	padding: 0px 18px 0px 18px;	
 	z-index: 1;
+	width: 80%;
 }
 
 
@@ -104,6 +106,7 @@ float: left;
 
 #attributepane .nodeattributes {
 	display:block;
+	max-width: 13em;
 	max-height: 400px;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -149,7 +152,7 @@ font-size:14px;
 
 .left-close {
 background-image: url('../images/fancybox_sprite.png');
-margin-left:-37px;
+float: right;
 z-index:99999;
 cursor: pointer;
 padding-left:31px;
@@ -430,4 +433,28 @@ display: none;
 }
 .ui-all {
 	margin-left: 10px;
+}
+/* https://philipwalton.github.io/solved-by-flexbox/demos/holy-grail/ */
+.HolyGrail,
+.HolyGrail-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.HolyGrail-nav {
+  order: -1;
+}
+
+@media (min-width: 768px) {
+  .HolyGrail-body {
+    flex-direction: row;
+    flex: 1;
+  }
+  .HolyGrail-content {
+    flex: 1;
+  }
+  .HolyGrail-nav, .HolyGrail-ads {
+    /* 12em is the width of the columns */
+    flex: 0 0 12em;
+  }
 }
