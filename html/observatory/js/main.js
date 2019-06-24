@@ -76,7 +76,7 @@ function initSigma(config) {
       defaultLabelHoverColor: "#fff",
       labelThreshold: 100,
       defaultEdgeType: "curve",
-      edgeColor: "target",
+      edgeColor: "default",
       hoverFontStyle: "bold",
       fontStyle: "bold",
       activeFontStyle: "bold",
@@ -118,15 +118,18 @@ function initSigma(config) {
   dataReady = function() {
     //This is called as soon as data is loaded
     a.clusters = {};
-
+    a.iterEdges(function(b) {
+      b.attr['true_color'] = b.color;
+    });
     a.iterNodes(function(b) {
+      
       //This is where we populate the array used for the group select box
 
       // note: index may not be consistent for all nodes. Should calculate each time.
       // note: index may not be consistent for all nodes. Should calculate each time.
       // alert(JSON.stringify(b.attr.attributes[5].val));
       // alert(b.x);
-b.attr.attributes['true_color'] = b.color;
+b.attr['true_color'] = b.color;
       a.clusters[b.attr.attributes.domain] ||
         (a.clusters[b.attr.attributes.domain] = []);
       a.clusters[b.attr.attributes.domain].push(b.id); //SAH: push id not label
@@ -411,15 +414,17 @@ function nodeNormal() {
     sigInst.iterEdges(function(a) {
       a.attr.color = false;
       a.hidden = false;
+      a.color = a.attr['true_color'];
+      a.attr["grey"] = false;
     });
     sigInst.drawingProperties('edgeColor',"source");
     sigInst.iterNodes(function(a) {
-      a.attr.attributes['drawBorder'] = false;
+      a.attr['drawBorder'] = false;
       a.hidden = false;
       a.attr.color = false;
       a.attr.lineWidth = false;
       a.attr.size = false;
-      a.color = a.attr.attributes['true_color'];
+      a.color = a.attr['true_color'];
       a.attr["grey"] = false;
     });
     sigInst.draw(2, 2, 2, 2);
@@ -625,7 +630,7 @@ function nodeActive(a) {
 }
 
 function showCluster(a) {
-  sigInst.drawingProperties('edgeColor',"default");
+  
   var b = sigInst.clusters[a];
   if (b && 0 < b.length) {
     //showGroups(false);
@@ -635,15 +640,18 @@ function showCluster(a) {
       a.hidden = false;
       a.attr.lineWidth = false;
       a.attr.color = false;
+      a.color = a.attr['true_color'];
+      a.attr["grey"] = 1;
     });
     
       sigInst.iterNodes(function(n) {
      
           n.attr["grey"] = 1;
-          n.attr.attributes['drawBorder'] = true;
+          n.attr['drawBorder'] = true;
      
     
     });
+    var clusterIds = []
     var toBeMoved = []
     for (var f = [], clusters = [], c = 0, g = b.length; c < g; c++) {
       var d = sigInst._core.graph.nodesIndex[b[c]];
@@ -661,16 +669,23 @@ function showCluster(a) {
             // d.id +
             // '\')
             '" onmouseout="sigInst.refresh()">' +
-            d.label.replace(d.attr.attributes.domain,"").replace(/\/\//g,"/") +
+            d.label.replace(a,"").replace(/\/\//g,"/") +
             "</a></li>"
         );
       
-       d.attr.attributes['drawBorder'] = false;
-        d.color = colorBrewer2Set3[config.agency.websites.indexOf(d.attr.attributes.domain)];
+       d.attr['drawBorder'] = false;
+        d.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
         d.attr["grey"] = false;
         toBeMoved.push(sigInst._core.graph.nodes.findIndex(function(e) {return e.id == d.id}));
+        clusterIds.push(d.id);
       }
     }
+    sigInst.iterEdges(function(edge) {
+     if      (clusterIds.indexOf(edge.target) >= 0  || clusterIds.indexOf(edge.source) >= 0) {
+      edge.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
+      edge.attr["grey"] = false;
+     }
+    });
     toBeMoved.forEach( function(m) {
       moved = sigInst._core.graph.nodes.splice(m, 1);
       sigInst._core.graph.nodes.push(moved[0]);
