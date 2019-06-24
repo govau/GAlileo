@@ -244,12 +244,7 @@ function configSigmaElements(config) {
   }
   //a.sort();
   $GP.cluster.content(clusterList.join(""));
-  box = {
-    minWidth: 400,
-    maxWidth: 800,
-    maxHeight: 600
-  }; //        minHeight: 300,
-  $("a.fb").fancybox(box);
+
   $("#zoom")
     .find(".z")
     .each(function() {
