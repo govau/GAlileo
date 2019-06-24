@@ -1,5 +1,18 @@
 var sigInst, canvas, $GP;
-
+var colorBrewer2Set3 = [
+"#8dd3c7",
+"#ffffb3",
+"#bebada",
+"#fb8072",
+"#80b1d3",
+"#fdb462",
+"#b3de69",
+"#fccde5",
+"#d9d9d9",
+"#bc80bd",
+"#ccebc5",
+"#ffed6f"
+]; // http://colorbrewer2.org/#type=qualitative&scheme=Set3&n=12
 //Load configuration file
 var config = {};
 
@@ -119,9 +132,9 @@ b.attr.attributes['true_color'] = b.color;
       a.clusters[b.attr.attributes.domain].push(b.id); //SAH: push id not label
     });
 
-    a.bind("upnodes", function(a) {
-      nodeActive(a.content[0]);
-    });
+    // a.bind("upnodes", function(a) {
+    //   nodeActive(a.content[0]);
+    // });
 
     a.draw();
     configSigmaElements(config);
@@ -164,7 +177,7 @@ function setupGUI(config) {
     $(".colours").hide();
   }
   $.each(config.agency.websites, function(i) {
-    var li = $("<li/>")
+    var li = $("<li/>").css("color",colorBrewer2Set3[i])
       .addClass("ui-menu-item")
       .attr("role", "menuitem")
       .appendTo($("#websites"));
@@ -238,7 +251,7 @@ function configSigmaElements(config) {
   }; //        minHeight: 300,
   $("a.fb").fancybox(box);
   $("#zoom")
-    .find("div.z")
+    .find(".z")
     .each(function() {
       var a = $(this),
         b = a.attr("rel");
@@ -399,7 +412,7 @@ function nodeNormal() {
     showGroups(false);
     $GP.calculating = true;
     sigInst.detail = true;
-    $GP.info.delay(400).animate({ width: "hide" }, 350);
+    $GP.info.hide();
     sigInst.iterEdges(function(a) {
       a.attr.color = false;
       a.hidden = false;
@@ -510,9 +523,11 @@ function nodeActive(a) {
           c.name +
           '" onmouseover="sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex[\'' +
           c.id +
-          "'])\" onclick=\"nodeActive('" +
-          c.id +
-          '\')" onmouseout="sigInst.refresh()">' +
+          "'])\" onclick='return false;'"+
+          // onclick=\"nodeActive('" +
+          // c.id +
+          // '\')" 
+          'onmouseout="sigInst.refresh()">' +
           c.name +
           "</a></li>"
       );
@@ -607,7 +622,7 @@ function nodeActive(a) {
   }
   $GP.info_data.show();
   $GP.info_p.html("Connections:");
-  $GP.info.animate({ width: "show" }, 350);
+  $GP.info.show();
   $GP.info_donnees.hide();
   $GP.info_donnees.show();
   sigInst.active = a;
@@ -646,22 +661,24 @@ function showCluster(a) {
             d.label +
             '" onmouseover="sigInst._core.plotter.drawHoverNode(sigInst._core.graph.nodesIndex[\'' +
             d.id +
-            "'])\" onclick=\"nodeActive('" +
-            d.id +
-            '\')" onmouseout="sigInst.refresh()">' +
+            "'])\" onclick=\"" +
+            // nodeActive('" +
+            // d.id +
+            // '\')
+            '" onmouseout="sigInst.refresh()">' +
             d.label.replace(d.attr.attributes.domain,"").replace(/\/\//g,"/") +
             "</a></li>"
         );
       
        d.attr.attributes['drawBorder'] = false;
-        d.color = d.attr.attributes["true_color"];
+        d.color = colorBrewer2Set3[config.agency.websites.indexOf(d.attr.attributes.domain)];
         d.attr["grey"] = false;
         toBeMoved.push(sigInst._core.graph.nodes.findIndex(function(e) {return e.id == d.id}));
       }
     }
     toBeMoved.forEach( function(m) {
       moved = sigInst._core.graph.nodes.splice(m, 1);
-      sigInst._core.graph.nodes.unshift(moved[0]);
+      sigInst._core.graph.nodes.push(moved[0]);
       //sigInst._core.graph.nodesIndex[moved[0].id] = sigInst._core.graph.nodes.length;
     });
     
@@ -670,9 +687,9 @@ function showCluster(a) {
     sigInst.draw(2, 2, 2, 2);
     $GP.info_name.html("<b>" + a + "</b>");
     $GP.info_data.hide();
-    $GP.info_p.html("Group Members:");
+    $GP.info_p.html("Pages:");
     $GP.info_link.find("ul").html(f.join(""));
-    $GP.info.animate({ width: "show" }, 350);
+    $GP.info.show();
     $GP.search.clean();
     return true;
   }

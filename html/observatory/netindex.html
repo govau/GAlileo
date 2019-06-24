@@ -109,17 +109,17 @@
           <div id="mainpanel" class="col-xs-4">
             <div class="col">
               <div id="legend">
-                <div class="box">
+                <!-- <div class="box">
                   <h2>Agency name:</h2>
                   <div id="agencyName"></div>
-                </div>
+                </div> -->
                 <div class="box">
                   <h2>
-                    Agency websites: <small><a href="#">edit</a></small>
+                    Agency websites: <!--<small><a href="#">edit</a></small>-->
                   </h2>
                   <ul id="websites"></div>
                 </div>
-                <div class="box">
+                <!-- <div class="box">
                   <h2>Date range shown:</h2>
                   <label for="text-input">from</label>
                   <i class="far fa-calendar input-icon" aria-hidden="true"></i
@@ -165,40 +165,57 @@
                     <div class="list cf"></div>
                   </div>
                 </form>
-              </div>
+              
               <small>Data last updated: today</small>
+            -->
+            <div id="attributepane">
+                <div class="text">
+                  <div title="Close" class="left-close returntext">
+                    <div class="c cf"><span>Close</span></div>
+                  </div>
+                  <div class="nodeattributes">
+                    <div class="name"></div>
+                    <div class="data"></div>
+                    <div class="p">Connections:</div>
+                    <div class="link">
+                      <ul></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
             </div>
             <div id="information"></div>
-          <div class="sigma-parent col-xs-8">
-            <div class="sigma-expand" id="sigma-canvas"></div>
+          <div class="col-xs-8">
+              <section class="au-callout">
+                  
+                  <p>The diagram shows the <b>functional network</b> created by .gov.au users as they move from webpage to webpage.<br/>  Node size shows the relative <b>importance</b> of page</p>
+              </section>
+              
+              <div class="sigma-parent">
+              <div class="sigma-expand" id="sigma-canvas"></div>
             <div id="zoom">
-              <div class="z" rel="out"><i class="fa fa-minus"></i></div>
-              <div class="z" rel="in"><i class="fa fa-plus"></i></div>
-              <div class="z" rel="center">
+              <span class="z" rel="out"><i class="fa fa-minus"></i></span>
+              <span class="z" rel="in"><i class="fa fa-plus"></i></span>
+              <span class="z" rel="center">
                 <i class=" fa fa-arrows-alt"></i>
-              </div>
+              </span>
             </div>
           </div>
 
-          <div id="attributepane">
-            <div class="text">
-              <div title="Close" class="left-close returntext">
-                <div class="c cf"><span>Return to the full network</span></div>
-              </div>
-              <div class="headertext">
-                <span>Information Pane</span>
-              </div>
-              <div class="nodeattributes">
-                <div class="name"></div>
-                <div class="data"></div>
-                <div class="p">Connections:</div>
-                <div class="link">
-                  <ul></ul>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
+
+          
+      </section>
+                  <section class="au-callout au-callout--dark">
+          <h2 class="au-callout__heading">Lorem ipsum dolor sit amet</h2>
+          <p> Consectetur adipiscing elit. Nulla a consectetur sapien. Donec hendrerit, sapien vitae iaculis sollicitudin, arcu mi sagittis diam, sed porta lorem lectus sit amet risus. Mauris ultricies, augue et elementum dictum, diam odio luctus velit, at tincidunt libero arcu at erat. Nam eros nulla, lacinia sit amet vestibulum eu, laoreet non libero. Sed sagittis leo ac risus ornare, sed ultrices est cursus. Vestibulum suscipit nunc in nisl blandit consectetur. Morbi mollis ullamcorper erat at placerat.
+
+              Donec tincidunt sapien quam, sit amet accumsan orci eleifend tincidunt. Mauris tempus, neque blandit commodo accumsan, tellus lacus finibus mauris, ut venenatis magna nunc condimentum elit. Donec placerat lorem in nisi malesuada, tincidunt aliquet diam ultricies. In bibendum feugiat tortor in ultrices. Pellentesque dignissim diam et sem eleifend, ac maximus quam lacinia. Sed efficitur leo vel venenatis maximus. Pellentesque pellentesque eu purus vel lobortis. Sed non auctor nunc. Aliquam vulputate pellentesque sem, elementum mattis turpis.
+              
+              Phasellus vel mauris non neque suscipit suscipit eu ac elit. In venenatis ut nisl vitae dapibus. In venenatis, nisi luctus tincidunt ullamcorper, lectus metus suscipit nunc, eu vestibulum erat tortor ut lorem. Fusce ultrices, sapien ut ornare imperdiet, nunc eros pellentesque mi, ut vestibulum massa augue sit amet mauris. Donec convallis lectus id est dignissim, non viverra ex elementum. Suspendisse a scelerisque nibh. Vivamus scelerisque ac nisl ut fermentum. Duis semper purus vitae felis congue dictum. Curabitur felis mauris, gravida id enim at, aliquam iaculis ligula. Nulla facilisi. Pellentesque dictum magna ac nibh posuere gravida.
+             </p>
       </section>
     </main>
     <footer
