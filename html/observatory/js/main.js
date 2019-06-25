@@ -76,7 +76,7 @@ function initSigma(config) {
       defaultLabelHoverColor: "#fff",
       labelThreshold: 100,
       defaultEdgeType: "curve",
-      edgeColor: "default",
+      edgeColor: "source",
       hoverFontStyle: "bold",
       fontStyle: "bold",
       activeFontStyle: "bold",
@@ -417,7 +417,6 @@ function nodeNormal() {
       a.color = a.attr["true_color"];
       a.attr["grey"] = false;
     });
-    sigInst.drawingProperties("edgeColor", "source");
     sigInst.iterNodes(function(a) {
       a.attr["drawBorder"] = false;
       a.hidden = false;
@@ -467,7 +466,6 @@ function nodeActive(a) {
     (b.hidden = false), (b.attr.color = "rgba(0, 0, 0, 1)");
   });
   var f = [];
-  sigInst.drawingProperties("edgeColor", "source");
   sigInst.iterNodes(function(a) {
     a.hidden = true;
     a.attr.lineWidth = false;
