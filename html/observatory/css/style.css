@@ -5,9 +5,13 @@ html,body {
 	margin: 0px;
 	padding: 0px;
 }
-main .au-body {
+main.au-body {
 	background: #eee !important;
 	padding: 0 20px 0 20px;
+}
+.explanation {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
 }
 .sigma-parent {
 	position: relative;
