@@ -407,6 +407,7 @@ function showGroups(a) {
 
 function nodeNormal() {
   if (true != $GP.calculating && false != sigInst.detail) {
+ sigInst.drawingProperties("edgeColor", "source");
     showGroups(false);
     $GP.calculating = true;
     sigInst.detail = true;
@@ -631,6 +632,7 @@ function showCluster(a) {
   var b = sigInst.clusters[a];
   if (b && 0 < b.length) {
     //showGroups(false);
+ sigInst.drawingProperties("edgeColor", "default");
     sigInst.detail = true;
     b.sort();
     sigInst.iterEdges(function(a) {
