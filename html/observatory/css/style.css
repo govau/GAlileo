@@ -5,11 +5,19 @@ html,body {
 	margin: 0px;
 	padding: 0px;
 }
-
+main.au-body {
+	background: #eee !important;
+	padding: 0 20px 0 20px;
+}
+.explanation {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
 .sigma-parent {
 	position: relative;
 	height: 100%;
 	min-height: 800px !important;
+	background: white;
 }
 
 .sigma-expand {
@@ -31,21 +39,16 @@ canvas#sigma_bg_1 {
 }
 
 #attributepane {
-   	display: block;	
-	display: none;
-    position:absolute;
+   	display: none;
     height:auto;
-    bottom:0;
-    top:50%;
-    right:0;
-	width: 240px;
+
 	background-color: #fff;
 	margin: 0;
 	word-wrap: break-word;
 	background-color:rgba(255,255,255,0.8);
-	border: 1px solid #ccc;
 	padding: 0px 18px 0px 18px;	
 	z-index: 1;
+	width: 80%;
 }
 
 
@@ -107,7 +110,8 @@ float: left;
 
 #attributepane .nodeattributes {
 	display:block;
-	height:85%;
+	max-width: 13em;
+	max-height: 400px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	border-bottom:1px solid #999;
@@ -152,13 +156,12 @@ font-size:14px;
 
 .left-close {
 background-image: url('../images/fancybox_sprite.png');
-margin-left:-37px;
+float: right;
 z-index:99999;
 cursor: pointer;
 padding-left:31px;
 line-height:36px;
 background-repeat: no-repeat;
-margin-bottom:25px;
 font-weight: bold;
 font-size:14px;
 
@@ -331,16 +334,16 @@ margin-left: 5px;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	width: 240px;
-	height: 80px;
 	position: relative;
-	right: 5%;
+	left: 90%;
 	bottom: 5%;
+width: 60px;
 }
-#zoom .div {
+.z {
+	width: 16px;
 	display: inline-block;
+	cursor:pointer;
 }
-
 .line {
 	font-size: 12px;
 	color: #000;
@@ -428,9 +431,35 @@ display: none;
 }
 #websites li::before {
   content: "\2588 ";  /* Add content: \2022 is the CSS Code/unicode for a square block */
-  color: red; /* Change the color */
   font-weight: bold; /* If you want it to be bold */
   display: inline-block; /* Needed to add space between the bullet and the text */ 
   width: 1em; /* Also needed for space (tweak if needed) */
   margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+.ui-all {
+	margin-left: 10px;
+}
+/* https://philipwalton.github.io/solved-by-flexbox/demos/holy-grail/ */
+.HolyGrail,
+.HolyGrail-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.HolyGrail-nav {
+  order: -1;
+}
+
+@media (min-width: 768px) {
+  .HolyGrail-body {
+    flex-direction: row;
+    flex: 1;
+  }
+  .HolyGrail-content {
+    flex: 1;
+  }
+  .HolyGrail-nav, .HolyGrail-ads {
+    /* 12em is the width of the columns */
+    flex: 0 0 12em;
+  }
 }
