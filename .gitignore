@@ -160,3 +160,6 @@ htpasswd
 *.gexf
 *.graphml
 Staticfile.auth
+*.iml
+*.ipr
+*.iws
