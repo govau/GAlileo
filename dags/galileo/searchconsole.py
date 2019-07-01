@@ -7,7 +7,7 @@ except ImportError:
     import galileo
 
 
-def generate_search_query_report(property_uri,
+def generate_web_search_query_report(property_uri,
                                  days=10,
                                  end_date=datetime.date.today()):
     # Authenticate and construct service.

@@ -21,8 +21,6 @@ with models.DAG(
         default_args=default_dag_args) as dag:
     project_id = models.Variable.get('GCP_PROJECT','dta-ga-bigquery')
 
-    view_id = '69211100'
-    timestamp = '20190425'
     temp_table = 'benchmark_%s_%s' % (view_id, timestamp)
     query = """
     CREATE TABLE `{{params.project_id}}.tmp.{{ params.temp_table }}`

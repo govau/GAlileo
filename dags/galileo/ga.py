@@ -1,4 +1,5 @@
 import tablib
+
 try:
     from . import galileo
 except ImportError:
@@ -39,5 +40,51 @@ def generate_accounts_views_index():
         f.write(data.csv)
 
 
+def print_response(response):
+    """Parses and prints the Analytics Reporting API V4 response.
+
+    Args:
+      response: An Analytics Reporting API V4 response.
+    """
+    for report in response.get('reports', []):
+        columnHeader = report.get('columnHeader', {})
+        dimensionHeaders = columnHeader.get('dimensions', [])
+        metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
+
+        for row in report.get('data', {}).get('rows', []):
+            dimensions = row.get('dimensions', [])
+            dateRangeValues = row.get('metrics', [])
+
+            for header, dimension in zip(dimensionHeaders, dimensions):
+                print(header + ': ' + dimension)
+
+            for i, values in enumerate(dateRangeValues):
+                print('Date range: ' + str(i))
+                for metricHeader, value in zip(metricHeaders, values.get('values')):
+                    print(metricHeader.get('name') + ': ' + value)
+
+
+def get_events(view_id, category, action):
+    service = galileo.get_service(api_name='analyticsreporting', api_version='v4',
+                                  scopes=['https://www.googleapis.com/auth/analytics.readonly'])
+    response = service.reports().batchGet(
+        body={
+            'reportRequests': [
+                {
+                    'viewId': view_id,
+                    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+                    'metrics': [{'expression': 'ga:totalEvents'}],
+                    'dimensions': [{'name': 'ga:eventLabel'}],
+                    'orderBys': '-ga:totalEvents',
+                    'filtersExpression': 'ga:eventCategory==ElasticSearch-Results;ga:eventAction==Successful Search',
+                    'samplingLevel': 'FASTER'
+                }]
+        }
+    ).execute()
+    print_response(response)
+
+
 if __name__ == '__main__':
-    generate_accounts_views_index()
+    # generate_accounts_views_index()
+    print(get_events(114274207, "ElasticSearch-Results" "Successful Search"))
+    # print(get_events(114274207, "ElasticSearch-Results Clicks","Page Result Click"))
