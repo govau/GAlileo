@@ -1,5 +1,4 @@
 import tablib
-
 try:
     from . import galileo
 except ImportError:
@@ -40,31 +39,8 @@ def generate_accounts_views_index():
         f.write(data.csv)
 
 
-def print_response(response):
-    """Parses and prints the Analytics Reporting API V4 response.
-
-    Args:
-      response: An Analytics Reporting API V4 response.
-    """
-    for report in response.get('reports', []):
-        columnHeader = report.get('columnHeader', {})
-        dimensionHeaders = columnHeader.get('dimensions', [])
-        metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
-
-        for row in report.get('data', {}).get('rows', []):
-            dimensions = row.get('dimensions', [])
-            dateRangeValues = row.get('metrics', [])
-
-            for header, dimension in zip(dimensionHeaders, dimensions):
-                print(header + ': ' + dimension)
-
-            for i, values in enumerate(dateRangeValues):
-                print('Date range: ' + str(i))
-                for metricHeader, value in zip(metricHeaders, values.get('values')):
-                    print(metricHeader.get('name') + ': ' + value)
-
-
-def get_events(view_id, category, action):
+def get_events(name, view_id, category, action):
+    print('fetching',name,'for',view_id)
     service = galileo.get_service(api_name='analyticsreporting', api_version='v4',
                                   scopes=['https://www.googleapis.com/auth/analytics.readonly'])
     response = service.reports().batchGet(
@@ -72,19 +48,37 @@ def get_events(view_id, category, action):
             'reportRequests': [
                 {
                     'viewId': view_id,
-                    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+                    'dateRanges': [{'startDate': '30daysAgo', 'endDate': 'today'}],
                     'metrics': [{'expression': 'ga:totalEvents'}],
                     'dimensions': [{'name': 'ga:eventLabel'}],
-                    'orderBys': '-ga:totalEvents',
-                    'filtersExpression': 'ga:eventCategory==ElasticSearch-Results;ga:eventAction==Successful Search',
-                    'samplingLevel': 'FASTER'
+                    'orderBys': [{"fieldName":'ga:totalEvents',"sortOrder": "DESCENDING"}],
+                    'filtersExpression': 'ga:totalEvents>10;ga:eventCategory=='+category+';ga:eventAction=='+action,
+                    'pageSize': 100000
                 }]
         }
     ).execute()
-    print_response(response)
+    result = []
+    for row in response.get('reports', [])[0].get('data', {}).get('rows', []):
+        if row:
+            # print(row['dimensions'][0], row['metrics'][0]['values'][0])
+            result.append({"query":row['dimensions'][0], name: int(row['metrics'][0]['values'][0])})
+
+    return result
 
 
 if __name__ == '__main__':
     # generate_accounts_views_index()
-    print(get_events(114274207, "ElasticSearch-Results" "Successful Search"))
-    # print(get_events(114274207, "ElasticSearch-Results Clicks","Page Result Click"))
+
+    searches = get_events('impressions', '114274207', "ElasticSearch-Results", "Successful Search")
+    search_clicks = get_events('clicks', '114274207', "ElasticSearch-Results Clicks", "Page Result Click")
+    from collections import defaultdict
+    d = defaultdict(dict)
+    for l in (searches, search_clicks):
+        for elem in l:
+            d[elem['query'].lower()].update(elem)
+    data = tablib.Dataset(headers=['query','impressions','clicks'])
+    for l in d.values():
+        data.append((l['query'],l.get('impressions'), l.get('clicks')))
+    import datetime
+    with open(galileo.DATA_DIR+'internalsearch_114274207_'+datetime.datetime.now().strftime('%Y%m%d')+'.csv', 'wt') as f:
+        f.write(data.csv)

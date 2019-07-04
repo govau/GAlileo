@@ -1,6 +1,7 @@
 from __future__ import print_function
 import datetime
 import time
+import os
 import tablib
 
 from airflow import models
@@ -8,7 +9,8 @@ from airflow.operators import python_operator
 from airflow.contrib.operators import bigquery_to_gcs
 from airflow.contrib.operators import bigquery_operator
 
-from galileo import domain_slug
+from galileo import DATA_DIR, domain_slug
+from galileo.ga import get_events
 from galileo.searchconsole import generate_web_search_query_report
 
 default_dag_args = {
@@ -16,8 +18,25 @@ default_dag_args = {
     # fixed point in time rather than dynamically, since it is evaluated every
     # time a DAG is parsed. See:
     # https://airflow.apache.org/faq.html#what-s-the-deal-with-start-date
-    'start_date': datetime.datetime(2019, 7, 1),
+    'start_date': datetime.datetime(2019, 7, 4),
 }
+
+
+def export_search_events():
+    searches = get_events('impressions', '114274207', "ElasticSearch-Results", "Successful Search")
+    search_clicks = get_events('clicks', '114274207', "ElasticSearch-Results Clicks", "Page Result Click")
+    from collections import defaultdict
+    d = defaultdict(dict)
+    for l in (searches, search_clicks):
+        for elem in l:
+            d[elem['query'].lower()].update(elem)
+    data = tablib.Dataset(headers=['query','impressions','clicks'])
+    for l in d.values():
+        data.append((l['query'],l.get('impressions'), l.get('clicks')))
+    if not os.path.isdir(DATA_DIR+'/searchqueries'):
+        os.mkdir(DATA_DIR+'/searchqueries')
+    with open(DATA_DIR+'/searchqueries/internalsearch_114274207_'+datetime.date.now().strftime('%Y%m%d')+'.csv', 'wt') as f:
+        f.write(data.csv)
 
 with models.DAG(
         'search_reporter',
