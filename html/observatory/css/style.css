@@ -453,13 +453,13 @@ display: none;
 @media (min-width: 768px) {
   .HolyGrail-body {
     flex-direction: row;
-    flex: 1;
+    flex: 1 0 auto;
   }
   .HolyGrail-content {
-    flex: 1;
+    flex: 1 0 auto;
   }
   .HolyGrail-nav, .HolyGrail-ads {
     /* 12em is the width of the columns */
-    flex: 0 0 12em;
+    flex: 0 0 17em;
   }
 }
