@@ -14,15 +14,12 @@ default_dag_args = {
     'start_date': yesterday,
 }
 
-
 with models.DAG(
         'ga_benchmark',
         schedule_interval=datetime.timedelta(days=1),
         default_args=default_dag_args) as dag:
-    project_id = models.Variable.get('GCP_PROJECT','dta-ga-bigquery')
+    project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
 
-    view_id = '69211100'
-    timestamp = '20190425'
     temp_table = 'benchmark_%s_%s' % (view_id, timestamp)
     query = """
     CREATE TABLE `{{params.project_id}}.tmp.{{ params.temp_table }}`
@@ -58,6 +55,7 @@ with models.DAG(
     export_benchmark_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_benchmark_to_gcs',
         source_project_dataset_table="%s.tmp.%s" % (project_id, temp_table),
-        destination_cloud_storage_uris=["gs://us-central1-maxious-airflow-64b78389-bucket/data/%s.csv" % (temp_table,)],
+        destination_cloud_storage_uris=["gs://%s/data/%s.csv" % (
+        models.Variable.get('AIRFLOW_BUCKET', 'us-east1-dta-airflow-b3415db4-bucket'), temp_table)],
         export_format='CSV')
     query_benchmark >> export_benchmark_to_gcs

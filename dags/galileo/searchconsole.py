@@ -1,15 +1,16 @@
 import tablib
 import datetime
 import os
+
 try:
     from . import galileo
 except ImportError:
     import galileo
 
 
-def generate_search_query_report(property_uri,
-                                 days=10,
-                                 end_date=datetime.date.today()):
+def generate_web_search_query_report(property_uri,
+                                     days=10,
+                                     end_date=datetime.date.today()):
     # Authenticate and construct service.
     service = galileo.get_service(
         api_name='webmasters',
@@ -63,9 +64,9 @@ def generate_search_query_report(property_uri,
             page_start += 25000
         else:
             print("done ", property_uri)
-    if not os.path.isdir(galileo.DATA_DIR+'/searchqueries'):
-        os.mkdir(galileo.DATA_DIR+'/searchqueries')
-    with open(galileo.DATA_DIR + '/searchqueries/{}-searchqueries-{}-{}.csv'.format(
+    if not os.path.isdir(galileo.DATA_DIR + '/searchqueries'):
+        os.mkdir(galileo.DATA_DIR + '/searchqueries')
+    with open(galileo.DATA_DIR + '/searchqueries/{}_websearch_{}_{}.csv'.format(
             galileo.domain_slug(property_uri),
             data_start_date.replace('-', ''),
             data_end_date.replace('-', ''),

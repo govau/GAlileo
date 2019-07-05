@@ -9,17 +9,18 @@ from apache_beam.io import WriteToText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
+
 def run(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--input',
                         dest='input',
                         default='gs://us-central1-maxious-airflow-64b78389-bucket/data/benchmark_69211100_20190425.csv',
-    #'../../data/benchmark_69211100_20190425.csv',
+                        # '../../data/benchmark_69211100_20190425.csv',
                         help='Input file to process.')
     parser.add_argument('--output',
                         dest='output',
                         default='gs://us-central1-maxious-airflow-64b78389-bucket/data/tally_69211100_20190425.csv',
-    #'../../data/tally_69211100_20190425.csv',
+                        # '../../data/tally_69211100_20190425.csv',
                         help='Output file to write results to.')
     known_args, pipeline_args = parser.parse_known_args(argv)
 

@@ -10,7 +10,7 @@ def test_dag_import():
     if __package__ is None:
         import sys
         from os import path
-        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
         import ga_daily_reporter as module
     else:
         from . import ga_daily_reporter as module

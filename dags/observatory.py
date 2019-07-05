@@ -46,4 +46,4 @@ with models.DAG(
                                                     'cf v3-push observatory-blue &&'
                                                     'cf map-route observatory-blue apps.y.cld.gov.au -n observatory &&'
                                                     'cf unmap-route observatory-blue apps.y.cld.gov.au -n observatory-green'
-                                                    .format(GCS_BUCKET=GCS_BUCKET, HTPASSWD=htpasswd)])
+                                         .format(GCS_BUCKET=GCS_BUCKET, HTPASSWD=htpasswd)])

@@ -9,8 +9,12 @@ if not os.path.isdir(DATA_DIR):
 
 
 def get_service(api_name, api_version, scopes):
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        DATA_DIR + '/test-credentials.json', scopes=scopes)
+    if scopes == ['https://www.googleapis.com/auth/webmasters.readonly']:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            DATA_DIR + '/test-credentials.json', scopes=scopes)
+    else:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            DATA_DIR + '/credentials.json', scopes=scopes)
 
     # Build the service object.
     service = build(api_name, api_version, credentials=credentials)
