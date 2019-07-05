@@ -1,4 +1,5 @@
 import tablib
+
 try:
     from . import galileo
 except ImportError:
@@ -40,7 +41,7 @@ def generate_accounts_views_index():
 
 
 def get_events(name, view_id, category, action):
-    print('fetching',name,'for',view_id)
+    print('fetching', name, 'for', view_id)
     service = galileo.get_service(api_name='analyticsreporting', api_version='v4',
                                   scopes=['https://www.googleapis.com/auth/analytics.readonly'])
     response = service.reports().batchGet(
@@ -51,8 +52,8 @@ def get_events(name, view_id, category, action):
                     'dateRanges': [{'startDate': '30daysAgo', 'endDate': 'today'}],
                     'metrics': [{'expression': 'ga:totalEvents'}],
                     'dimensions': [{'name': 'ga:eventLabel'}],
-                    'orderBys': [{"fieldName":'ga:totalEvents',"sortOrder": "DESCENDING"}],
-                    'filtersExpression': 'ga:totalEvents>10;ga:eventCategory=='+category+';ga:eventAction=='+action,
+                    'orderBys': [{"fieldName": 'ga:totalEvents', "sortOrder": "DESCENDING"}],
+                    'filtersExpression': 'ga:totalEvents>10;ga:eventCategory==' + category + ';ga:eventAction==' + action,
                     'pageSize': 100000
                 }]
         }
@@ -61,7 +62,7 @@ def get_events(name, view_id, category, action):
     for row in response.get('reports', [])[0].get('data', {}).get('rows', []):
         if row:
             # print(row['dimensions'][0], row['metrics'][0]['values'][0])
-            result.append({"query":row['dimensions'][0], name: int(row['metrics'][0]['values'][0])})
+            result.append({"query": row['dimensions'][0], name: int(row['metrics'][0]['values'][0])})
 
     return result
 
@@ -72,13 +73,16 @@ if __name__ == '__main__':
     searches = get_events('impressions', '114274207', "ElasticSearch-Results", "Successful Search")
     search_clicks = get_events('clicks', '114274207', "ElasticSearch-Results Clicks", "Page Result Click")
     from collections import defaultdict
+
     d = defaultdict(dict)
     for l in (searches, search_clicks):
         for elem in l:
             d[elem['query'].lower()].update(elem)
-    data = tablib.Dataset(headers=['query','impressions','clicks'])
+    data = tablib.Dataset(headers=['query', 'impressions', 'clicks'])
     for l in d.values():
-        data.append((l['query'],l.get('impressions'), l.get('clicks')))
+        data.append((l['query'], l.get('impressions'), l.get('clicks')))
     import datetime
-    with open(galileo.DATA_DIR+'internalsearch_114274207_'+datetime.datetime.now().strftime('%Y%m%d')+'.csv', 'wt') as f:
+
+    with open(galileo.DATA_DIR + 'internalsearch_114274207_' + datetime.datetime.now().strftime('%Y%m%d') + '.csv',
+              'wt') as f:
         f.write(data.csv)

@@ -21,7 +21,7 @@ project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
 
 # to get view ids query "SELECT schema_name FROM INFORMATION_SCHEMA.SCHEMATA where schema_name < 'a'"
 view_ids = set(['34154705', '100180008', '88992271', '71597546', '101713735', '69211100', '86149663',
-                '99993137',  '34938005', '70635257', '80842702', '101163468', '90974611',
+                '99993137', '34938005', '70635257', '80842702', '101163468', '90974611',
                 '77664740', '104411629', '100832347', '95074916', '53715324', '95014024', '134969186',
                 '31265425', '47586269', '95068310', '98362688', '104395490', '100095673', '5289745', '100136570',
                 '77084214', '100095166', '85844330', '98349896', '129200625', '69522323', '98360372', '98349897'])
@@ -103,10 +103,9 @@ with models.DAG(
         'wildebeest',
         schedule_interval=datetime.timedelta(days=7),
         default_args=default_dag_args) as dag:
-
     query, subqueries, temp_table = generate_host_query(view_ids)
     query_wildebeest_host = bigquery_operator.BigQueryOperator(
-        task_id='query_wildebeest_host' ,
+        task_id='query_wildebeest_host',
         bql=query, use_legacy_sql=False, params={
             'project_id': project_id,
             'temp_table': temp_table,
