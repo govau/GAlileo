@@ -7,9 +7,9 @@ options(googleAuthR.scopes.selected = "https://www.googleapis.com/auth/analytics
 gar_auth_service("credentials.json")
 
 gg <- ga_account_list() %>%
-    select(accountId, internalWebPropertyId,websiteUrl, webPropertyId, level, type, viewId, viewName) %>%
-    filter(level=="PREMIUM" & type == "WEB") %>%
+    select(accountId, internalWebPropertyId, websiteUrl, webPropertyId, level, type, viewId, viewName) %>%
+    filter(level == "PREMIUM" & type == "WEB") %>%
     distinct(webPropertyId, .keep_all = TRUE)
 
 name <- paste0("GA360-", format(Sys.time(), '%d%b%Y'), ".csv")
-write.csv(gg,name)
+write.csv(gg, name)
