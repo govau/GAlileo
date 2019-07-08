@@ -163,3 +163,4 @@ Staticfile.auth
 *.iml
 *.ipr
 *.iws
+notebooks/*.html
