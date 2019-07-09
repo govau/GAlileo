@@ -28,9 +28,9 @@ def export_search_events():
     for l in (searches, search_clicks):
         for elem in l:
             d[elem['query'].lower()].update(elem)
-    data = tablib.Dataset(headers=['query', 'impressions', 'clicks'])
+    data = tablib.Dataset(headers=['query', 'page', 'impressions', 'clicks'])
     for l in d.values():
-        data.append((l['query'], l.get('impressions'), l.get('clicks')))
+        data.append((l['query'], '114274207', l.get('impressions'), l.get('clicks')))
     if not os.path.isdir(galileo.DATA_DIR + '/searchqueries'):
         os.mkdir(galileo.DATA_DIR + '/searchqueries')
     with open(galileo.DATA_DIR + '/searchqueries/114274207_internalsearch_' + datetime.datetime.now().strftime(
@@ -69,6 +69,7 @@ with models.DAG(
               expiration_timestamp=TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
             ) AS
                         SELECT lower(replace(REGEXP_EXTRACT(page.pagePath, r"{{ params.search_param }}=(.*?)(?:&|$)"),"+"," ")) query, 
+                        "{{params.domain}}" page,
                         count(*) impressions 
             FROM
               `dta-ga-bigquery.{{params.view_id}}.ga_sessions_*`,
@@ -89,6 +90,7 @@ with models.DAG(
                 'start': start,
                 'end': end,
                 'temp_table': temp_table,
+                'domain': d['domain'],
                 'search_param': d['search_param']
             })
         export_internalsearch_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
