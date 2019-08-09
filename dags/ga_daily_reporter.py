@@ -36,7 +36,7 @@ def combine_tally():
         for row in d:
             data.append(row)
 
-    with open(DATA_DIR + 'tally_69211100_20190425.csv', 'wt') as f:
+    with open(DATA_DIR + 'tally_69211100_20190425.csv', 'wt', newline='')  as f:
         f.write('path,hits\n')
         f.write(data.csv)
 

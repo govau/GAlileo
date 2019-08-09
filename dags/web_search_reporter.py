@@ -1,6 +1,5 @@
 from __future__ import print_function
 import datetime
-import time
 import os
 import tablib
 
@@ -35,7 +34,7 @@ def export_search_events():
         os.mkdir(galileo.DATA_DIR + '/searchqueries')
     with open(galileo.DATA_DIR + '/searchqueries/114274207_internalsearch_' + datetime.datetime.now().strftime(
             '%Y%m%d') + '.csv',
-              'wt') as f:
+              'wt', newline='') as f:
         f.write(data.csv)
 
 

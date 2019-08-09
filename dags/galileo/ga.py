@@ -32,11 +32,11 @@ def generate_accounts_views_index():
 
             for view in profiles.get('items'):
                 # print '    view',view['id'], view['name']
-                # return the first view (profile) id.
+                # return each view ID
                 data.append([account['id'], account['name'], property['id'], property['name'],
                              property.get('level'), property.get('websiteUrl'),
                              property.get('defaultProfileId'), view['id'], view['name']])
-    with open(galileo.DATA_DIR + '/ga_accounts_views_index.csv', 'wt') as f:
+    with open(galileo.DATA_DIR + '/ga_accounts_views_index.csv', 'wt', newline='')  as f:
         f.write(data.csv)
 
 
@@ -84,5 +84,5 @@ if __name__ == '__main__':
     import datetime
 
     with open(galileo.DATA_DIR + 'internalsearch_114274207_' + datetime.datetime.now().strftime('%Y%m%d') + '.csv',
-              'wt') as f:
+              'wt', newline='')  as f:
         f.write(data.csv)
