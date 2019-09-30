@@ -48,7 +48,7 @@ with models.DAG(
         python_callable=export_search_events)
 
     for domain in ["https://data.gov.au", "https://www.dta.gov.au", "https://www.domainname.gov.au/",
-                   "https://marketplace.service.gov.au"]:
+                   "https://marketplace.service.gov.au", "https://www.australia.gov.au"]:
         web_searchqueries = python_operator.PythonOperator(
             task_id='web_searchqueries_' + galileo.domain_slug(domain),
             python_callable=searchconsole.generate_web_search_query_report,
