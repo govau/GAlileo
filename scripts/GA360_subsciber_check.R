@@ -39,7 +39,6 @@ GaMerge <- left_join(x = GaMerge,y = au_201909[,c("ID", "Billable.Hit.Volume")] 
 colnames(GaMerge) <- c("ID", "Oct18","Nov18", "Dec18", "Jan19", "Feb19", "Mar19", "Apr19", "May19", "Jun19", "Jul19", "Aug19", "Sept19")
 
 GaMerge$Type <- au_201908$Type
-#GaMerge[is.na(GaMerge)] <- 0 
 #Filtering by Premium only
 GaFilt <- filter(GaMerge, Type == "Premium")
 GaFilt[is.na(GaFilt)] <- 0 
