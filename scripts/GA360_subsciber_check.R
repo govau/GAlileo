@@ -46,7 +46,6 @@ GaFilt[is.na(GaFilt)] <- 0
 
 GaFilt <- left_join(GaFilt, ua_to_agency_mapping, by = "ID")
 #rearrange column names
-
 GaFilt$agency_mean <- as.integer(rowMeans(GaFilt[,2:13]))
 GaFilt$agency_sum <- as.numeric(rowSums(GaFilt[,2:13]))
 
