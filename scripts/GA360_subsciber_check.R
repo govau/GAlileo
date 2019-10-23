@@ -4,7 +4,7 @@ setwd("~/Documents/usage search/GA Subscriber usage")
 
 # Importing datasets, you will need to download the raw data 
 # from Google Marketing platform, organisation settings/usage
-# ua_to_agency_mapping is a csv of Agency name and their associated range of UA id's
+# ua_to_agency_mapping is a custom generated csv of Agency name and their associated range of UA id's
 ua_to_agency_mapping <- read.csv("data/ua_to_agency_mapping.csv", stringsAsFactors = FALSE)
 au_201810 <- read.csv("data/analytics_usage_201810.csv", stringsAsFactors = FALSE)
 au_201811 <- read.csv("data/analytics_usage_201811.csv", stringsAsFactors = FALSE)
