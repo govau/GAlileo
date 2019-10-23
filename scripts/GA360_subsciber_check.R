@@ -43,6 +43,7 @@ GaMerge$Type <- au_201908$Type
 GaFilt <- filter(GaMerge, Type == "Premium")
 GaFilt[is.na(GaFilt)] <- 0 
 
+# Add agency name from mapping file
 GaFilt <- left_join(GaFilt, ua_to_agency_mapping, by = "ID")
 #rearrange column names
 GaFilt$agency_mean <- as.integer(rowMeans(GaFilt[,2:13]))
