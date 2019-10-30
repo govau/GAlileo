@@ -1,7 +1,7 @@
 # gov.au Observatory
 
 ## Contents
-* [About](#About gov.au Observatory)
+
 
 
 ## About gov.au Observatory
@@ -17,6 +17,14 @@ The Observatory does not:
 
 ### Subscribing
 If you're working in government and would like to join or learn more, please visit the [Observatory](https://www.dta.gov.au/our-projects/govau-observatory) on [dta.gov.au](https://www.dta.gov.au/).
+
+### Blog articles we have written
+We are putting out blog content our first blog can be found here:
+- [gov.au Observatory: Digital Constellations from user journeys](https://www.dta.gov.au/blogs/govau-observatory-digital-constellations-user-journeys)
+
+### Blog articles we recommend
+- blog1
+- blog2
 
 ## About this repository
 This repository contains our work in progress:
@@ -34,3 +42,4 @@ To run the HTML version, download augov.gexf from /data on Google Cloud Storage,
 ### Using your own data 
 We currently use a customised version of Gephi's .gexf file format, adding a "domain" column. 
 You may be able to use a tool like [HttpGraph](https://gephi.org/plugins/#/plugin/httpgraph) as a starting point to create your own.
+
