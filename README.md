@@ -10,25 +10,25 @@ To quantify interactions with government services, creating insights that suppor
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## About gov.au Observatory
+# About gov.au Observatory
 The gov.au Observatory aims to quantify interactions with government services and support delivery teams to improve their own products and services. 
 Using anonymous analytics data, we are creating prototypes that visualise user intent, language, behaviour and service outcomes. We want to show where individual services fit in to the broader environment.
 We want government to deliver the best services it possibly can, and part of that is [measuring performance](https://www.dta.gov.au/help-and-advice/digital-service-standard/digital-service-standard-criteria/11-measure-performance). The Observatory will help to give context and quantifiable measures to delivery teams striving to improve.
 
-### Privacy
+## Privacy
 The Observatory does not:
 - use any personally identifiable information (PII),
 - sell data,
 - provide data access to third parties unless strictly required under our [Terms of Service](https://www.dta.gov.au/our-projects/google-analytics-government/dta-terms-service-google-analytics-360).
 
-### Subscribing
+## Subscribing
 If you're working in government and would like to join or learn more, please visit the [Observatory](https://www.dta.gov.au/our-projects/govau-observatory) on [dta.gov.au](https://www.dta.gov.au/).
 
-### Blog articles we have written
+## Blog articles we have written
 We are putting out blog content our first blog can be found here:
 - [gov.au Observatory: Digital Constellations from user journeys](https://www.dta.gov.au/blogs/govau-observatory-digital-constellations-user-journeys)
 
-### Blog articles we recommend
+## Blog articles we recommend
 - blog1
 - blog2
 
