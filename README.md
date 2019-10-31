@@ -1,7 +1,7 @@
 # gov.au Observatory
 
 ## Contents
-
+[Running the alpha prototypu](#running-the-alpha-prototype)
 
 
 ## About gov.au Observatory
