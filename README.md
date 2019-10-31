@@ -25,7 +25,7 @@ The Observatory does not:
 If you're working in government and would like to join or learn more, please visit the [Observatory](https://www.dta.gov.au/our-projects/govau-observatory) on [dta.gov.au](https://www.dta.gov.au/).
 
 
-## About this repository
+# About this repository
 This repository contains our work in progress:
 * /dags - Airflow data pipelines. See [Airflow 101](AIRFLOW101.md) for more information.
   * /docker - A docker image we use in data pipelines with R packages
@@ -41,6 +41,8 @@ To run the HTML version, download augov.gexf from /data on Google Cloud Storage,
 ### Using your own data 
 We currently use a customised version of Gephi's .gexf file format, adding a "domain" column. 
 You may be able to use a tool like [HttpGraph](https://gephi.org/plugins/#/plugin/httpgraph) as a starting point to create your own.
+
+# Some reading 
 
 ## Blog articles we have written
 We are putting out blog content our first blog can be found here:
