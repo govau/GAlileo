@@ -1,7 +1,10 @@
 # gov.au Observatory
+To quantify interactions with government services, creating insights that support and empower prodcut teams to deliver positive user outcomes
 
 ## Contents
 * [About gov.au Observatory](#about-gov.au-observatory)
+  * [Privacy](#privacy)
+  * [Subscribing](#subscribing)
 * [About this repository](#about-this-repository)
 * [Running the alpha prototype](#running-the-alpha-prototype)
 
