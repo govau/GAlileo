@@ -1,5 +1,5 @@
 # gov.au Observatory
-To quantify interactions with government services, creating insights that support and empower prodcut teams to deliver positive user outcomes
+To quantify interactions with government services, creating insights that support and empower product teams to deliver positive user outcomes
 
 # Contents
 * [About gov.au Observatory](#about-gov.au-observatory)
