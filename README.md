@@ -1,8 +1,8 @@
 # gov.au Observatory
 
 ## Contents
-[About this repository](#about-this-repository)
-[Running the alpha prototype](#running-the-alpha-prototype)
+* [About this repository](#about-this-repository)
+* [Running the alpha prototype](#running-the-alpha-prototype)
 
 
 
