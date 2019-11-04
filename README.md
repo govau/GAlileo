@@ -1,4 +1,7 @@
 # gov.au Observatory
+[Functional Behaviour diagram (857KB, PDF)](gov-au_observatory-functional_behaviour.pdf) | [Structural Behaviour diagram (2.8MB, PDF)](gov-au_observatory-structural_behaviour.pdf)
+------------ | -------------
+![Functional Behaviour diagram](gov-au_observatory-functional_behaviour-thumbnail.png) | ![Structural Behaviour diagram](gov-au_observatory-structural_behaviour-thumbnail.png)
 
 ## About gov.au Observatory
 The gov.au Observatory aims to quantify interactions with government services and support delivery teams to improve their own products and services. 
