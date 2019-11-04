@@ -1,5 +1,5 @@
 # gov.au Observatory
-[Functional Behaviour diagram (877KB, PDF)](gov-au_observatory-functional_behaviour.pdf) | [Structural Behaviour diagram (6MB, PDF)](gov-au_observatory-structural_behaviour.pdf)
+[Functional Behaviour diagram (857KB, PDF)](gov-au_observatory-functional_behaviour.pdf) | [Structural Behaviour diagram (2.8MB, PDF)](gov-au_observatory-structural_behaviour.pdf)
 ------------ | -------------
 ![Functional Behaviour diagram](gov-au_observatory-functional_behaviour-thumbnail.png) | ![Structural Behaviour diagram](gov-au_observatory-structural_behaviour-thumbnail.png)
 
