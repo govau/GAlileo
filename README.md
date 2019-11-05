@@ -13,6 +13,7 @@ To quantify interactions with government services, creating insights that suppor
 * [About this repository](#about-this-repository)
   * [Selected Examples](#selected-examples)
 * [Running the alpha prototype](#running-the-alpha-prototype)
+* [Some reading](#some-reading)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
