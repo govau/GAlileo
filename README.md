@@ -64,12 +64,12 @@ We currently use a customised version of Gephi's .gexf file format, adding a "do
 You may be able to use a tool like [HttpGraph](https://gephi.org/plugins/#/plugin/httpgraph) as a starting point to create your own.
 
 # Some reading 
-
 ## Blog articles we have written
-We are putting out blog content our first blog can be found here:
+We are putting out blog content, our first blog can be found here:
 - [gov.au Observatory: Digital Constellations from user journeys](https://www.dta.gov.au/blogs/govau-observatory-digital-constellations-user-journeys)
 
 ## Blog articles we recommend
-- blog1
-- blog2
+- https://dataingovernment.blog.gov.uk/2019/05/29/connecting-the-dots-network-science-on-gov-uk/
+- https://snowplowanalytics.com/blog/2018/03/26/building-a-model-for-atomic-event-data-as-a-graph/
+- https://datarunsdeep.com.au/blog/flying-beagle/how-consistently-select-randomly-distributed-sample-rows-bigquery-table
 
