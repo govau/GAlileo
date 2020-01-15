@@ -1,0 +1,147 @@
+/* SQL Create Script for Page view statistics per Day associated with Each page URL and its respective hostname, top level domain and registered domain name
+  The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for periodic/accumulated snapshot; rollup for hostname, top level domain and registered domain name
+
+ Outputs 
+    Statistics:
+      pageview count
+      time spent on page
+    Dimensions:
+      hostname
+      current timestamp
+*/
+
+BEGIN
+  
+  create or replace table dta_customers.pageviews_daily_snapshot_emp
+  as
+--Time spent on Page per hostname
+select
+  GENERATE_UUID() AS uuid,
+  reg_domain,
+  pageviews as pageviews_day,
+  cast(total_time_on_page as numeric) as total_time_on_page_day,
+  datetime(current_timestamp, 'Australia/Sydney') as record_timestamp
+from
+  (
+    select
+      net.reg_domain(hostname) as reg_domain,
+      count(*) as pageviews,
+      sum(time_on_page) as total_time_on_page
+    from
+    (
+      select
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      case
+        when isExit is not null then last_interaction - hit_time
+        else next_pageview - hit_time
+      end as time_on_page,
+      hostname
+     from 
+     (
+      select
+      hostname,
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      last_interaction,
+      lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
+      from
+      (
+        select
+          fullVisitorId,
+          visitStartTime,
+          hostname,
+          pagePath,
+          hit_time,
+          type,
+          isExit,
+          last_interaction
+        from
+          (
+/* Start - Datasets of employment websites */
+           select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+/* End - Datasets of employment websites */
+              )
+            WHERE
+              type = 'PAGE'
+      )))
+  where  net.reg_domain(hostname) is not null
+  group by reg_domain
+  having count(*) > 100
+  )
+  order by reg_domain
+  ;
+  
+  END;
