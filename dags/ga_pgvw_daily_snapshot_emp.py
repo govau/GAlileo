@@ -20,7 +20,7 @@ default_dag_args = {
 
 with models.DAG(
         'pageviews_snapshot',
-        schedule_interval=datetime.timedelta(days=7),
+        schedule_interval=datetime.timedelta(days=1),
         default_args=default_dag_args) as dag:
     project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
     # day = (datetime.date.today() ).strftime("%Y%m%d")
@@ -41,7 +41,7 @@ with models.DAG(
     #         'end': end,
     #         'search_param': d['search_param']
     #     })
-    export_internalsearch_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+    export_pageviews_snapshot_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_internalsearch_to_gcs',
         source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_emp",
         params={
@@ -53,5 +53,5 @@ with models.DAG(
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'pgviews_daily_snapshot_emp')],
         export_format='CSV')
-    # query_internalsearch >>
-    export_internalsearch_to_gcs
+    # query_pageviews_snapshot >>
+    export_pageviews_snapshot_to_gcs
