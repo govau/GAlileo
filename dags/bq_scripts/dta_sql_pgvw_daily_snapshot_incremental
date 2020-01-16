@@ -1,0 +1,254 @@
+/* SQL Incremental Insert Script for Scheduling
+Description: Page view statistics associated with Each page URL and its respective hostname, top level domain and registered domain name
+The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for periodic/accumulated snapshot; rollup for hostname, 
+top level domain and registered domain name
+
+ Outputs 
+    Statistics:
+      pageview count
+      time spent on page
+    Dimensions:
+      hostname
+      current timestamp
+*/
+
+
+BEGIN
+
+create temp table t_dta_pgvw_snap_daily_emp
+as
+-- Time Spent on Page Hostname
+select
+   hostname,
+   count(*) as pageviews,
+   cast(sum(time_on_page) as numeric) as total_time_on_page
+from
+    (
+      select
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      case
+        when isExit is not null then last_interaction - hit_time
+        else next_pageview - hit_time
+      end as time_on_page,
+      hostname
+     from 
+     (
+      select
+      hostname,
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      last_interaction,
+      lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
+      from
+      (
+        select
+          fullVisitorId,
+          visitStartTime,
+          hostname,
+          pagePath,
+          hit_time,
+          type,
+          isExit,
+          last_interaction
+        from
+          (
+ /* Start - Datasets of employment websites */
+           select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+/* End - Datasets of employment websites */
+          )
+            WHERE
+              type = 'PAGE'
+      )))
+  group by hostname  
+  order by hostname
+  ;
+ 
+
+
+-- 1 Incremental Processing for Identical Page with same pageviews
+--   insert into dta_customers.pageviews_daily_snapshot_emp
+select 
+    i.uuid,
+    i.reg_domain,
+    i.hostname,
+    i.tld,
+    t.pageviews - i.pageviews,
+    t.total_time_on_page - i.total_time_on_page,
+    datetime(current_timestamp, 'Australia/Sydney') 
+from        dta_customers.pageviews_daily_snapshot_emp i
+inner join  t_dta_pgvw_av_hname t
+on    i.pagepath = t.pagepath
+  and i.reg_domain = t.reg_domain
+  and i.hostname = t.hostname
+  and i.tld = t.tld
+where
+    i.pageviews = t.pageviews
+and i.exits = t.exits
+and i.total_time_on_page = t.total_time_on_page
+and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
+;
+    
+
+-- 2 Incremental Processing for Identical Page with difference in pageviews
+--   insert into dta_customers.pageviews_daily_snapshot_emp
+select 
+    i.uuid,
+    i.reg_domain,
+    i.hostname,
+    i.tld,
+    t.pageviews - i.pageviews,
+    t.exits - i.exits ,
+    t.total_time_on_page - i.total_time_on_page,
+    case
+    when (t.pageviews - i.pageviews) = (t.exits - i.exits) then 0
+    else (t.total_time_on_page - i.total_time_on_page) / ((t.pageviews - i.pageviews)-(t.exits - i.exits))
+    end,
+    i.pagepath,
+    datetime(current_timestamp, 'Australia/Sydney')
+from        dta_customers.pageviews_daily_snapshot_emp i
+inner join  t_dta_pgvw_av_hname t
+on    i.pagepath = t.pagepath
+  and i.reg_domain = t.reg_domain
+  and i.hostname = t.hostname
+  and i.tld = t.tld
+where
+   i.pageviews <> t.pageviews
+or i.exits <> t.exits
+or cast(i.total_time_on_page as numeric) <> cast(t.total_time_on_page as numeric)
+-- and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
+;
+
+
+-- 3 Incremental Processing for same hostname but different pagepath and pageviews
+--   insert into dta_customers.pageviews_daily_snapshot_emp
+select 
+    GENERATE_UUID(),
+    t.reg_domain,
+    t.hostname,
+    t.tld,
+    t.pageviews,
+    t.exits,
+    t.total_time_on_page,
+    case
+    when t.pageviews = t.exits then 0
+    else t.total_time_on_page / (t.pageviews-t.exits)
+    end,
+    t.pagePath,
+    datetime(current_timestamp, 'Australia/Sydney')
+from        dta_customers.pageviews_daily_snapshot_emp i
+right join  t_dta_pgvw_av_hname t
+on    
+      i.reg_domain = t.reg_domain
+  and i.hostname = t.hostname
+  and i.tld = t.tld
+  and i.pagepath = t.pagepath
+where
+    i.pagepath is null 
+-- and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
+;  
+
+
+-- 4 Incremetnal Processing Insert New Records
+--   insert into dta_customers.pageviews_daily_snapshot_emp
+select 
+    GENERATE_UUID(),
+    t.reg_domain,
+    t.hostname,
+    t.tld,
+    t.pageviews,
+    t.exits,
+    t.total_time_on_page,
+    case
+    when t.pageviews = t.exits then 0
+    else t.total_time_on_page / (t.pageviews-t.exits)
+    end,
+    t.pagePath,
+    datetime(current_timestamp, 'Australia/Sydney')
+from  t_dta_pgvw_av_hname t
+where not exists 
+  (
+   select 1
+   from   dta_customers.pageviews_daily_snapshot_emp i
+   where  
+           i.pagepath = t.pagepath
+   and     i.reg_domain = t.reg_domain
+   and     i.hostname = t.hostname
+   and     i.tld = t.tld
+   and     datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 0
+  )
+;
+
+END;

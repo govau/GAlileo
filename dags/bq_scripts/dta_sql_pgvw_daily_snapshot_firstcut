@@ -12,9 +12,9 @@
 
 BEGIN
   
-  create or replace table dta_customers.pageviews_daily_snapshot_emp
+create or replace table dta_customers.pageviews_daily_snapshot_emp
   as
---Time spent on Page per hostname
+-- Time spent on Page of Registered Domain
 select
   GENERATE_UUID() AS uuid,
   reg_domain,
