@@ -148,7 +148,7 @@ from
 
 
 -- 1 Incremental Processing for Identical Page with same pageviews
---   insert into dta_customers.pageviews_daily_snapshot_emp
+insert into dta_customers.pageviews_daily_snapshot_emp
 select 
     i.uuid,
     i.reg_domain,
@@ -167,8 +167,8 @@ and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record
     
 
 -- 2 Incremental Processing for Identical Page with difference in pageviews
---   insert into dta_customers.pageviews_daily_snapshot_emp
-select 
+insert into dta_customers.pageviews_daily_snapshot_emp
+select
     i.uuid,
     i.reg_domain,
     t.pageviews_day - i.pageviews_day,
@@ -181,12 +181,12 @@ on
 where
    i.pageviews_day <> t.pageviews_day
 or cast(i.total_time_on_page_day as numeric) <> cast(t.total_time_on_page_day as numeric)
--- and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
+and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
 ;
 
 
 -- 3 Incremetnal Processing Insert New Records
---   insert into dta_customers.pageviews_daily_snapshot_emp
+insert into dta_customers.pageviews_daily_snapshot_emp
 select 
     GENERATE_UUID(),
     t.reg_domain,
@@ -199,7 +199,7 @@ where t.reg_domain not in
    select reg_domain
    from   dta_customers.pageviews_daily_snapshot_emp i
    where  
-            datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 0
+            datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
   )
 ;
 
