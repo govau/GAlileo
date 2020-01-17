@@ -144,7 +144,6 @@ from
   )
   order by reg_domain
   ;
- 
 
 
 -- 1 Incremental Processing for Identical Page with same pageviews
@@ -156,7 +155,7 @@ select
     t.total_time_on_page_day - i.total_time_on_page_day,
     datetime(current_timestamp, 'Australia/Sydney') 
 from        dta_customers.pageviews_daily_snapshot_emp i
-inner join  t_dta_pgvw_snap_daily_emp t
+right join  t_dta_pgvw_snap_daily_emp t
 on    
         i.reg_domain = t.reg_domain
 where
@@ -175,7 +174,7 @@ select
     t.total_time_on_page_day - i.total_time_on_page_day,
     datetime(current_timestamp, 'Australia/Sydney')
 from        dta_customers.pageviews_daily_snapshot_emp i
-inner join  t_dta_pgvw_snap_daily_emp t
+right join  t_dta_pgvw_snap_daily_emp t
 on   
     i.reg_domain = t.reg_domain
 where
@@ -194,9 +193,9 @@ select
     t.total_time_on_page_day,
     datetime(current_timestamp, 'Australia/Sydney')
 from  t_dta_pgvw_snap_daily_emp t
-where t.reg_domain not in 
+where t.reg_domain not in
   (
-   select reg_domain
+   select distinct reg_domain
    from   dta_customers.pageviews_daily_snapshot_emp i
    where  
             datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
