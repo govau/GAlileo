@@ -52,6 +52,6 @@ with models.DAG(
                 models.Variable.get('AIRFLOW_BUCKET',
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'pgviews_daily_snapshot_emp')],
-        export_format='JSON')
+        export_format='NEWLINE_DELIMITED_JSON')
     # query_pageviews_snapshot >>
     export_pageviews_snapshot_to_gcs
