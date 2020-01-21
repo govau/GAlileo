@@ -1,6 +1,6 @@
-/* SQL Insert Full Snapshot Script for Scheduling
+/* SQL Webpage Template of Full Snapshot Script for Automation
 Description: Page view statistics associated with Each page URL and its respective hostname, top level domain and registered domain name
-The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for periodic/accumulated snapshot; rollup for hostname, 
+The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for daily accumulated snapshot; rollup for hostname, 
 top level domain and registered domain name
 
  Outputs 
@@ -8,7 +8,7 @@ top level domain and registered domain name
       pageview count
       time spent on page
     Dimensions:
-      hostname
+      registered domain
       current timestamp
 */
 
@@ -63,7 +63,9 @@ from
             last_interaction
             from
         (
-/* Start - Datasets of employment websites */
+/* Start - Datasets of <analytics> websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
            select
               fullVisitorId,
               visitStartTime,
@@ -133,20 +135,21 @@ from
             from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-/* End - Datasets of employment websites */
+/* End - Datasets of <analytics> websites */
               )
             WHERE
               type = 'PAGE'
       )))
   where  net.reg_domain(hostname) is not null
   group by reg_domain
+  -- Low Pass Filter Applied to exclude non-public visits
   having count(*) > 100
   )
   order by reg_domain
   ;
  
 
--- 1 Pageviews Daily Snapshot of Existing and/or New Registered Domain
+-- 1 Aggregation of Pageviews Daily Snapshot of Existing and/or New Registered Domain
 insert into dta_customers.pageviews_daily_snapshot_emp
 select 
     case 
