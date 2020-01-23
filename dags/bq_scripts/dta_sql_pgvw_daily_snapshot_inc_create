@@ -1,0 +1,15 @@
+/*
+Schedule: One-Off Run
+Script to create table for storing Daily Snapshot Incremental Data (7 Days) 
+*/
+
+create table dta_customers.pageviews_daily_snapshot_increment (
+    uuid	STRING	,	
+    reg_domain	STRING	,	
+    total_pageviews	INT64	,	
+    pageviews_day	INT64	,	
+    total_time_on_page	NUMERIC	,	
+    total_time_on_page_day	NUMERIC	,	
+    record_timestamp	DATETIME	,	
+    inc_record_timestamp	DATETIME	
+);
