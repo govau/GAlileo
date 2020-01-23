@@ -34,9 +34,14 @@ with models.DAG(
     query_pageviews_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_pageviews_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_full").read_text(), use_legacy_sql=False)
+    
+    query_pageviews_snapshot_inc = bigquery_operator.BigQueryOperator(
+        task_id='query_pageviews_snapshot_inc',
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_incremental").read_text(), use_legacy_sql=False)
+
     export_pageviews_snapshot_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_internalsearch_to_gcs',
-        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_emp",
+        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment",
         params={
             'project_id': project_id
         },
@@ -46,4 +51,4 @@ with models.DAG(
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'pgviews_daily_snapshot_emp')],
         export_format='NEWLINE_DELIMITED_JSON')
-    query_pageviews_snapshot >> export_pageviews_snapshot_to_gcs
+    query_pageviews_snapshot >> query_pageviews_snapshot_inc  >> export_pageviews_snapshot_to_gcs
