@@ -10,6 +10,8 @@ top level domain and registered domain name
     Dimensions:
       registered domain
       current timestamp
+
+Formula: datetime(timestamp_seconds(min(visitStartTime)), 'Australia/Sydney') as visit_date_since
 */
 
 
