@@ -3,6 +3,8 @@ Description: Page view statistics associated with Each page URL and its respecti
 The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for periodic/accumulated snapshot; rollup for hostname, 
 top level domain and registered domain name
 
+Schedule: Daily Run at Midnight UTC
+
  Outputs 
     Statistics:
       pageview count
@@ -12,194 +14,70 @@ top level domain and registered domain name
       current timestamp
 */
 
-
 BEGIN
 
-create temp table t_dta_pgvw_snap_daily_emp
-as
--- Time Spent on Page of Registered Domain
-select
-  reg_domain,
-  pageviews_day,
-  cast(total_time_on_page as numeric) as total_time_on_page_day
-from
-  (
-    select
-      net.reg_domain(hostname) as reg_domain,
-      count(*) as pageviews_day,
-      sum(time_on_page) as total_time_on_page
-    from
-    (
-      select
-      pagePath,
-      hit_time,
-      type,
-      isExit,
-      case
-        when isExit is not null then last_interaction - hit_time
-        else next_pageview - hit_time
-      end as time_on_page,
-      hostname
-     from 
-        (
-        select
-        hostname,
-        pagePath,
-        hit_time,
-        type,
-        isExit,
-        last_interaction,
-        lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
-        from
-        (
-            select
-            fullVisitorId,
-            visitStartTime,
-            hostname,
-            pagePath,
-            hit_time,
-            type,
-            isExit,
-            last_interaction
-            from
-        (
-/* Start - Datasets of employment websites */
-           select
-              fullVisitorId,
-              visitStartTime,
-              hits.page.hostname as hostname,
-              hits.page.pagePath,
-              hits.type,
-              coalesce(cast(hits.isExit as string),"") as isExit,
-              hits.time/1000 as hit_time,
-              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
-              (partition by fullVisitorId, visitStartTime) as last_interaction
-            from
-              `72008433.ga_sessions_*` AS GA,
-              UNNEST(GA.hits) AS hits 
-            union all
-            select
-              fullVisitorId,
-              visitStartTime,
-              hits.page.hostname as hostname,
-              hits.page.pagePath,
-              hits.type,
-              coalesce(cast(hits.isExit as string),"") as isExit,
-              hits.time/1000 as hit_time,
-              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
-              (partition by fullVisitorId, visitStartTime) as last_interaction
-            from
-              `111564569.ga_sessions_*` AS GA,
-              UNNEST(GA.hits) AS hits 
-            union all
-            select
-              fullVisitorId,
-              visitStartTime,
-              hits.page.hostname as hostname,
-              hits.page.pagePath,
-              hits.type,
-              coalesce(cast(hits.isExit as string),"") as isExit,
-              hits.time/1000 as hit_time,
-              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
-              (partition by fullVisitorId, visitStartTime) as last_interaction
-            from
-              `124827135.ga_sessions_*` AS GA,
-              UNNEST(GA.hits) AS hits
-            union all
-            select
-              fullVisitorId,
-              visitStartTime,
-              hits.page.hostname as hostname,
-              hits.page.pagePath,
-              hits.type,
-              coalesce(cast(hits.isExit as string),"") as isExit,
-              hits.time/1000 as hit_time,
-              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
-              (partition by fullVisitorId, visitStartTime) as last_interaction
-            from
-              `104411629.ga_sessions_*` AS GA,
-              UNNEST(GA.hits) AS hits
-            union all
-            select
-              fullVisitorId,
-              visitStartTime,
-              hits.page.hostname as hostname,
-              hits.page.pagePath,
-              hits.type,
-              coalesce(cast(hits.isExit as string),"") as isExit,
-              hits.time/1000 as hit_time,
-              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
-              (partition by fullVisitorId, visitStartTime) as last_interaction
-            from
-              `86630641.ga_sessions_*` AS GA,
-              UNNEST(GA.hits) AS hits
-/* End - Datasets of employment websites */
-              )
-            WHERE
-              type = 'PAGE'
-      )))
-  where  net.reg_domain(hostname) is not null
-  group by reg_domain
-  having count(*) > 100
-  )
-  order by reg_domain
-  ;
+declare day_num int64 default 0;
 
+create temp table t_dta_pgvw_snap_daily_inc (
+    uuid	STRING	,	
+    reg_domain	STRING	,	
+    total_pageviews	INT64	,	
+    pageviews_day	INT64	,	
+    total_time_on_page	NUMERIC	,	
+    total_time_on_page_day	NUMERIC	,	
+    record_timestamp	DATETIME	,	
+    inc_record_timestamp	DATETIME	
+);
 
--- 1 Incremental Processing for Identical Page with same pageviews
-insert into dta_customers.pageviews_daily_snapshot_emp
-select 
-    i.uuid,
-    i.reg_domain,
-    t.pageviews_day - i.pageviews_day,
-    t.total_time_on_page_day - i.total_time_on_page_day,
-    datetime(current_timestamp, 'Australia/Sydney') 
-from        dta_customers.pageviews_daily_snapshot_emp i
-right join  t_dta_pgvw_snap_daily_emp t
-on    
-        i.reg_domain = t.reg_domain
-where
-    i.pageviews_day = t.pageviews_day
-and i.total_time_on_page_day = t.total_time_on_page_day
-and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
-;
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
     
+    insert into t_dta_pgvw_snap_daily_inc
+      with tt as (
+          select uuid,
+                 reg_domain,
+                 pageviews_day,
+                 total_time_on_page_day,
+                 record_timestamp
+          from   dta_customers.pageviews_daily_snapshot_emp
+          where  datetime_diff(datetime(current_timestamp, 'Australia/Sydney'),
+          cast(record_timestamp as datetime), DAY) =       day_num
+        )   
+          select 
+              tt.uuid,
+              tt.reg_domain,
+              tt.pageviews_day as total_pageviews,
+              tt.pageviews_day-i.pageviews_day as pageviews_day,
+              tt.total_time_on_page_day as total_time_on_page,
+              tt.total_time_on_page_day-i.total_time_on_page_day as total_time_on_page_day,
+              tt.record_timestamp,
+              datetime(current_timestamp, 'Australia/Sydney') as inc_record_timestamp
+          from             dta_customers.pageviews_daily_snapshot_emp i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp, 'Australia/Sydney'),
+          cast(i.record_timestamp as datetime), DAY) = day_num +1
+          order by tt.reg_domain
+          ;
 
--- 2 Incremental Processing for Identical Page with difference in pageviews
-insert into dta_customers.pageviews_daily_snapshot_emp
-select
-    i.uuid,
-    i.reg_domain,
-    t.pageviews_day - i.pageviews_day,
-    t.total_time_on_page_day - i.total_time_on_page_day,
-    datetime(current_timestamp, 'Australia/Sydney')
-from        dta_customers.pageviews_daily_snapshot_emp i
-right join  t_dta_pgvw_snap_daily_emp t
-on   
-    i.reg_domain = t.reg_domain
-where
-   i.pageviews_day <> t.pageviews_day
-or cast(i.total_time_on_page_day as numeric) <> cast(t.total_time_on_page_day as numeric)
-and datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
-;
+  SET day_num = day_num+1;
+  END LOOP;
+  
 
 
--- 3 Incremetnal Processing Insert New Records
-insert into dta_customers.pageviews_daily_snapshot_emp
-select 
-    GENERATE_UUID(),
-    t.reg_domain,
-    t.pageviews_day,
-    t.total_time_on_page_day,
-    datetime(current_timestamp, 'Australia/Sydney')
-from  t_dta_pgvw_snap_daily_emp t
-where t.reg_domain not in
-  (
-   select distinct reg_domain
-   from   dta_customers.pageviews_daily_snapshot_emp i
-   where  
-            datetime_diff(datetime(current_timestamp, 'Australia/Sydney') ,cast(i.record_timestamp as datetime), DAY) = 1
-  )
-;
+    create or replace dta_customers.pageviews_daily_snapshot_increment
+    select   
+            uuid,
+            reg_domain,
+            total_pageviews,
+            pageviews_day,
+            total_time_on_page,
+            total_time_on_page_day,
+            record_timestamp,
+            inc_record_timestamp
+    from t_dta_pgvw_snap_daily_inc;
 
 END;
