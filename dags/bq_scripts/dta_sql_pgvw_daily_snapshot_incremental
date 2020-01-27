@@ -68,7 +68,8 @@ create temp table t_dta_pgvw_snap_daily_inc (
   
 
 
-    create or replace dta_customers.pageviews_daily_snapshot_increment
+    create or replace table dta_customers.pageviews_daily_snapshot_increment
+    as
     select   
             uuid,
             reg_domain,
