@@ -69,16 +69,25 @@ create temp table t_dta_pgvw_snap_daily_inc (
 
 
     create or replace table dta_customers.pageviews_daily_snapshot_increment
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 2 HOUR)
+    )
     as
     select   
             uuid,
-            reg_domain,
-            total_pageviews,
-            pageviews_day,
-            total_time_on_page,
-            total_time_on_page_day,
-            record_timestamp,
-            inc_record_timestamp
-    from t_dta_pgvw_snap_daily_inc;
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.total_pageviews,
+            i.pageviews_day,
+            i.total_time_on_page,
+            i.total_time_on_page_day,
+            i.record_timestamp,
+            i.inc_record_timestamp
+    from        t_dta_pgvw_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
 
 END;
