@@ -167,7 +167,7 @@ select
     t.reg_domain,
     t.pageviews_day,
     t.total_time_on_page_day,
-    datetime(current_timestamp, 'Australia/Sydney')
+    CURRENT_TIMESTAMP
 from t_dta_pgvw_snap_daily_emp  t
 ;
 

@@ -25,8 +25,8 @@ create temp table t_dta_pgvw_snap_daily_inc (
     pageviews_day	INT64	,	
     total_time_on_page	NUMERIC	,	
     total_time_on_page_day	NUMERIC	,	
-    record_timestamp	DATETIME	,	
-    inc_record_timestamp	DATETIME	
+    record_timestamp	TIMESTAMP	,	
+    inc_record_timestamp	TIMESTAMP	
 );
 
   LOOP
@@ -42,7 +42,7 @@ create temp table t_dta_pgvw_snap_daily_inc (
                  total_time_on_page_day,
                  record_timestamp
           from   dta_customers.pageviews_daily_snapshot_emp
-          where  datetime_diff(datetime(current_timestamp, 'Australia/Sydney'),
+          where  datetime_diff(datetime(current_timestamp),
           cast(record_timestamp as datetime), DAY) =       day_num
         )   
           select 
@@ -53,12 +53,12 @@ create temp table t_dta_pgvw_snap_daily_inc (
               tt.total_time_on_page_day as total_time_on_page,
               tt.total_time_on_page_day-i.total_time_on_page_day as total_time_on_page_day,
               tt.record_timestamp,
-              datetime(current_timestamp, 'Australia/Sydney') as inc_record_timestamp
+              current_timestamp() as inc_record_timestamp
           from             dta_customers.pageviews_daily_snapshot_emp i
           right join  tt
           on    
                       i.reg_domain = tt.reg_domain
-          where  datetime_diff(datetime(current_timestamp, 'Australia/Sydney'),
+          where  datetime_diff(datetime(current_timestamp),
           cast(i.record_timestamp as datetime), DAY) = day_num +1
           order by tt.reg_domain
           ;
