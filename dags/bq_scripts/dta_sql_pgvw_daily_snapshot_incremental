@@ -50,7 +50,7 @@ create temp table t_dta_pgvw_snap_daily_inc (
               tt.reg_domain,
               tt.total_pageviews as total_pageviews,
               tt.total_pageviews-i.total_pageviews as pageviews_day,
-              tt.total_time_on_page_day as total_time_on_page,
+              tt.total_time_on_page as total_time_on_page,
               tt.total_time_on_page-i.total_time_on_page as total_time_on_page_day,
               tt.record_timestamp,
               current_timestamp() as inc_record_timestamp
