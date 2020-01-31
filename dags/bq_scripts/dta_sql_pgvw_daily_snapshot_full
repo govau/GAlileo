@@ -81,7 +81,7 @@ from
             from
               `72008433.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-            where regexp_contains( hostname, "^.*.gov.au$") = TRUE 
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
             union all
             select
               fullVisitorId,
@@ -96,7 +96,7 @@ from
             from
               `111564569.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-            where regexp_contains( hostname, "^.*.gov.au$") = TRUE 
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
             union all
             select
               fullVisitorId,
@@ -111,7 +111,7 @@ from
             from
               `124827135.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-            where regexp_contains( hostname, "^.*.gov.au$") = TRUE 
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
             union all
             select
               fullVisitorId,
@@ -126,7 +126,7 @@ from
             from
               `104411629.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-            where regexp_contains( hostname, "^.*.gov.au$") = TRUE 
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
             union all
             select
               fullVisitorId,
@@ -141,7 +141,7 @@ from
             from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
-            where regexp_contains( hostname, "^.*.gov.au$") = TRUE
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
 /* End - Datasets of <analytics> websites */
               )
             WHERE
