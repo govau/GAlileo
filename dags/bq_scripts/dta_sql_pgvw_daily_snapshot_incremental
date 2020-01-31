@@ -38,8 +38,8 @@ create temp table t_dta_pgvw_snap_daily_inc (
       with tt as (
           select uuid,
                  reg_domain,
-                 pageviews_day,
-                 total_time_on_page_day,
+                 total_pageviews,
+                 total_time_on_page,
                  record_timestamp
           from   dta_customers.pageviews_daily_snapshot_emp
           where  datetime_diff(datetime(current_timestamp),
@@ -48,10 +48,10 @@ create temp table t_dta_pgvw_snap_daily_inc (
           select 
               tt.uuid,
               tt.reg_domain,
-              tt.pageviews_day as total_pageviews,
-              tt.pageviews_day-i.pageviews_day as pageviews_day,
+              tt.total_pageviews as total_pageviews,
+              tt.total_pageviews-i.total_pageviews as pageviews_day,
               tt.total_time_on_page_day as total_time_on_page,
-              tt.total_time_on_page_day-i.total_time_on_page_day as total_time_on_page_day,
+              tt.total_time_on_page-i.total_time_on_page as total_time_on_page_day,
               tt.record_timestamp,
               current_timestamp() as inc_record_timestamp
           from             dta_customers.pageviews_daily_snapshot_emp i
