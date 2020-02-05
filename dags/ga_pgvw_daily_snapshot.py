@@ -25,7 +25,7 @@ default_dag_args = {
 }
 
 with models.DAG(
-        'pageviews_snapshot_emp',
+        'pageviews_snapshot',
         schedule_interval=datetime.timedelta(days=1),
         # schedule_interval = '0 0 * * *',
         default_args=default_dag_args) as dag:
