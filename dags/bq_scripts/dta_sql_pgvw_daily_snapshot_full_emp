@@ -1,0 +1,173 @@
+/* SQL Webpage Template of Full Snapshot Script for Automation
+Description: Page view statistics associated with Each page URL and its respective hostname, top level domain and registered domain name
+The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for daily accumulated snapshot; rollup for hostname, 
+top level domain and registered domain name
+
+ Outputs 
+    Statistics:
+      pageview count
+      time spent on page
+    Dimensions:
+      registered domain
+      current timestamp
+
+Formula: datetime(timestamp_seconds(min(visitStartTime)), 'Australia/Sydney') as visit_date_since
+*/
+
+BEGIN
+
+create temp table t_dta_pgvw_snap_daily_emp
+as
+-- Time Spent on Page of Registered Domain
+select
+  reg_domain,
+  pageviews_day,
+  cast(total_time_on_page as numeric) as total_time_on_page_day
+from
+  (
+    select
+      net.reg_domain(hostname) as reg_domain,
+      count(*) as pageviews_day,
+      sum(time_on_page) as total_time_on_page
+    from
+    (
+      select
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      case
+        when isExit is not null then last_interaction - hit_time
+        else next_pageview - hit_time
+      end as time_on_page,
+      hostname
+     from 
+        (
+        select
+        hostname,
+        pagePath,
+        hit_time,
+        type,
+        isExit,
+        last_interaction,
+        lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
+        from
+        (
+            select
+            fullVisitorId,
+            visitStartTime,
+            hostname,
+            pagePath,
+            hit_time,
+            type,
+            isExit,
+            last_interaction
+            from
+        (
+/* Start - Datasets of <analytics> websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+/* End - Datasets of <analytics> websites */
+              )
+            WHERE
+              type = 'PAGE'
+      )))
+  where  net.reg_domain(hostname) is not null
+  group by reg_domain
+  -- Low Pass Filter Applied to exclude non-public visits
+  having count(*) > 100
+  )
+  order by reg_domain
+  ;
+
+
+-- 1 Aggregation of Pageviews Daily Snapshot of Existing and/or New Registered Domain
+insert into dta_customers.pageviews_daily_snapshot_emp
+select 
+    case 
+            when t.reg_domain in (select distinct reg_domain from dta_customers.pageviews_daily_snapshot_emp )
+                then    (select distinct uuid from dta_customers.pageviews_daily_snapshot_emp i where t.reg_domain = i.reg_domain )    
+            else GENERATE_UUID()
+    end,
+    t.reg_domain,
+    t.pageviews_day,
+    t.total_time_on_page_day,
+    CURRENT_TIMESTAMP
+from t_dta_pgvw_snap_daily_emp  t
+;
+
+END;
