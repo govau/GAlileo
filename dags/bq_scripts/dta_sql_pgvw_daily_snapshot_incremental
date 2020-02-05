@@ -10,7 +10,7 @@ Schedule: Daily Run at Midnight UTC
       pageview count
       time spent on page
     Dimensions:
-      hostname
+      registered domain
       current timestamp
 */
 
@@ -68,10 +68,10 @@ create temp table t_dta_pgvw_snap_daily_inc (
   
 
 
-    create or replace table dta_customers.pageviews_daily_snapshot_increment
+    create or replace table dta_customers.pageviews_daily_snapshot_increment_<agency_group_name>
     OPTIONS (
         description = "Daily incremental snapshot of past 7 days",
-        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 2 HOUR)
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
     )
     as
     select   
