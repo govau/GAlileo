@@ -12,7 +12,6 @@ from airflow.contrib.operators import bigquery_operator
 
 from google.cloud import bigquery
 
-
 from galileo import galileo, searchconsole, ga
 
 default_dag_args = {
@@ -49,7 +48,7 @@ with models.DAG(
             "gs://%s/data/analytics/%s.json" % (
                 models.Variable.get('AIRFLOW_BUCKET',
                                     'us-east1-dta-airflow-b3415db4-bucket'),
-                'pgviews_daily_snapshot_emp')],
+                'pgviews_daily_snapshot')],
         export_format='NEWLINE_DELIMITED_JSON')
 
     export_bq_to_gcs_csv = bigquery_to_gcs.BigQueryToCloudStorageOperator(
@@ -62,7 +61,7 @@ with models.DAG(
         "gs://%s/data/analytics/%s.csv" % (
             models.Variable.get('AIRFLOW_BUCKET',
                                 'us-east1-dta-airflow-b3415db4-bucket'),
-            'pgviews_daily_snapshot_emp')],
+            'pgviews_daily_snapshot')],
     export_format='CSV')
     query_pageviews_snapshot >> query_pageviews_snapshot_delta >> export_bq_to_gcs_json
     query_pageviews_snapshot_delta >> export_bq_to_gcs_csv
