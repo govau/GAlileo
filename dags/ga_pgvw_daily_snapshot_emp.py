@@ -33,15 +33,15 @@ with models.DAG(
   
     query_pageviews_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_pageviews_snapshot',
-        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_full").read_text(), use_legacy_sql=False)
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_full_emp").read_text(), use_legacy_sql=False)
     
     query_pageviews_snapshot_delta = bigquery_operator.BigQueryOperator(
         task_id='query_pageviews_snapshot_delta',
-        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_incremental").read_text(), use_legacy_sql=False)
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_incremental_emp").read_text(), use_legacy_sql=False)
 
     export_bq_to_gcs_json = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_bq_to_gcs_json',
-        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment",
+        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment_emp",
         params={
             'project_id': project_id
         },
@@ -54,7 +54,7 @@ with models.DAG(
 
     export_bq_to_gcs_csv = bigquery_to_gcs.BigQueryToCloudStorageOperator(
     task_id='export_bq_to_gcs_csv',
-    source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment",
+    source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment_emp",
     params={
         'project_id': project_id
     },
