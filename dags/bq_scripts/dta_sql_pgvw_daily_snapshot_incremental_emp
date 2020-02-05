@@ -1,0 +1,93 @@
+/* SQL Incremental Insert Script for Scheduling
+Description: Page view statistics associated with Each page URL and its respective hostname, top level domain and registered domain name
+The output dataset sets the base for analytics with Australia/Sydney time zone timestamp for periodic/accumulated snapshot; rollup for hostname, 
+top level domain and registered domain name
+
+Schedule: Daily Run at Midnight UTC
+
+ Outputs 
+    Statistics:
+      pageview count
+      time spent on page
+    Dimensions:
+      registered domain
+      current timestamp
+*/
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_pgvw_snap_daily_inc (
+    uuid	STRING	,	
+    reg_domain	STRING	,	
+    total_pageviews	INT64	,	
+    pageviews_day	INT64	,	
+    total_time_on_page	NUMERIC	,	
+    total_time_on_page_day	NUMERIC	,	
+    record_timestamp	TIMESTAMP	,	
+    inc_record_timestamp	TIMESTAMP	
+);
+
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_pgvw_snap_daily_inc
+      with tt as (
+          select uuid,
+                 reg_domain,
+                 total_pageviews,
+                 total_time_on_page,
+                 record_timestamp
+          from   dta_customers.pageviews_daily_snapshot_emp
+          where  datetime_diff(datetime(current_timestamp),
+          cast(record_timestamp as datetime), DAY) =       day_num
+        )   
+          select 
+              tt.uuid,
+              tt.reg_domain,
+              tt.total_pageviews as total_pageviews,
+              tt.total_pageviews-i.total_pageviews as pageviews_day,
+              tt.total_time_on_page as total_time_on_page,
+              tt.total_time_on_page-i.total_time_on_page as total_time_on_page_day,
+              tt.record_timestamp,
+              current_timestamp() as inc_record_timestamp
+          from             dta_customers.pageviews_daily_snapshot_emp i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),
+          cast(i.record_timestamp as datetime), DAY) = day_num +1
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+
+    create or replace table dta_customers.pageviews_daily_snapshot_increment_emp
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            uuid,
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.total_pageviews,
+            i.pageviews_day,
+            i.total_time_on_page,
+            i.total_time_on_page_day,
+            i.record_timestamp,
+            i.inc_record_timestamp
+    from        t_dta_pgvw_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+
+END;
