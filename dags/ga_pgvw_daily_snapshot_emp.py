@@ -20,8 +20,8 @@ default_dag_args = {
     # fixed point in time rather than dynamically, since it is evaluated every
     # time a DAG is parsed. See:
     # https://airflow.apache.org/faq.html#what-s-the-deal-with-start-date
-    # 'start_date': datetime.datetime(2020, 1, 15),
-    'start_date': pendulum.create(2020, 1, 15, tz="Australia/Sydney")
+    'start_date': datetime.datetime(2020, 1, 15)
+    # 'start_date': pendulum.create(2020, 1, 15, tz="Australia/Sydney")
 }
 
 with models.DAG(
