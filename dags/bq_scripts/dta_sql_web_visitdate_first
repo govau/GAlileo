@@ -3,8 +3,19 @@ BigQuery SQL Script
 Script to output first visit date of agency's websites since operational
 */
 
+/* Schedule: Manual run when new website domain is added */
+
 
 BEGIN
+
+CREATE OR REPLACE TABLE dta_customers.pageviews_first_visitdate_domain_emp
+(
+    visit_date_since	DATETIME	NULLABLE  OPTIONS( description =	"First visit date since website published in public domain"),
+    reg_domain	STRING	NULLABLE
+);
+
+insert into dta_customers.pageviews_first_visitdate_domain_emp
+as
     select
     datetime(timestamp_seconds(min(visitStartTime))) as visit_date_since,
     net.reg_domain(hostname) as reg_domain
