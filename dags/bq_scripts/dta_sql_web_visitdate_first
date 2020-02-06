@@ -3,3 +3,63 @@ BigQuery SQL Script
 Script to output first visit date of agency's websites since operational
 */
 
+
+BEGIN
+    select
+    datetime(timestamp_seconds(min(visitStartTime))) as visit_date_since,
+    net.reg_domain(hostname) as reg_domain
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+/* End - Datasets of employment websites */
+    )
+    WHERE
+        type = 'PAGE'
+    GROUP BY hostname
+END;
