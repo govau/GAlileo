@@ -64,7 +64,7 @@ from
             last_interaction
             from
         (
-/* Start - Datasets of <analytics> websites
+/* Start - Datasets of employment websites
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
  */
            select
@@ -141,7 +141,7 @@ from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
             where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
-/* End - Datasets of <analytics> websites */
+/* End - Datasets of employment websites */
               )
             WHERE
               type = 'PAGE'
