@@ -1,0 +1,85 @@
+/*
+BigQuery SQL Script
+Script to output total unique visitors on agency's websites - first cut
+*/
+
+/* Schedule: Manual run - once only for first cut of employment dataset */
+
+BEGIN
+    CREATE OR REPLACE TABLE dta_customers.pageviews_unique_visitor_emp
+    (
+        total_visitors INT64 OPTIONS (description = "Unique visitors total for registered domain up to date"),
+        total_visitors_approx INT64 OPTIONS (description = "Visitors approximate total unique count for registered domain up to date"),
+        reg_domain string
+        ,record_timestamp date
+    )
+    PARTITION BY record_timestamp 
+    OPTIONS (
+        description = "Unique visitors count for registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+    insert into dta_customers.pageviews_unique_visitor_emp
+    select
+        COUNT(distinct fullVisitorId) as total_visitors, 
+        APPROX_COUNT_DISTINCT(fullVisitorId) as total_visitors_approx,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              fullVisitorId,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+/* End - Datasets of employment websites */
+    )
+    WHERE
+        type = 'PAGE'
+    GROUP BY reg_domain;
+    
+END;
