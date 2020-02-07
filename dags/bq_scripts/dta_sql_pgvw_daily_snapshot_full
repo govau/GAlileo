@@ -14,7 +14,6 @@ top level domain and registered domain name
 Formula: datetime(timestamp_seconds(min(visitStartTime)), 'Australia/Sydney') as visit_date_since
 */
 
-
 BEGIN
 
 create temp table t_dta_pgvw_snap_daily_emp
@@ -65,7 +64,7 @@ from
             last_interaction
             from
         (
-/* Start - Datasets of <analytics> websites
+/* Start - Datasets of <industry> websites
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
  */
            select
@@ -142,7 +141,7 @@ from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
             where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
-/* End - Datasets of <analytics> websites */
+/* End - Datasets of <industry> websites */
               )
             WHERE
               type = 'PAGE'
@@ -154,7 +153,7 @@ from
   )
   order by reg_domain
   ;
- 
+
 
 -- 1 Aggregation of Pageviews Daily Snapshot of Existing and/or New Registered Domain
 insert into dta_customers.pageviews_daily_snapshot_emp
