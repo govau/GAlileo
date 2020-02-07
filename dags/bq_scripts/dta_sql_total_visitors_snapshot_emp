@@ -7,7 +7,7 @@ Script to output total unique visitors on agency's websites - Daily Snapshot
 
 BEGIN
 
-   insert into dta_customers.pageviews_unique_visitor_emp
+   insert into dta_customers.pageviews_daily_snapshot_unique_visitor_emp
     select
         COUNT(distinct fullVisitorId) as total_visitors, 
         APPROX_COUNT_DISTINCT(fullVisitorId) as total_visitors_approx,
