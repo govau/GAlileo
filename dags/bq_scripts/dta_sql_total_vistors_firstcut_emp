@@ -6,7 +6,7 @@ Script to output total unique visitors on agency's websites - first cut
 /* Schedule: Manual run - once only for first cut of employment dataset */
 
 BEGIN
-    CREATE OR REPLACE TABLE dta_customers.pageviews_unique_visitor_emp
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_unique_visitor_emp
     (
         total_visitors INT64 OPTIONS (description = "Unique visitors total for registered domain up to date"),
         total_visitors_approx INT64 OPTIONS (description = "Visitors approximate total unique count for registered domain up to date"),
