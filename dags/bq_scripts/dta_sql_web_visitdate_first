@@ -10,13 +10,22 @@ BEGIN
 
 CREATE OR REPLACE TABLE dta_customers.pageviews_first_visitdate_domain_emp
 (
-    visit_date_since	DATETIME	NULLABLE  OPTIONS( description =	"First visit date since website published in public domain"),
-    reg_domain	STRING	NULLABLE
-);
+    -- UUID string,
+    visit_date_since	DATETIME  OPTIONS( description =	"First visit date since website published in public domain"),
+    reg_domain	STRING
+)
+OPTIONS (
+        description = "Employment websites first visit date",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+;
 
 insert into dta_customers.pageviews_first_visitdate_domain_emp
-as
     select
+/*(select distinct uuid from dta_customers.pageviews_daily_snapshot_emp e where   e.reg_domain = net.reg_domain(hostname)
+    and     extract(YEAR from record_timestamp) = extract(YEAR from current_timestamp)
+    and     extract(MONTH from record_timestamp) = extract(MONTH from current_timestamp)
+    and     extract(DAY from record_timestamp) = extract(DAY from current_timestamp) ) as uuid,*/    
     datetime(timestamp_seconds(min(visitStartTime))) as visit_date_since,
     net.reg_domain(hostname) as reg_domain
     from
@@ -73,4 +82,5 @@ as
     WHERE
         type = 'PAGE'
     GROUP BY hostname
+    -- , uuid
 END;
