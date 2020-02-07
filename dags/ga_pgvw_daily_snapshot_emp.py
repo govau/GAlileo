@@ -39,6 +39,14 @@ with models.DAG(
         task_id='query_pageviews_snapshot_delta',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_incremental_emp").read_text(), use_legacy_sql=False)
 
+    query_total_visitors_snapshot = bigquery_operator.BigQueryOperator(
+        task_id='query_total_visitors_snapshot',
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_total_visitors_snapshot_emp").read_text(), use_legacy_sql=False)
+
+    query_total_visitors_delta_snapshot = bigquery_operator.BigQueryOperator(
+        task_id='query_total_visitors_delta_snapshot',
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_total_visitors_snapshot_delta_emp").read_text(), use_legacy_sql=False)
+
     export_bq_to_gcs_json = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_bq_to_gcs_json',
         source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment_emp",
@@ -64,5 +72,34 @@ with models.DAG(
                                 'us-east1-dta-airflow-b3415db4-bucket'),
             'pgviews_daily_snapshot_emp')],
     export_format='CSV')
+
+    export_bq_to_gcs_json_totalvisitors = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+        task_id='export_bq_to_gcs_json_totalvisitors',
+        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_totalvisitors_delta_emp",
+        params={
+            'project_id': project_id
+        },
+        destination_cloud_storage_uris=[
+            "gs://%s/data/analytics/%s.json" % (
+                models.Variable.get('AIRFLOW_BUCKET',
+                                    'us-east1-dta-airflow-b3415db4-bucket'),
+                'totalvisitors_daily_snapshot_emp')],
+        export_format='NEWLINE_DELIMITED_JSON')
+
+    export_bq_to_gcs_csv_totalvisitors = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+    task_id='export_bq_to_gcs_csv_totalvisitors',
+    source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_totalvisitors_delta_emp",
+    params={
+        'project_id': project_id
+    },
+    destination_cloud_storage_uris=[
+        "gs://%s/data/analytics/%s.csv" % (
+            models.Variable.get('AIRFLOW_BUCKET',
+                                'us-east1-dta-airflow-b3415db4-bucket'),
+            'totalvisitors_daily_snapshot_emp')],
+    export_format='CSV')
     query_pageviews_snapshot >> query_pageviews_snapshot_delta >> export_bq_to_gcs_json
     query_pageviews_snapshot_delta >> export_bq_to_gcs_csv
+    query_total_visitors_snapshot >> query_total_visitors_delta_snapshot >> export_bq_to_gcs_json_totalvisitors
+    query_total_visitors_delta_snapshot >> export_bq_to_gcs_csv_totalvisitors
+    
