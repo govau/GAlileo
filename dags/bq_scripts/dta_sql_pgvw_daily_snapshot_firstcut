@@ -11,16 +11,22 @@
 */
 
 BEGIN
-  
-create or replace table dta_customers.pageviews_daily_snapshot_emp
+
+create or replace table dta_customers.pageviews_daily_snapshot_<agency_group_name>
+partition by record_timestamp
+OPTIONS (
+  description = "Daily snapshot of employment websites analytics",
+  partition_expiration_days = 365,
+  require_partition_filter = false
+)
   as
 -- Time spent on Page of Registered Domain
 select
   GENERATE_UUID() AS uuid,
   reg_domain,
-  pageviews as pageviews_day,
-  cast(total_time_on_page as numeric) as total_time_on_page_day,
-  datetime(current_timestamp, 'Australia/Sydney') as record_timestamp
+  pageviews as total_pageviews,
+  cast(total_time_on_page as numeric) as total_time_on_page,
+  CURRENT_TIMESTAMP() as record_timestamp
 from
   (
     select
