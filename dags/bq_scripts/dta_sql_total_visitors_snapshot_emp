@@ -12,7 +12,8 @@ BEGIN
         COUNT(distinct fullVisitorId) as total_visitors, 
         APPROX_COUNT_DISTINCT(fullVisitorId) as total_visitors_approx,
         net.reg_domain(hostname) as reg_domain,
-        cast(current_timestamp as date) as record_timestamp
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
     from
     (
 /* Start - Datasets of employment websites

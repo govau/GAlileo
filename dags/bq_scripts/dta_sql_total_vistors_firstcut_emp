@@ -10,8 +10,9 @@ BEGIN
     (
         total_visitors INT64 OPTIONS (description = "Unique visitors total for registered domain up to date"),
         total_visitors_approx INT64 OPTIONS (description = "Visitors approximate total unique count for registered domain up to date"),
-        reg_domain string
-        ,record_timestamp date
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
     )
     PARTITION BY record_timestamp 
     OPTIONS (
@@ -26,7 +27,8 @@ BEGIN
         COUNT(distinct fullVisitorId) as total_visitors, 
         APPROX_COUNT_DISTINCT(fullVisitorId) as total_visitors_approx,
         net.reg_domain(hostname) as reg_domain,
-        cast(current_timestamp as date) as record_timestamp
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
     from
     (
 /* Start - Datasets of employment websites
