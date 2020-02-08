@@ -21,6 +21,8 @@ create temp table t_dta_total_uvisitor_snap_daily_inc (
     reg_domain	STRING	,	
     total_visitors	INT64	,	
     total_visitors_approx	INT64	,	
+    total_visitors_day INT64,
+    total_visitors_approx_day INT64,
     posted_timestamp	TIMESTAMP	,	
     inc_posted_timestamp	TIMESTAMP	
 );
