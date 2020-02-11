@@ -1,30 +1,31 @@
 /*
 BigQuery SQL Script
-Script to output device browser being used to access agency's websites - first cut
+Script to output device operating systems being used to access agency's websites - first cut
 */
 
 /* Schedule: Manual run - once only for first cut of employment dataset */
 
 BEGIN
-    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_device_browser_emp
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_device_ops_emp
     (
-        device_browser string,
-        device_browser_count INT64 OPTIONS (description = "Device browsers used to access registered domain up to date"),
+        device_ops string,
+        device_ops_count INT64 OPTIONS (description = "Device operating systems used to access registered domain up to date"),
         reg_domain string,
         record_timestamp date,
         posted_timestamp timestamp
     )
     PARTITION BY record_timestamp 
     OPTIONS (
-        description = "Device browsers count for registered domain in employment sector",
+        description = "Device operating systems count for registered domain in employment sector",
         partition_expiration_days = 365,
         require_partition_filter = false
-    );
+    )
+    ;
 
-    insert into dta_customers.pageviews_daily_snapshot_device_browser_emp
+    insert into dta_customers.pageviews_daily_snapshot_device_ops_emp
     select
-        device_browser,
-        count(*) as device_browser_count,
+        device_ops,
+        count(*) as device_ops_count,
         net.reg_domain(hostname) as reg_domain,
         cast(current_timestamp as date) as record_timestamp,
         current_timestamp
@@ -34,9 +35,8 @@ BEGIN
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
  */
            select
-              fullVisitorId,
               hits.page.hostname as hostname,
-              device.browser as device_browser
+              device.operatingSystem as device_ops
             from
               `72008433.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -45,9 +45,8 @@ BEGIN
              and totals.visits =1 
             union all
             select
-              fullVisitorId,
               hits.page.hostname as hostname,
-              device.browser as device_browser
+              device.operatingSystem as device_ops
             from
               `111564569.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -56,9 +55,8 @@ BEGIN
              and totals.visits =1 
             union all
             select
-              fullVisitorId,
               hits.page.hostname as hostname,
-              device.browser as device_browser
+              device.operatingSystem as device_ops
             from
               `124827135.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -67,9 +65,8 @@ BEGIN
              and totals.visits =1 
             union all
             select
-              fullVisitorId,
               hits.page.hostname as hostname,
-              device.browser as device_browser
+              device.operatingSystem as device_ops
             from
               `104411629.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -78,9 +75,8 @@ BEGIN
              and totals.visits =1 
             union all
             select
-              fullVisitorId,
               hits.page.hostname as hostname,
-              device.browser as device_browser
+              device.operatingSystem as device_ops
             from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -90,7 +86,7 @@ BEGIN
 /* End - Datasets of employment websites */
     )
     GROUP BY    reg_domain,
-                        device_browser
+                        device_ops
    having count(*) > 99;
     
 END;
