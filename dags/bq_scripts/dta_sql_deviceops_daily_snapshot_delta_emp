@@ -1,13 +1,13 @@
 /*
 BigQuery SQL Script
-Delta script for counting devices' category used to access employment domain websites daily
+Delta script for counting devices' operating systems used to access employment domain websites daily
 
 Schedule: Daily run
 
 Outputs
     registered domain
-    total devices' category upto date
-    total devices' category per day
+    total devices' ops upto date
+    total devices' ops per day
     current date
     current posted timestamp
 */
@@ -17,13 +17,13 @@ BEGIN
 
 declare day_num int64 default 0;
 
-create temp table t_dta_device_category_snap_daily_inc (
+create temp table t_dta_device_ops_snap_daily_inc (
     reg_domain	STRING	,	
-    device_category string,
-    total_device_category	INT64	,	
-    total_device_category_day INT64,
+    device_ops string,
+    total_device_ops	INT64	,	
+    total_device_ops_day INT64,
     posted_timestamp	TIMESTAMP,	
-    inc_posted_timestamp	TIMESTAMP	
+    inc_posted_timestamp	TIMESTAMP
 );
 
   LOOP
@@ -31,30 +31,30 @@ create temp table t_dta_device_category_snap_daily_inc (
         LEAVE;
     END IF;
     
-    insert into t_dta_device_category_snap_daily_inc
+    insert into t_dta_device_ops_snap_daily_inc
       with tt as (
           select 
                  reg_domain,
-                 device_category,
-                 device_category_count,
+                 device_ops,
+                 device_ops_count,
                  posted_timestamp
-          from   dta_customers.pageviews_daily_snapshot_device_category_emp
+          from   dta_customers.pageviews_daily_snapshot_device_ops_emp
           where  datetime_diff(datetime(current_timestamp),
-          cast(posted_timestamp as datetime), DAY) =  day_num
+          cast(posted_timestamp as datetime), DAY) =       day_num
         )   
           select 
               tt.reg_domain,
-              tt.device_category,
-              tt.device_category_count	 as total_device_category,
-              tt.device_category_count	-i.device_category_count	 as total_device_category_day,
+              tt.device_ops,
+              tt.device_ops_count as total_device_ops,
+              tt.device_ops_count-i.device_ops_count as total_device_ops_day,
               tt.posted_timestamp,
               current_timestamp() as inc_posted_timestamp
-          from        dta_customers.pageviews_daily_snapshot_device_category_emp i
+          from        dta_customers.pageviews_daily_snapshot_device_ops_emp i
           right join  tt
           on    
                       i.reg_domain = tt.reg_domain
           where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
-          and       i.device_category = tt.device_category
+          and       i.device_ops = tt.device_ops
           order by tt.reg_domain
           ;
 
@@ -62,8 +62,7 @@ create temp table t_dta_device_category_snap_daily_inc (
   END LOOP;
   
 
-
-    create or replace table dta_customers.pageviews_daily_snapshot_device_category_delta_emp
+    create or replace table dta_customers.pageviews_daily_snapshot_device_ops_delta_emp
     OPTIONS (
         description = "Daily incremental snapshot of past 7 days",
         expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
@@ -72,15 +71,14 @@ create temp table t_dta_device_category_snap_daily_inc (
     select   
             COALESCE(da.agency,"") as agency,
             i.reg_domain,
-            i.device_category,
-            i.total_device_category,
-            i.total_device_category_day,
+            i.device_ops,
+            i.total_device_ops,
+            i.total_device_ops_day,
             i.posted_timestamp,
             i.inc_posted_timestamp
-    from       t_dta_device_category_snap_daily_inc i
+    from       t_dta_device_ops_snap_daily_inc i
     left join   dta_customers.domain_agency_map da
     on          i.reg_domain = da.domain_name
     ;
-
 
 END;
