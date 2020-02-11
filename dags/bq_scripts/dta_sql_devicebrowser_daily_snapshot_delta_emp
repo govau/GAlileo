@@ -19,6 +19,7 @@ declare day_num int64 default 0;
 
 create temp table t_dta_device_browser_snap_daily_inc (
     reg_domain	STRING	,	
+    device_browser string,
     total_device_browser	INT64	,	
     total_device_browser_day INT64,
     posted_timestamp	TIMESTAMP,	
@@ -34,25 +35,29 @@ create temp table t_dta_device_browser_snap_daily_inc (
       with tt as (
           select 
                  reg_domain,
-                 total_device_browser,
-                 total_device_browser_day,
+                 device_browser,
+                 device_browser_count,
                  posted_timestamp
-          from   dta_customers.pageviews_daily_snapshot_device_browser_emp
-          where  datetime_diff(datetime(current_timestamp),
-          cast(posted_timestamp as datetime), DAY) =       day_num
+          from    dta_customers.pageviews_daily_snapshot_device_browser_emp
+          where  datetime_diff(datetime(current_timestamp),cast(posted_timestamp as datetime), DAY) =       day_num
+          and     device_browser in( 'Internet Explorer', 'Chrome', 'Safari','Safari (in-app)','Android Webview',
+                      'Samsung Internet','Edge','Firefox','Opera','UC Browser','Opera Mini','Mozilla','Android Browser','YaBrowser',
+                      'Playstation Vita Browser','UCWEB','Coc Coc','BlackBerry','SeaMonkey','Nintendo Browser','Amazon Silk','Maxthon',
+                      'Mozilla Compatible Agent','Puffin','Playstation 4','Playstation 3','Jora com.jora.Jobseeker','candroid' )
         )   
           select 
               tt.reg_domain,
-              tt.total_device_browser as total_device_browser,
-              tt.total_device_browser-i.total_device_browser as total_device_browser_day,
+              tt.device_browser,
+              tt.device_browser_count as total_device_browser,
+              tt.device_browser_count-i.device_browser_count as total_device_browser_day,
               tt.posted_timestamp,
               current_timestamp() as inc_posted_timestamp
           from        dta_customers.pageviews_daily_snapshot_device_browser_emp i
           right join  tt
           on    
                       i.reg_domain = tt.reg_domain
-          where  datetime_diff(datetime(current_timestamp),
-          cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          where  datetime_diff(datetime(current_timestamp), cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          and     i.device_browser = tt.device_browser
           order by tt.reg_domain
           ;
 
@@ -69,6 +74,7 @@ create temp table t_dta_device_browser_snap_daily_inc (
     select   
             COALESCE(da.agency,"") as agency,
             i.reg_domain,
+            i.device_browser,
             i.total_device_browser,
             i.total_device_browser_day,
             i.posted_timestamp,
