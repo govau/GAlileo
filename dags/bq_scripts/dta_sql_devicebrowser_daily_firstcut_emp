@@ -19,8 +19,7 @@ BEGIN
         description = "Device browsers count for registered domain in employment sector",
         partition_expiration_days = 365,
         require_partition_filter = false
-    )
-    ;
+    );
 
     insert into dta_customers.pageviews_daily_snapshot_device_browser_emp
     select
