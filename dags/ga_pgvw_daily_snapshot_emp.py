@@ -31,6 +31,7 @@ with models.DAG(
         default_args=default_dag_args) as dag:
     project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
   
+    # pageviews snapshot
     query_pageviews_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_pageviews_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_full_emp").read_text(), use_legacy_sql=False)
@@ -39,6 +40,7 @@ with models.DAG(
         task_id='query_pageviews_snapshot_delta',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_pgvw_daily_snapshot_incremental_emp").read_text(), use_legacy_sql=False)
 
+    # total visitors snapshot
     query_total_visitors_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_total_visitors_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_total_visitors_snapshot_emp").read_text(), use_legacy_sql=False)
@@ -47,6 +49,7 @@ with models.DAG(
         task_id='query_total_visitors_delta_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_total_visitors_snapshot_delta_emp").read_text(), use_legacy_sql=False)
 
+    # export datasets
     export_bq_to_gcs_json = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_bq_to_gcs_json',
         source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_increment_emp",
@@ -54,7 +57,7 @@ with models.DAG(
             'project_id': project_id
         },
         destination_cloud_storage_uris=[
-            "gs://%s/data/analytics/%s.json" % (
+            "gs://%s/data/analytics/json/%s.json" % (
                 models.Variable.get('AIRFLOW_BUCKET',
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'pgviews_daily_snapshot_emp')],
@@ -67,7 +70,7 @@ with models.DAG(
         'project_id': project_id
     },
     destination_cloud_storage_uris=[
-        "gs://%s/data/analytics/%s.csv" % (
+        "gs://%s/data/analytics/csv/%s.csv" % (
             models.Variable.get('AIRFLOW_BUCKET',
                                 'us-east1-dta-airflow-b3415db4-bucket'),
             'pgviews_daily_snapshot_emp')],
@@ -80,7 +83,7 @@ with models.DAG(
             'project_id': project_id
         },
         destination_cloud_storage_uris=[
-            "gs://%s/data/analytics/%s.json" % (
+            "gs://%s/data/analytics/json/%s.json" % (
                 models.Variable.get('AIRFLOW_BUCKET',
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'totalvisitors_daily_snapshot_emp')],
@@ -93,7 +96,7 @@ with models.DAG(
         'project_id': project_id
     },
     destination_cloud_storage_uris=[
-        "gs://%s/data/analytics/%s.csv" % (
+        "gs://%s/data/analytics/csv/%s.csv" % (
             models.Variable.get('AIRFLOW_BUCKET',
                                 'us-east1-dta-airflow-b3415db4-bucket'),
             'totalvisitors_daily_snapshot_emp')],
@@ -102,4 +105,3 @@ with models.DAG(
     query_pageviews_snapshot_delta >> export_bq_to_gcs_csv
     query_total_visitors_snapshot >> query_total_visitors_delta_snapshot >> export_bq_to_gcs_json_totalvisitors
     query_total_visitors_delta_snapshot >> export_bq_to_gcs_csv_totalvisitors
-    
