@@ -1,0 +1,141 @@
+/*
+BigQuery SQL Script
+Script to output traffic source and medium of agency's websites - first cut
+*/
+
+/* Schedule: Manual run - once only for first cut of employment dataset */
+
+BEGIN
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_traffic_src_medium_emp
+    (
+        traffic_source string,
+        traffic_medium string,
+        source_medium_count INT64 OPTIONS (description = "Traffic source and medium of registered domain up to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp
+    OPTIONS (
+        description = "Traffic source and medium count of registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    );
+
+    insert into dta_customers.pageviews_daily_snapshot_traffic_src_medium_emp
+    select
+        traffic_source,
+        traffic_medium,
+        count(*) as source_medium_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+/* End - Datasets of employment websites */
+    )
+    GROUP BY   reg_domain,
+                        traffic_source,
+                        traffic_medium
+    HAVING count(*) > 999
+   ;
+    
+CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_traffic_src_medium_dense_emp
+  (
+        traffic_source string,
+        traffic_medium string,
+        source_medium_count INT64 OPTIONS (description = "Traffic source and medium of registered domain up to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp 
+    OPTIONS (
+        description = "Traffic source and medium count summarised rolling up referrals of registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+  );
+  
+   insert into dta_customers.pageviews_daily_snapshot_traffic_src_medium_dense_emp
+    with tt as (
+      select
+        case
+          when traffic_medium = 'referral' then 'web redirection'
+          else regexp_replace(traffic_source,r'\(direct\)','direct')
+        end as traffic_source,
+        regexp_replace(traffic_medium,r'\(none\)','manual') as traffic_medium,
+        sum(source_medium_count) as source_medium_count,
+        reg_domain
+      from dta_customers.pageviews_daily_snapshot_traffic_src_medium_emp
+      GROUP BY   reg_domain,
+                          traffic_source,
+                          traffic_medium
+    )
+    select
+      traffic_source,
+      traffic_medium,
+      source_medium_count,
+      reg_domain,
+      cast(current_timestamp as date),
+      current_timestamp
+    from tt                        
+    ;
+
+END;
