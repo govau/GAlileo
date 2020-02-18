@@ -1,0 +1,162 @@
+/*
+BigQuery SQL Script
+Script to output user engagement performed in single or multiple sessions on agency's websites - first cut
+*/
+
+/* Schedule: Manual run - once only for first cut of employment dataset */
+
+BEGIN
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_session_user_emp
+    (
+        user_type string options(description = "session new user or returning user") ,
+        number_of_sessions INT64 options(description = "number of session or sessions each user engages"),
+        user_count INT64 OPTIONS (description = "users on registered domain up to date"),
+        pageview_hits INT64,
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp 
+    OPTIONS (
+        description = "users engagement in sessions performed on registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+    insert into dta_customers.pageviews_daily_snapshot_session_user_emp
+    select
+        user_type,
+        number_of_sessions, 
+        sum(users) as users,
+        sum(pageview_hits) as pageview_hits,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+              SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+              from
+                `72008433.ga_sessions_*` AS GA,
+                UNNEST(GA.hits) AS hits
+              where hits.type = 'PAGE'
+              and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+              and totals.visits = 1
+              group by   1,2,3
+              having count(*) > 99
+            union all
+              SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+              from
+                `111564569.ga_sessions_*` AS GA,
+                UNNEST(GA.hits) AS hits
+              where hits.type = 'PAGE'
+              and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+              and totals.visits = 1
+              group by   1,2,3
+              having count(*) > 99
+            union all
+              SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+                          from
+                            `124827135.ga_sessions_*` AS GA,
+                            UNNEST(GA.hits) AS hits
+                          where hits.type = 'PAGE'
+                          and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+                          and totals.visits = 1
+                          group by   1,2,3
+                having count(*) > 99
+            union all
+              SELECT
+                  hits.page.hostname as hostname,
+                  -- Count of Sessions (dimension)
+                  visitNumber AS number_of_sessions,
+                  -- User Type (dimension)
+                  CASE
+                    WHEN totals.newVisits = 1 THEN 'new visitor'
+                  ELSE
+                  'returning visitor'
+                  END AS user_type,
+                  -- Users (metric)
+                  COUNT(DISTINCT fullVisitorId) AS users,
+                  -- Hits (metric)
+                  SUM(totals.hits) AS pageview_hits
+                  from
+                              `104411629.ga_sessions_*` AS GA,
+                              UNNEST(GA.hits) AS hits
+                  where hits.type = 'PAGE'
+                  and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+                  and totals.visits = 1
+                  group by   1,2,3
+                  having count(*) > 99
+            union all
+              SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+                from
+                            `86630641.ga_sessions_*` AS GA,
+                            UNNEST(GA.hits) AS hits
+                where hits.type = 'PAGE'
+                and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+                and totals.visits =1
+                group by   1,2,3
+                having count(*) > 99
+/* End - Datasets of employment websites */
+    )
+    group by
+      reg_domain, 
+      number_of_sessions, 
+      user_type
+    
+END;

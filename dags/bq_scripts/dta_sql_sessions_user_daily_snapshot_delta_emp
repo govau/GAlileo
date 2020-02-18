@@ -1,0 +1,103 @@
+/*
+BigQuery SQL Script
+Script to output user engagement performed in single or multiple sessions on agency's websites - Daily delta snapshot
+*/
+
+/* Schedule: Daily run  - employment dataset 
+
+Outputs
+    registered domain
+    user type
+    total users upto date
+    total users per day
+    number of sessions upto date
+    number of sessions per day
+    total users' page hits upto date
+    total users' page hits per day 
+    current date
+    current posted timestamp
+*/
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_session_user_snap_daily_inc (
+    reg_domain	STRING	,	
+    user_type string,
+    number_of_sessions INT64,
+    number_of_sessions_day INT64,
+    total_session_users	INT64,	
+    total_session_users_day INT64,
+    total_pageview_hits INT64,
+    total_pageview_hits_day INT64, 
+    posted_timestamp	TIMESTAMP,	
+    inc_posted_timestamp	TIMESTAMP
+);
+
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_session_user_snap_daily_inc
+      with tt as (
+          select 
+                 reg_domain,
+                 user_type,
+                 number_of_sessions,
+                 user_count,
+                 pageview_hits,
+                 posted_timestamp
+          from   dta_customers.pageviews_daily_snapshot_session_user_emp
+          where  datetime_diff(datetime(current_timestamp),
+          cast(posted_timestamp as datetime), DAY) =       day_num
+        )   
+          select 
+              tt.reg_domain,
+              tt.user_type,
+              tt.number_of_sessions as number_of_sessions,
+              tt.number_of_sessions-i.number_of_sessions as number_of_sessions_day,
+              tt.user_count as total_session_users,
+              tt.user_count-i.user_count as total_session_users_day,
+              tt.pageview_hits as total_pageview_hits,
+              tt.pageview_hits-i.pageview_hits as total_pageview_hits_day,
+              tt.posted_timestamp,
+              current_timestamp() as inc_posted_timestamp
+          from        dta_customers.pageviews_daily_snapshot_session_user_emp i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          and       i.session_user = tt.session_user
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+    create or replace table dta_customers.pageviews_daily_snapshot_session_user_delta_emp
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.user_type,
+            i.number_of_sessions,
+            i.number_of_sessions_day,
+            i.total_session_users,
+            i.total_session_users_day,
+            i.total_pageview_hits,
+            i.total_pageview_hits_day,
+            i.posted_timestamp,
+            i.inc_posted_timestamp
+    from       t_dta_session_user_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+END;

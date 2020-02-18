@@ -1,0 +1,83 @@
+/*
+BigQuery SQL Script
+Delta script for counting cities and countries, locations that visited employment domain websites daily
+
+Schedule: Daily run
+
+Outputs
+    registered domain
+    total cities upto date
+    total cities ops per day
+    current date
+    current posted timestamp
+*/
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_local_city_snap_daily_inc (
+    reg_domain	STRING	,	
+    local_city string,
+    total_local_city	INT64	,	
+    total_local_city_day INT64,
+    posted_timestamp	TIMESTAMP,	
+    inc_posted_timestamp	TIMESTAMP
+);
+
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_local_city_snap_daily_inc
+      with tt as (
+          select 
+                 reg_domain,
+                 local_city,
+                 local_city_count,
+                 posted_timestamp
+          from   dta_customers.pageviews_daily_snapshot_local_city_emp
+          where  datetime_diff(datetime(current_timestamp),
+          cast(posted_timestamp as datetime), DAY) =       day_num
+        )   
+          select 
+              tt.reg_domain,
+              tt.local_city,
+              tt.local_city_count as total_local_city,
+              tt.local_city_count-i.local_city_count as total_local_city_day,
+              tt.posted_timestamp,
+              current_timestamp() as inc_posted_timestamp
+          from        dta_customers.pageviews_daily_snapshot_local_city_emp i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          and       i.local_city = tt.local_city
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+    create or replace table dta_customers.pageviews_daily_snapshot_local_city_delta_emp
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.local_city,
+            i.total_local_city,
+            i.total_local_city_day,
+            i.posted_timestamp,
+            i.inc_posted_timestamp
+    from       t_dta_local_city_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+END;
