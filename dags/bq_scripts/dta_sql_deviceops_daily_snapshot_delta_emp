@@ -12,7 +12,6 @@ Outputs
     current posted timestamp
 */
 
-
 BEGIN
 
 declare day_num int64 default 0;

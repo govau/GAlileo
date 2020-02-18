@@ -45,8 +45,8 @@ create temp table t_dta_traffic_src_medium_snap_daily_inc (
         )   
           select 
               tt.reg_domain,
-              traffic_source,
-              traffic_medium,
+              tt.traffic_source,
+              tt.traffic_medium,
               tt.source_medium_count	 as total_source_medium,
               tt.source_medium_count-i.source_medium_count	 as total_source_medium_day,
               tt.posted_timestamp,
@@ -81,7 +81,7 @@ create temp table t_dta_traffic_src_medium_snap_daily_inc (
             i.total_source_medium_day,
             i.posted_timestamp,
             i.inc_posted_timestamp
-    from       t_dta_traffic_medium_snap_daily_inc i
+    from       t_dta_traffic_src_medium_snap_daily_inc i
     left join   dta_customers.domain_agency_map da
     on          i.reg_domain = da.domain_name
     ;
