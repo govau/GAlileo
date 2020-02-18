@@ -40,7 +40,7 @@ create temp table t_dta_device_browser_snap_daily_inc (
                  posted_timestamp
           from    dta_customers.pageviews_daily_snapshot_device_browser_emp
           where  datetime_diff(datetime(current_timestamp),cast(posted_timestamp as datetime), DAY) =       day_num
-          and     device_browser in( 'Internet Explorer', 'Chrome', 'Safari','Safari (in-app)','Android Webview',
+          and     device_browser in( 'Internet Explorer', 'Chrome', 'Safari','Safari (in-app)','Android Webview', 'Tizen',
                       'Samsung Internet','Edge','Firefox','Opera','UC Browser','Opera Mini','Mozilla','Android Browser','YaBrowser',
                       'Playstation Vita Browser','UCWEB','Coc Coc','BlackBerry','SeaMonkey','Nintendo Browser','Amazon Silk','Maxthon',
                       'Mozilla Compatible Agent','Puffin','Playstation 4','Playstation 3','Jora com.jora.Jobseeker','candroid' )
