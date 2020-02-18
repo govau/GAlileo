@@ -1,0 +1,154 @@
+/*
+BigQuery SQL Script
+Script to output geo locations, local cities and international countries that are visiting the agency's websites - Daily Snapshot
+*/
+
+/* Schedule: Daily Run for snapshot of local cities and countries count, locations that visited employment industry websites */
+
+BEGIN
+
+    insert into dta_customers.pageviews_daily_snapshot_local_city_emp
+    select
+        local_city,
+        count(*) as local_city_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1
+/* End - Datasets of employment websites */
+    )
+    GROUP BY    reg_domain,
+                        local_city
+   having count(*) > 99;
+
+
+/*
+Pageviews of Employment Industry by Country
+*/
+
+    insert into dta_customers.pageviews_daily_snapshot_country_emp
+    select
+        country,
+        count(*) as country_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              hits.page.hostname as hostname,
+              geoNetwork.country as country
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.country as country
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.country as country
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.country as country
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              geoNetwork.country as country
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+/* End - Datasets of employment websites */
+    )
+    GROUP BY    reg_domain,
+                        country
+   having count(*) > 99;
+
+END;

@@ -1,0 +1,77 @@
+/*
+BigQuery SQL Script
+Script to output device categories being used to access agency's websites - Daily Snapshot
+*/
+
+/* Schedule: Daily run for snapshot on device categories count in employment datasets */
+
+BEGIN 
+ 
+    insert into dta_customers.pageviews_daily_snapshot_device_category_emp
+        select
+            device_category,
+            count(*) as device_category_count,
+            net.reg_domain(hostname) as reg_domain,
+            cast(current_timestamp as date) as record_timestamp,
+            current_timestamp
+        from
+        (
+/*  Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+           select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+/* End - Datasets of employment websites */
+    )
+    GROUP BY    reg_domain,
+                        device_category
+   having count(*) > 99;
+    
+END;
