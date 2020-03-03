@@ -1,0 +1,861 @@
+/*
+BigQuery SQL Script
+Script to output device operating system and browser to interact with agencies's websites - first cut
+*/
+
+/* Schedule: Manual run - once only for first cut of agencies' dataset */
+
+BEGIN
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_device_opsbrowser_doi
+    (
+        device_ops string,
+        device_browser string,
+        ops_browser_count INT64 OPTIONS (description = "Device operating system and browser used to interact with registered domain up to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp
+    OPTIONS (
+        description = "Device operating system and browser count interacting with registered domain across the agencies",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    );
+
+    insert into dta_customers.pageviews_daily_snapshot_device_opsbrowser_doi
+    select
+        device_ops,
+        device_browser,
+        count(*) as ops_browser_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+/* End - Datasets of agencies' websites */
+    )
+    GROUP BY   reg_domain,
+                        device_ops,
+                        device_browser
+    HAVING count(*) > 999
+   ;
+    
+
+
+END;

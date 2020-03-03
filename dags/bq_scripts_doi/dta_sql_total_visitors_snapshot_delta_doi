@@ -1,0 +1,101 @@
+/*
+BigQuery SQL Script
+Delta script for counting total unique visitors visiting registered domain websites daily
+
+Schedule: Daily run
+
+Outputs
+    registered domain
+    total people visiting domains upto date
+    unique people visiting domains upto date
+    total people visiting domains per day
+    unique people visiting domains per day
+    current date
+    current posted timestamp
+*/
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_total_uvisitor_snap_daily_inc (
+    reg_domain	STRING,	
+    total_visitors	INT64,	
+    total_visitors_day INT64,
+    unique_visitors INT64,
+    unique_visitors_day INT64,
+    unique_visitors_approx	INT64,	
+    unique_visitors_approx_day INT64,
+    posted_timestamp	TIMESTAMP,	
+    inc_posted_timestamp	TIMESTAMP	
+);
+
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_total_uvisitor_snap_daily_inc
+      with tt as (
+          select 
+                 reg_domain,
+                 total_visitors,
+                 unique_visitors,
+                 unique_visitors_approx,
+                 posted_timestamp
+          from   dta_customers.pageviews_daily_snapshot_unique_visitor_doi
+          where  datetime_diff(datetime(current_timestamp),
+          cast(posted_timestamp as datetime), DAY) =       day_num
+        )   
+          select 
+              tt.reg_domain,
+              tt.total_visitors as total_visitors,
+              tt.total_visitors-i.total_visitors as total_visitors_day,
+              tt.unique_visitors as unique_visitors,
+              tt.unique_visitors-i.unique_visitors as unique_visitors_day,
+              tt.unique_visitors_approx as unique_visitors_approx,
+              tt.unique_visitors_approx-i.unique_visitors_approx as unique_visitors_approx_day,
+              tt.posted_timestamp,
+              current_timestamp() as inc_posted_timestamp
+          from             dta_customers.pageviews_daily_snapshot_unique_visitor_doi i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),
+          cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+
+    create or replace table dta_customers.pageviews_daily_snapshot_totalvisitors_delta_doi
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.total_visitors,
+            i.total_visitors_day,
+            case 
+                when i.unique_visitors > i.unique_visitors_approx then i.unique_visitors
+                else i.unique_visitors_approx
+            end as unique_people,
+            case 
+                when i.unique_visitors_day > i.unique_visitors_approx_day then i.unique_visitors_day
+                else i.unique_visitors_approx_day
+            end as unique_people_day,
+            i.posted_timestamp,
+            i.inc_posted_timestamp
+    from       t_dta_total_uvisitor_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+
+END;
