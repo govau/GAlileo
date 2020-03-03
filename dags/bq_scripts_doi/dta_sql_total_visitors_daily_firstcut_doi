@@ -1,0 +1,28 @@
+/*
+BigQuery SQL Script - Total Visitors
+Script to output total unique and total visitors on agency's websites - first cut
+*/
+
+/* Schedule: Manual run - once only for first cut of datasets of interest */
+
+BEGIN
+
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_unique_visitor_doi
+    (
+        total_visitors INT64 OPTIONS (description = "Total visitors for registered domains up to date"),
+        unique_visitors INT64 OPTIONS (description = "Unique visitors total for registered domains up to date"),
+        unique_visitors_approx INT64 OPTIONS (description = "Unique visitors approximate total count for registered domain up to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp
+    OPTIONS (
+        description = "Unique visitors and total visitors count for registered domains of interest",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+
+END;

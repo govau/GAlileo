@@ -1,0 +1,88 @@
+/*
+BigQuery SQL Script
+Delta script for counting devices' browser used to access agencies' domain websites daily
+
+Schedule: Daily run
+
+Outputs
+    registered domain
+    total devices' browser upto date
+    total devices' browser per day
+    current date
+    current posted timestamp
+*/
+
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_device_browser_snap_daily_inc (
+    reg_domain	STRING	,	
+    device_browser string,
+    total_device_browser	INT64	,	
+    total_device_browser_day INT64,
+    posted_timestamp	TIMESTAMP,	
+    inc_posted_timestamp	TIMESTAMP	
+);
+
+  LOOP
+    IF day_num > 7 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_device_browser_snap_daily_inc
+      with tt as (
+          select 
+                 reg_domain,
+                 device_browser,
+                 device_browser_count,
+                 posted_timestamp
+          from    dta_customers.pageviews_daily_snapshot_device_browser_doi
+          where  datetime_diff(datetime(current_timestamp),cast(posted_timestamp as datetime), DAY) =       day_num
+          and     device_browser in( 'Internet Explorer', 'Chrome', 'Safari','Safari (in-app)','Android Webview', 'Tizen',
+                      'Samsung Internet','Edge','Firefox','Opera','UC Browser','Opera Mini','Mozilla','Android Browser','YaBrowser',
+                      'Playstation Vita Browser','UCWEB','Coc Coc','BlackBerry','SeaMonkey','Nintendo Browser','Amazon Silk','Maxthon',
+                      'Mozilla Compatible Agent','Puffin','Playstation 4','Playstation 3','Jora com.jora.Jobseeker','candroid' )
+        )   
+          select 
+              tt.reg_domain,
+              tt.device_browser,
+              tt.device_browser_count as total_device_browser,
+              tt.device_browser_count-i.device_browser_count as total_device_browser_day,
+              tt.posted_timestamp,
+              current_timestamp() as inc_posted_timestamp
+          from        dta_customers.pageviews_daily_snapshot_device_browser_doi i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp), cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          and     i.device_browser = tt.device_browser
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+    create or replace table dta_customers.pageviews_daily_snapshot_device_browser_delta_doi
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.device_browser,
+            i.total_device_browser,
+            i.total_device_browser_day,
+            i.posted_timestamp,
+            i.inc_posted_timestamp
+    from       t_dta_device_browser_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+
+END;

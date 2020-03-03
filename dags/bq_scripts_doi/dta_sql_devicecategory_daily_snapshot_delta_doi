@@ -1,0 +1,86 @@
+/*
+BigQuery SQL Script
+Delta script for counting devices' category used to access agencies' domain websites daily
+
+Schedule: Daily run
+
+Outputs
+    registered domain
+    total devices' category upto date
+    total devices' category per day
+    current date
+    current posted timestamp
+*/
+
+
+BEGIN
+
+declare day_num int64 default 0;
+
+create temp table t_dta_device_category_snap_daily_inc (
+    reg_domain	STRING	,	
+    device_category string,
+    total_device_category	INT64	,	
+    total_device_category_day INT64,
+    posted_timestamp	TIMESTAMP,	
+    inc_posted_timestamp	TIMESTAMP	
+);
+
+  LOOP
+    IF day_num > 4 THEN
+        LEAVE;
+    END IF;
+    
+    insert into t_dta_device_category_snap_daily_inc
+      with tt as (
+          select 
+                 reg_domain,
+                 device_category,
+                 device_category_count,
+                 posted_timestamp
+          from   dta_customers.pageviews_daily_snapshot_device_category_doi
+          where  datetime_diff(datetime(current_timestamp),
+          cast(posted_timestamp as datetime), DAY) =  day_num
+        )   
+          select 
+              tt.reg_domain,
+              tt.device_category,
+              tt.device_category_count	 as total_device_category,
+              tt.device_category_count	-i.device_category_count	 as total_device_category_day,
+              tt.posted_timestamp,
+              current_timestamp() as inc_posted_timestamp
+          from        dta_customers.pageviews_daily_snapshot_device_category_doi i
+          right join  tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
+          and       i.device_category = tt.device_category
+          order by tt.reg_domain
+          ;
+
+  SET day_num = day_num+1;
+  END LOOP;
+  
+
+
+    create or replace table dta_customers.pageviews_daily_snapshot_device_category_delta_doi
+    OPTIONS (
+        description = "Daily incremental snapshot of past 7 days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.device_category,
+            i.total_device_category,
+            i.total_device_category_day,
+            i.posted_timestamp,
+            i.inc_posted_timestamp
+    from       t_dta_device_category_snap_daily_inc i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
+
+
+END;
