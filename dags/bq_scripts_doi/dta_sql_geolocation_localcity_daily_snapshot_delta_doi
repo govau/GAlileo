@@ -28,7 +28,7 @@ create temp table t_dta_local_city_snap_daily_inc (
 );
 
   LOOP
-    IF day_num > 5 THEN
+    IF day_num > 7 THEN
         LEAVE;
     END IF;
     
