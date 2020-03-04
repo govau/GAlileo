@@ -9,8 +9,9 @@ BEGIN
 
    insert into dta_customers.pageviews_daily_snapshot_unique_visitor_emp
     select
-        COUNT(distinct fullVisitorId) as total_visitors, 
-        APPROX_COUNT_DISTINCT(fullVisitorId) as total_visitors_approx,
+        COUNT(fullVisitorId) as total_visitors, 
+        COUNT(distinct fullVisitorId) as unique_visitors, 
+        APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
         net.reg_domain(hostname) as reg_domain,
         cast(current_timestamp as date) as record_timestamp,
         current_timestamp

@@ -19,6 +19,8 @@ declare day_num int64 default 0;
 create temp table t_dta_local_city_snap_daily_inc (
     reg_domain	STRING	,	
     local_city string,
+    geo_y string,
+    geo_x string,
     total_local_city	INT64	,	
     total_local_city_day INT64,
     posted_timestamp	TIMESTAMP,	
@@ -35,6 +37,8 @@ create temp table t_dta_local_city_snap_daily_inc (
           select 
                  reg_domain,
                  local_city,
+                  geo_y,
+                  geo_x,
                  local_city_count,
                  posted_timestamp
           from   dta_customers.pageviews_daily_snapshot_local_city_emp
@@ -44,6 +48,8 @@ create temp table t_dta_local_city_snap_daily_inc (
           select 
               tt.reg_domain,
               tt.local_city,
+              tt.geo_y,
+              tt.geo_x,
               tt.local_city_count as total_local_city,
               tt.local_city_count-i.local_city_count as total_local_city_day,
               tt.posted_timestamp,
@@ -54,6 +60,8 @@ create temp table t_dta_local_city_snap_daily_inc (
                       i.reg_domain = tt.reg_domain
           where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
           and       i.local_city = tt.local_city
+          and       i.geo_x = tt.geo_x
+          and       i.geo_y = tt.geo_y
           order by tt.reg_domain
           ;
 
@@ -71,13 +79,15 @@ create temp table t_dta_local_city_snap_daily_inc (
             COALESCE(da.agency,"") as agency,
             i.reg_domain,
             i.local_city,
+            i.geo_x,
+            i.geo_y,
             i.total_local_city,
             i.total_local_city_day,
             i.posted_timestamp,
             i.inc_posted_timestamp
     from       t_dta_local_city_snap_daily_inc i
-    left join   dta_customers.domain_agency_map da
-    on          i.reg_domain = da.domain_name
+    left join   dta_customers.domain_agency_map da on i.reg_domain = da.domain_name
+    -- left join   dta_customers.ga_dim_country_cities_geocodes cty on i.local_city = cty.city
     ;
 
 END;
