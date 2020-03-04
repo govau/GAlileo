@@ -1,0 +1,67 @@
+/*
+BigQuery SQL Script for Modification - Local Cities
+Script to output geo locations, local cities and international countries that are visiting the agency's websites - Add geocodes column
+*/
+
+/* Schedule: Manual run - once only for producing base output of employment dataset */
+
+BEGIN
+    
+    CREATE OR REPLACE TEMP TABLE t_pageviews_daily_snapshot_visitors_emp
+    (
+        total_visitors INT64, 
+        total_visitors_approx INT64,
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    );
+
+    insert into t_pageviews_daily_snapshot_visitors_emp (
+        total_visitors, 
+        total_visitors_approx,
+        reg_domain,
+        record_timestamp,
+        posted_timestamp
+    )
+      select
+        total_visitors, 
+        total_visitors_approx,
+        reg_domain,
+        record_timestamp,
+        posted_timestamp
+      from dta_customers.pageviews_daily_snapshot_unique_visitor_emp
+      order by reg_domain,posted_timestamp;
+
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_unique_visitor_emp
+    (
+        total_visitors INT64 OPTIONS (description = "Total visitors for registered domain up to date"),
+        unique_visitors INT64 OPTIONS (description = "Unique visitors total for registered domain up to date"),
+        unique_visitors_approx INT64 OPTIONS (description = "Visitors approximate total unique count for registered domain up to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp
+    OPTIONS (
+        description = "Unique visitors and total visitors count for registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+    insert into dta_customers.pageviews_daily_snapshot_unique_visitor_emp (
+        unique_visitors,
+        unique_visitors_approx,
+        reg_domain,
+        record_timestamp,
+        posted_timestamp
+    )
+    select
+        total_visitors, 
+        total_visitors_approx,
+        reg_domain,
+        record_timestamp,
+        posted_timestamp
+    from t_pageviews_daily_snapshot_visitors_emp;
+
+END;

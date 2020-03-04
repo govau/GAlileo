@@ -1,0 +1,86 @@
+/*
+BigQuery SQL Script
+Script to output device operating system and browser to interact with agency's websites - Daily Run
+*/
+
+/* Schedule: Daily run for full snapshot of employment dataset */
+
+BEGIN
+    insert into dta_customers.pageviews_daily_snapshot_device_opsbrowser_emp
+    select
+        device_ops,
+        device_browser,
+        count(*) as ops_browser_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+           select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1 
+            union all
+            select
+              hits.page.hostname as hostname,
+              device.operatingSystem as device_ops,
+              device.browser as device_browser
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+/* End - Datasets of employment websites */
+    )
+    GROUP BY   reg_domain,
+                        device_ops,
+                        device_browser
+    HAVING count(*) > 999
+   ;
+    
+
+
+END;
