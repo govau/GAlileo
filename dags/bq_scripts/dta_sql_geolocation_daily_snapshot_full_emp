@@ -10,6 +10,8 @@ BEGIN
     insert into dta_customers.pageviews_daily_snapshot_local_city_emp
     select
         local_city,
+        geo_y,
+        geo_x,
         count(*) as local_city_count,
         net.reg_domain(hostname) as reg_domain,
         cast(current_timestamp as date) as record_timestamp,
@@ -18,10 +20,12 @@ BEGIN
     (
 /* Start - Datasets of employment websites
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
- */
+*/
            select
               hits.page.hostname as hostname,
-              geoNetwork.city as local_city
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
             from
               `72008433.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -32,7 +36,9 @@ BEGIN
             union all
             select
               hits.page.hostname as hostname,
-              geoNetwork.city as local_city
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
             from
               `111564569.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -43,18 +49,22 @@ BEGIN
             union all
             select
               hits.page.hostname as hostname,
-              geoNetwork.city as local_city
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
             from
               `124827135.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
             where hits.type = 'PAGE'
              and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
              and geoNetwork.country = "Australia"
-             and totals.visits =1 
+             and totals.visits =1
             union all
             select
               hits.page.hostname as hostname,
-              geoNetwork.city as local_city
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
             from
               `104411629.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -65,7 +75,9 @@ BEGIN
             union all
             select
               hits.page.hostname as hostname,
-              geoNetwork.city as local_city
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
             from
               `86630641.ga_sessions_*` AS GA,
               UNNEST(GA.hits) AS hits
@@ -75,8 +87,10 @@ BEGIN
              and totals.visits =1
 /* End - Datasets of employment websites */
     )
-    GROUP BY    reg_domain,
-                        local_city
+    GROUP BY   reg_domain,
+                        local_city,
+                        geo_y,
+                        geo_x
    having count(*) > 99;
 
 

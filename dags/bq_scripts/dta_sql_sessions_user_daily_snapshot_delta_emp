@@ -10,8 +10,7 @@ Outputs
     user type
     total users upto date
     total users per day
-    number of sessions upto date
-    number of sessions per day
+    number of sessions
     total users' page hits upto date
     total users' page hits per day 
     current date
@@ -26,7 +25,6 @@ create temp table t_dta_session_user_snap_daily_inc (
     reg_domain	STRING	,	
     user_type string,
     number_of_sessions INT64,
-    number_of_sessions_day INT64,
     total_session_users	INT64,	
     total_session_users_day INT64,
     total_pageview_hits INT64,
@@ -57,7 +55,6 @@ create temp table t_dta_session_user_snap_daily_inc (
               tt.reg_domain,
               tt.user_type,
               tt.number_of_sessions as number_of_sessions,
-              tt.number_of_sessions-i.number_of_sessions as number_of_sessions_day,
               tt.user_count as total_session_users,
               tt.user_count-i.user_count as total_session_users_day,
               tt.pageview_hits as total_pageview_hits,
@@ -69,8 +66,9 @@ create temp table t_dta_session_user_snap_daily_inc (
           on    
                       i.reg_domain = tt.reg_domain
           where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num +1
-          and       i.session_user = tt.session_user
-          order by tt.reg_domain
+          and       i.user_type = tt.user_type
+          and       i.number_of_sessions = tt.number_of_sessions
+          order by tt.reg_domain, tt.number_of_sessions desc
           ;
 
   SET day_num = day_num+1;
@@ -88,7 +86,6 @@ create temp table t_dta_session_user_snap_daily_inc (
             i.reg_domain,
             i.user_type,
             i.number_of_sessions,
-            i.number_of_sessions_day,
             i.total_session_users,
             i.total_session_users_day,
             i.total_pageview_hits,
