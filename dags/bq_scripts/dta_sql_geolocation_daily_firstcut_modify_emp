@@ -1,0 +1,69 @@
+/*
+BigQuery SQL Script for Modification - Local Cities
+Script to output geo locations, local cities and international countries that are visiting the agency's websites - Add geocodes column
+*/
+
+/* Schedule: Manual run - once only for producing base output of employment dataset */
+
+BEGIN
+    
+    CREATE OR REPLACE TEMP TABLE t_pageviews_daily_snapshot_local_city_emp
+    (
+        local_city string,
+        geo_x string,
+        geo_y string,
+        local_city_count INT64 OPTIONS (description = "Local city from where registered domain is visited to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+
+    insert into t_pageviews_daily_snapshot_local_city_emp (
+          local_city,
+          local_city_count,
+          reg_domain,
+          record_timestamp,
+          posted_timestamp)
+      select
+          local_city,
+          local_city_count,
+          reg_domain,
+          record_timestamp,
+          posted_timestamp
+      from dta_customers.pageviews_daily_snapshot_local_city_emp
+
+
+    CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_local_city_emp
+    (
+        local_city string,
+        geo_x string,
+        geo_y string,
+        local_city_count INT64 OPTIONS (description = "Local city from where registered domain is visited to date"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp 
+    OPTIONS (
+        description = "Local cities count for registered domain in employment sector",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+    insert into dta_customers.pageviews_daily_snapshot_local_city_emp (
+          local_city,
+          local_city_count,
+          reg_domain,
+          record_timestamp,
+          posted_timestamp
+          )
+      select
+          local_city,
+          local_city_count,
+          reg_domain,
+          record_timestamp,
+          posted_timestamp
+      from t_pageviews_daily_snapshot_local_city_emp;
+
+END;
