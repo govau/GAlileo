@@ -1,0 +1,790 @@
+/*
+BigQuery SQL Script
+Script to output total unique visitors on agency's websites - Daily Full Snapshot
+*/
+
+/* Schedule: Daily run for snapshot on unique visitors count of employment dataset */
+
+ CREATE OR REPLACE TABLE dta_customers.pageviews_daily_snapshot_total_visitors_days_doi
+    (
+        total_visitors INT64 OPTIONS (description = "Total visitors for registered domains up to date"),
+        unique_visitors INT64 OPTIONS (description = "Unique visitors total for registered domains up to date"),
+        unique_visitors_approx INT64 OPTIONS (description = "Unique visitors approximate total count for registered domain up to date"),
+        total_days INT64 OPTIONS (description = "Total days registered domain is published"),
+        reg_domain string,
+        record_timestamp date,
+        posted_timestamp timestamp
+    )
+    PARTITION BY record_timestamp
+    OPTIONS (
+        description = "Unique visitors and total visitors count for registered domains of interest",
+        partition_expiration_days = 365,
+        require_partition_filter = false
+    )
+    ;
+
+BEGIN
+
+   insert into dta_customers.pageviews_daily_snapshot_total_visitors_days_doi
+    select
+        COUNT(fullVisitorId) as total_visitors,
+        COUNT(distinct fullVisitorId) as unique_visitors,
+        APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
+        datetime_diff(datetime(current_timestamp),datetime(timestamp_seconds(min(visitStartTime))), DAY)  as total_days,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_timestamp,
+        current_timestamp
+    from
+    (
+/* Start - Datasets of Interest websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+/* End - Datasets of Interest websites */
+    )
+    WHERE
+        type = 'PAGE'
+    GROUP BY reg_domain
+    -- HAVING COUNT(fullVisitorId) > 999
+    ;
+    
+
+END;
