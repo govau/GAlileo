@@ -103,10 +103,19 @@ with models.DAG(
     query_user_session_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_user_session_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts/dta_sql_sessions_user_daily_snapshot_full_emp").read_text(), use_legacy_sql=False)
-        
+    
     query_user_session_delta_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_user_session_delta_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts/dta_sql_sessions_user_daily_snapshot_delta_emp").read_text(), use_legacy_sql=False)
+    
+    # device operating system and browser snapshot
+    query_device_opsbrowser_snapshot = bigquery_operator.BigQueryOperator(
+        task_id='query_device_opsbrowser_snapshot',
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts/dta_sql_device_opsbrowser_daily_snapshot_full_emp").read_text(), use_legacy_sql=False)
+
+    query_device_opsbrowser_delta_snapshot = bigquery_operator.BigQueryOperator(
+        task_id='query_device_opsbrowser_delta_snapshot',
+        bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts/dta_sql_device_opsbrowser_daily_snapshot_delta_emp").read_text(), use_legacy_sql=False)
     # ============================================================================================================
     # Export datasets
     # pageviews snapshot
@@ -351,6 +360,33 @@ with models.DAG(
                                 'us-east1-dta-airflow-b3415db4-bucket'),
             'session_users_daily_snapshot_emp')],
     export_format='CSV')
+
+    # device operating system and browser snapshot
+    export_bq_to_gcs_json_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+        task_id='export_bq_to_gcs_json_device_opsbrowser',
+        source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_device_opsbrowser_delta_emp",
+        params={
+            'project_id': project_id
+        },
+        destination_cloud_storage_uris=[
+            "gs://%s/data/analytics/json/%s.json" % (
+                models.Variable.get('AIRFLOW_BUCKET',
+                                    'us-east1-dta-airflow-b3415db4-bucket'),
+                'device_opsbrowser_daily_snapshot_emp')],
+        export_format='NEWLINE_DELIMITED_JSON')
+
+    export_bq_to_gcs_csv_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+    task_id='export_bq_to_gcs_csv_device_opsbrowser',
+    source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_device_opsbrowser_delta_emp",
+    params={
+        'project_id': project_id
+    },
+    destination_cloud_storage_uris=[
+        "gs://%s/data/analytics/csv/%s.csv" % (
+            models.Variable.get('AIRFLOW_BUCKET',
+                                'us-east1-dta-airflow-b3415db4-bucket'),
+            'device_opsbrowser_daily_snapshot_emp')],
+    export_format='CSV')
     # ============================================================================================================
     query_pageviews_snapshot >> query_pageviews_snapshot_delta >> export_bq_to_gcs_json
     query_pageviews_snapshot_delta >> export_bq_to_gcs_csv
@@ -370,3 +406,5 @@ with models.DAG(
     query_country_delta_snapshot >> export_bq_to_gcs_csv_country
     query_user_session_snapshot >> query_user_session_delta_snapshot >> export_bq_to_gcs_json_session_users
     query_user_session_delta_snapshot >> export_bq_to_gcs_csv_session_users
+    query_device_opsbrowser_snapshot >> query_device_opsbrowser_delta_snapshot >> export_bq_to_gcs_json_device_opsbrowser
+    query_device_opsbrowser_delta_snapshot >> export_bq_to_gcs_csv_device_opsbrowser

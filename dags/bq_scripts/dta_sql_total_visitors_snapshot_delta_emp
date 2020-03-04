@@ -7,23 +7,26 @@ Schedule: Daily run
 Outputs
     registered domain
     total people visiting domain upto date
+    unique people visiting domain upto date
     total people visiting domain per day
+    unique people visiting domain per day
     current date
     current posted timestamp
 */
-
 
 BEGIN
 
 declare day_num int64 default 0;
 
 create temp table t_dta_total_uvisitor_snap_daily_inc (
-    reg_domain	STRING	,	
-    total_visitors	INT64	,	
-    total_visitors_approx	INT64	,	
+    reg_domain	STRING,	
+    total_visitors	INT64,	
     total_visitors_day INT64,
-    total_visitors_approx_day INT64,
-    posted_timestamp	TIMESTAMP	,	
+    unique_visitors INT64,
+    unique_visitors_day INT64,
+    unique_visitors_approx	INT64,	
+    unique_visitors_approx_day INT64,
+    posted_timestamp	TIMESTAMP,	
     inc_posted_timestamp	TIMESTAMP	
 );
 
@@ -37,7 +40,8 @@ create temp table t_dta_total_uvisitor_snap_daily_inc (
           select 
                  reg_domain,
                  total_visitors,
-                 total_visitors_approx,
+                 unique_visitors,
+                 unique_visitors_approx,
                  posted_timestamp
           from   dta_customers.pageviews_daily_snapshot_unique_visitor_emp
           where  datetime_diff(datetime(current_timestamp),
@@ -46,9 +50,11 @@ create temp table t_dta_total_uvisitor_snap_daily_inc (
           select 
               tt.reg_domain,
               tt.total_visitors as total_visitors,
-              tt.total_visitors_approx as total_visitors_approx,
               tt.total_visitors-i.total_visitors as total_visitors_day,
-              tt.total_visitors_approx-i.total_visitors_approx as total_visitors_approx_day,
+              tt.unique_visitors as unique_visitors,
+              tt.unique_visitors-i.unique_visitors as unique_visitors_day,
+              tt.unique_visitors_approx as unique_visitors_approx,
+              tt.unique_visitors_approx-i.unique_visitors_approx as unique_visitors_approx_day,
               tt.posted_timestamp,
               current_timestamp() as inc_posted_timestamp
           from             dta_customers.pageviews_daily_snapshot_unique_visitor_emp i
@@ -74,14 +80,16 @@ create temp table t_dta_total_uvisitor_snap_daily_inc (
     select   
             COALESCE(da.agency,"") as agency,
             i.reg_domain,
+            i.total_visitors,
+            i.total_visitors_day,
             case 
-                when i.total_visitors > i.total_visitors_approx then i.total_visitors
-                else i.total_visitors_approx
-            end as total_people,
+                when i.unique_visitors > i.unique_visitors_approx then i.unique_visitors
+                else i.unique_visitors_approx
+            end as unique_people,
             case 
-                when i.total_visitors_day > i.total_visitors_approx_day then i.total_visitors_day
-                else i.total_visitors_approx_day
-            end as total_people_day,
+                when i.unique_visitors_day > i.unique_visitors_approx_day then i.unique_visitors_day
+                else i.unique_visitors_approx_day
+            end as unique_people_day,
             i.posted_timestamp,
             i.inc_posted_timestamp
     from       t_dta_total_uvisitor_snap_daily_inc i
