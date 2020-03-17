@@ -1,0 +1,943 @@
+/*
+BigQuery SQL Script
+Script to output geo locations, local cities and international countries that are visiting the agency's websites - Monthly Snapshot
+*/
+
+/* Schedule: Monthly Run for snapshot of local cities and countries count, locations that visited agencies' websites websites */
+
+BEGIN
+
+    create temp table t_dta_delta_snapshot_local_city_doi
+    as
+    select
+        local_city,
+        geo_y,
+        geo_x,
+        count(*) as local_city_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_date,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+/* End - Datasets of agencies' websites */
+    )
+    GROUP BY   reg_domain,
+                        local_city,
+                        geo_y,
+                        geo_x
+   having count(*) > 99;
+
+
+create or replace table dta_customers.localcity_daily_snapshot_intraday_doi
+    OPTIONS (
+        description = "Daily delta snapshot of intra day",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+          select 
+              COALESCE(da.agency,"") as agency,
+              t.reg_domain,
+              t.local_city,
+              t.geo_y,
+              t.geo_x,
+              t.local_city_count,
+              t.record_date,
+              CURRENT_TIMESTAMP() as posted_timestamp,
+              t.intraday_date
+from        t_dta_delta_snapshot_local_city_doi  t
+left join   dta_customers.domain_agency_map da
+on           t.reg_domain = da.domain_name
+;
+
+
+END;
