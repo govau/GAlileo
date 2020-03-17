@@ -1,22 +1,34 @@
 /*
 BigQuery SQL Script
-Script to output total unique visitors on agency's websites - Daily Full Snapshot
+Script to output total unique visitors on agency's websites - Monthly Full Accumulated Snapshot
 */
 
-/* Schedule: Daily run for snapshot on unique visitors count of employment dataset */
+/* Schedule: Monthly run for full accumulated snapshot on unique and total visitors count and number of days of agencies' websites */
 
 
 BEGIN
 
-   insert into dta_customers.pageviews_daily_snapshot_total_visitors_days_doi
+  create temp table t_dta_total_visitor_snap_monthly_full (
+    reg_domain	STRING,	
+    total_visitors	INT64,	
+    unique_visitors INT64,
+    unique_visitors_approx	INT64,	
+    total_days INT64,
+    posted_date	date,	
+    inc_posted_timestamp	TIMESTAMP,
+    delta_day_date string
+);
+
+   insert into t_dta_total_visitor_snap_monthly_full
     select
+        net.reg_domain(hostname) as reg_domain,
         COUNT(fullVisitorId) as total_visitors,
         COUNT(distinct fullVisitorId) as unique_visitors,
         APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
         datetime_diff(datetime(current_timestamp),datetime(timestamp_seconds(min(visitStartTime))), DAY)  as total_days,
-        net.reg_domain(hostname) as reg_domain,
-        cast(current_timestamp as date) as record_timestamp,
-        current_timestamp
+        cast(current_timestamp as date) as posted_date,
+        current_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as delta_day_date
     from
     (
 /* Start - Datasets of Interest websites
@@ -1582,6 +1594,29 @@ BEGIN
     GROUP BY reg_domain
     -- HAVING COUNT(fullVisitorId) > 999
     ;
-    
+  
+
+   create or replace table dta_customers.pageviews_accumulated_snapshot_visitors_days_full_doi
+    OPTIONS (
+        description = "Montly full accumulated snapshot of past all days",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            COALESCE(da.agency,"") as agency,
+            i.reg_domain,
+            i.total_days,
+            i.total_visitors,
+            case 
+                when i.unique_visitors > i.unique_visitors_approx then i.unique_visitors
+                else i.unique_visitors_approx
+            end as unique_visitors,
+            i.posted_date,
+            i.inc_posted_timestamp,
+            i.delta_day_date
+    from       t_dta_total_visitor_snap_monthly_full i
+    left join   dta_customers.domain_agency_map da
+    on          i.reg_domain = da.domain_name
+    ;
 
 END;
