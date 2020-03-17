@@ -1,0 +1,901 @@
+/*
+BigQuery SQL Script
+Script to output traffic source and medium of agency's websites - Daily Delta Snapshot
+*/
+
+/* Schedule: Daily run for full snapshot of traffic source and medium count of agencies' websites*/
+
+BEGIN
+
+  create temp table t_pgvw_traffic_srcmedium_snap_delta_doi
+    as
+    select
+        traffic_source,
+        traffic_medium,
+        count(*) as source_medium_count,
+        net.reg_domain(hostname) as reg_domain,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+            union all
+    select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+              trafficSource.medium as traffic_medium
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+/* End - Datasets of agencies' websites */
+    )
+    GROUP BY   reg_domain,
+                        traffic_source,
+                        traffic_medium
+    HAVING count(*) > 999
+   ;
+  
+
+-- Condensing dataset classifying traffic medium streaming from direct or other re-directed traffic sources
+  create or replace table dta_customers.pgvw_daily_traffic_srcmedium_intraday_doi
+    OPTIONS (
+        description = "Daily delta snapshot of intra day",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+  as
+        select
+    COALESCE(da.agency,"") as agency,
+    t.reg_domain,
+    t.traffic_source,
+    t.traffic_medium,
+    t.source_medium_count,
+    cast(current_timestamp as date) as record_date,
+    CURRENT_TIMESTAMP() as posted_timestamp,
+    t.intraday_date
+  from
+  (
+    with tt as (
+            select
+        case 
+          when traffic_medium = 'referral' then 'web redirection'
+          else regexp_replace(traffic_source,r'\(direct\)','direct')
+        end as traffic_source,
+        case 
+          when regexp_contains(lower(traffic_medium), r'email|mail') = true then 'email'
+          when regexp_contains(lower(traffic_medium), r'banner|carousel|cpm|cpc') = true then 'advertisement'
+          when regexp_contains(lower(traffic_medium), r'web|microsite|intranet|page|utilities|native|file|factsheet|download') = true then 'web'
+          when regexp_contains(lower(traffic_medium), r'social|media|ios_app|instagram|miragenews|mobile-app|news|viostream|facebook|graduate-program-campaign|sem-sub|sst|promotion|proactive|display|article') = true then 'media'
+          when regexp_contains(traffic_medium,r'\(none\)') = true then 'manual'
+          when regexp_contains(lower(traffic_medium), r'ato') = true then 'organic'
+          when regexp_contains(lower(traffic_medium), r'response|external|domain-redirect|301') = true then 'referral'
+          else lower(traffic_medium)
+        end as traffic_medium,
+        sum(source_medium_count) as source_medium_count,
+        reg_domain,
+        intraday_date
+      from t_pgvw_traffic_srcmedium_snap_delta_doi
+      -- where traffic_medium not in ('error')
+      GROUP BY   reg_domain,
+                          traffic_source,
+                          traffic_medium,
+                          intraday_date
+    )
+    select
+      traffic_source,
+      traffic_medium,
+      source_medium_count,
+      reg_domain,
+      intraday_date
+    from tt                        
+  ) as t
+  left join   dta_customers.domain_agency_map da
+  on           t.reg_domain = da.domain_name
+  ;
+
+END;
