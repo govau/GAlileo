@@ -1,0 +1,1287 @@
+/* SQL Webpage Template of Full Snapshot Script for Automation
+Description: Page view statistics associated with Each page URL and its respective registered domain name
+The output dataset sets the base for analytics delivering daily accumulated snapshot; rollup for hostname, 
+top level domain and registered domain name
+
+ Outputs 
+    Statistics:
+      pageview count
+      time spent on page
+    Dimensions:
+      registered domain
+      current timestamp
+*/
+
+BEGIN
+
+create temp table t_dta_pgvw_snap_daily_delta_doi
+as
+-- Time Spent on Page of Registered Domain
+select
+  reg_domain,
+  total_pageviews,
+  cast(total_time_on_page as numeric) as total_time_on_page,
+  cast(current_timestamp as date) as record_date,
+  FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as full_day_date
+from
+  (
+  select
+      net.reg_domain(hostname) as reg_domain,
+      count(*) as total_pageviews,
+      sum(time_on_page) as total_time_on_page
+    from
+    (
+    select
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      case
+        when isExit is not null then last_interaction - hit_time
+        else next_pageview - hit_time
+      end as time_on_page,
+      hostname
+     from 
+        (
+        select
+        hostname,
+        pagePath,
+        hit_time,
+        type,
+        isExit,
+        last_interaction,
+        lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
+        from
+        (
+          select
+            fullVisitorId,
+            visitStartTime,
+            hostname,
+            pagePath,
+            hit_time,
+            type,
+            isExit,
+            last_interaction
+            from
+        (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+    select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+/* End - Datasets of employment websites */
+              )
+            WHERE
+              type = 'PAGE'
+      )))
+  where  net.reg_domain(hostname) is not null
+  group by reg_domain
+  -- Low Pass Filter Applied to exclude non-public visits
+  having count(*) > 100
+  )
+  order by reg_domain
+  ;
+
+
+-- 1 Aggregation of Pageviews Daily Snapshot of Existing and/or New Registered Domain
+create or replace table dta_customers.pageviews_daily_snapshot_delta_doi
+    OPTIONS (
+        description = "Daily delta snapshot of past day",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+  select
+    COALESCE(da.agency,"") as agency,
+    t.reg_domain,
+    t.total_pageviews,
+    t.total_time_on_page,
+    t.record_date,
+    CURRENT_TIMESTAMP() as posted_timestamp,
+    t.full_day_date
+  from        t_dta_pgvw_snap_daily_delta_doi t
+  left join   dta_customers.domain_agency_map da
+  on           t.reg_domain = da.domain_name
+;
+
+END;
