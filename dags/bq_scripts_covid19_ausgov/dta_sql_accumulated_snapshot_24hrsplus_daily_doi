@@ -1,0 +1,469 @@
+/*
+BigQuery SQL Script -  australia.gov.au
+Script to output following dimensions of ausgov website - Daily Snapshot for past 24 hours and intra day
+
+1- Total and unique visitors
+2- Outbound visitors
+3- Pageviews and timespent on page (total and average)
+4- Traffic source
+5- Local cities
+6- Device category
+7- User types i.e. new visitor and returning
+
+*/
+
+/* Schedule: Daily run for snapshot on ausgov dataset */
+
+
+BEGIN
+-- Pageviews and Time On Page
+-- Time Spent on Page of Registered Domain
+-- create temp table t_covid19_pageviews_timespent_accumulated_snapshot_24hrsplus_doi
+-- as
+insert into dta_customers_ausgov.covid19_pageviews_timespent_accumulated_snapshot_24hrsplus_doi
+select
+  reg_domain,
+  total_pageviews,
+  cast(total_time_on_page as numeric) as total_time_on_page,
+  cast(total_time_on_page / total_pageviews as numeric)  AS avg_time_on_page,
+  cast(current_timestamp as date) as record_date,
+  CURRENT_TIMESTAMP() as posted_timestamp,
+  concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+  FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+from
+  (
+  select
+      net.reg_domain(hostname) as reg_domain,
+      count(*) as total_pageviews,
+      sum(time_on_page) as total_time_on_page,
+      SUM(IF(isExit IS NOT NULL,
+        1,
+        0)) AS exits,
+    from
+    (
+    select
+      pagePath,
+      hit_time,
+      type,
+      isExit,
+      case
+        when isExit is not null then last_interaction - hit_time
+        else next_pageview - hit_time
+      end as time_on_page,
+      hostname
+     from 
+        (
+        select
+        hostname,
+        pagePath,
+        hit_time,
+        type,
+        isExit,
+        last_interaction,
+        lead(hit_time) over (partition by fullVisitorId, visitStartTime order by hit_time) as next_pageview
+        from
+        (
+          select
+            fullVisitorId,
+            visitStartTime,
+            hostname,
+            pagePath,
+            hit_time,
+            type,
+            isExit,
+            last_interaction
+            from
+        (
+/* Start - Datasets of employment websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+          select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and   _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+          select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.page.pagePath,
+              hits.type,
+              coalesce(cast(hits.isExit as string),"") as isExit,
+              hits.time/1000 as hit_time,
+              max( if( hits.isInteraction is not null, hits.time/1000, 0 ) ) over
+              (partition by fullVisitorId, visitStartTime) as last_interaction
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+         )
+         WHERE
+              type = 'PAGE'
+  )))
+  where  net.reg_domain(hostname) is not null
+  group by reg_domain
+  -- Low Pass Filter Applied to exclude non-public visits
+  having count(*) > 100
+  );
+
+END;
+  
+
+BEGIN
+
+-- declare day_num int64 default 0;
+
+create temp table t_covid19_total_unique_visitors_accumulated_snapshot_24hrsplus_doi
+as
+--total and unique visitors            
+select
+      reg_domain,
+      total_visitors,
+      case 
+           when unique_visitors > unique_visitors_approx then unique_visitors
+           else unique_visitors_approx
+       end as unique_visitors,
+       cast(current_timestamp as date) as posted_date,
+       CURRENT_TIMESTAMP() as posted_timestamp,
+       concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+       FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+from (
+ select
+        net.reg_domain(hostname) as reg_domain,
+        COUNT(fullVisitorId) as total_visitors,
+        COUNT(distinct fullVisitorId) as unique_visitors,
+        APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
+--         datetime_diff(datetime(current_timestamp),datetime(timestamp_seconds(min(visitStartTime))), DAY)  as total_days
+    from
+    (
+/* Start - Datasets of Interest websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+      )
+        WHERE
+        type = 'PAGE'
+    GROUP BY reg_domain
+    );
+
+END;
+    
+    
+BEGIN              
+-- visitors going to, outbound
+insert into dta_customers_ausgov.covid19_users_outbound_accumulated_snapshot_24hrsplus_doi
+select 
+       hostname,
+       eventCategory,
+       eventLabel,
+       count(*) as count_users,
+       cast(current_timestamp as date) as record_date,
+       CURRENT_TIMESTAMP() as posted_timestamp,
+       concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+       FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+from
+      (
+      select
+              hits.page.hostname,
+              hits.eventInfo.eventCategory,
+              hits.eventInfo.eventLabel
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where 
+            hits.type = 'EVENT'
+            and ( hits.eventInfo.eventCategory = 'All Links' or (hits.eventInfo.eventCategory = 'Outbound links' and hits.eventInfo.eventAction = 'Click'))
+            and regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+       union all
+       select
+              hits.page.hostname,
+              hits.eventInfo.eventCategory,
+              hits.eventInfo.eventLabel
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where 
+            hits.type = 'EVENT'
+            and ( hits.eventInfo.eventCategory = 'All Links' or (hits.eventInfo.eventCategory = 'Outbound links' and hits.eventInfo.eventAction = 'Click'))
+            and regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+       )
+       group by 
+                hostname,
+                eventCategory,
+                eventLabel
+              order by count_users desc;
+
+END;              
+              
+            
+
+BEGIN
+-- traffic source
+insert into dta_customers_ausgov.covid19_traffic_source_accumulated_snapshot_24hrsplus_doi
+ select
+        traffic_source,
+        count(*) as source_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_date,
+        CURRENT_TIMESTAMP() as posted_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+        FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+      select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source
+--               trafficSource.medium as traffic_medium
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and totals.visits = 1
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and   _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+      select
+              hits.page.hostname as hostname,
+              trafficSource.source as traffic_source,
+--               trafficSource.medium as traffic_medium
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+            and totals.visits = 1
+            and   regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and   _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+    )
+     GROUP BY   reg_domain,
+                traffic_source;
+
+END;                
+                
+
+BEGIN
+-- City Location across Australia
+insert into dta_customers_ausgov.covid19_localcity_accumulated_snapshot_24hrsplus_doi
+  select
+        local_city,
+        geo_y,
+        geo_x,
+        count(*) as local_city_count,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_date,
+        CURRENT_TIMESTAMP() as posted_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+        FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+  select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and geoNetwork.country = "Australia"
+             and totals.visits =1 
+             and   _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+  select
+              hits.page.hostname as hostname,
+              geoNetwork.city as local_city,
+              geoNetwork.latitude as geo_y,
+              geoNetwork.longitude as geo_x
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and totals.visits =1 
+            and geoNetwork.country = "Australia"
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+     )
+    GROUP BY   reg_domain,
+                        local_city,
+                        geo_y,
+                        geo_x;
+
+END;
+
+
+BEGIN
+-- Device category
+insert into dta_customers_ausgov.covid19_devices_accumulated_snapshot_24hrsplus_doi
+       select
+            device_category,
+            count(*) as device_category_count,
+            net.reg_domain(hostname) as reg_domain,
+            cast(current_timestamp as date) as record_date,
+            CURRENT_TIMESTAMP() as posted_timestamp,
+            concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+            FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+        from
+        (
+/*  Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+  select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and   _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+  select
+              hits.page.hostname as hostname,
+              device.deviceCategory as device_category
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+            and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+            and totals.visits =1
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+    )
+    GROUP BY    reg_domain,
+                device_category
+                having count(*) > 99;
+
+END;  
+  
+
+BEGIN  
+  -- User types; Returning Users
+create temp table t_covid19_user_type_accumulated_snapshot_24hrsplus_doi
+as
+    select
+        user_type,
+--         number_of_sessions,
+        sum(users) as users,
+        sum(pageview_hits) as pageview_hits,
+        net.reg_domain(hostname) as reg_domain,
+        cast(current_timestamp as date) as record_date,
+        CURRENT_TIMESTAMP() as posted_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+        FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+    from
+    (
+/* Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+             SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+              from
+                `71597546.ga_sessions_*` AS GA,
+                UNNEST(GA.hits) AS hits
+              where hits.type = 'PAGE'
+              and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+              and totals.visits = 1
+              and   _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+              group by   1,2,3
+              having count(*) > 99
+             union all 
+            SELECT
+                hits.page.hostname as hostname,
+                -- Count of Sessions (dimension)
+                visitNumber AS number_of_sessions,
+                -- User Type (dimension)
+                CASE
+                  WHEN totals.newVisits = 1 THEN 'new visitor'
+                ELSE
+                'returning visitor'
+                END AS user_type,
+                -- Users (metric)
+                COUNT(DISTINCT fullVisitorId) AS users,
+                -- Hits (metric)
+                SUM(totals.hits) AS pageview_hits
+              from
+                `71597546.ga_sessions_*` AS GA,
+                UNNEST(GA.hits) AS hits
+              where hits.type = 'PAGE'
+              and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+              and totals.visits = 1
+              and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+              group by   1,2,3
+              having count(*) > 99
+    )
+    group by
+      reg_domain, 
+--       number_of_sessions, 
+      user_type;
+
+insert into dta_customers_ausgov.covid19_user_type_accumulated_snapshot_24hrsplus_doi
+      select 
+              tt.user_type,
+              tt.users as users,
+              tt.pageview_hits as pageview_hits,
+               tt.reg_domain,
+              tt.record_date,
+              tt.posted_timestamp,
+              tt.intraday_date,
+              tt.earliest_date,
+              tt.users-i.users as session_users_delta,
+              tt.pageview_hits-i.pageview_hits as pageview_hits_delta
+          from        dta_customers_ausgov.covid19_user_type_accumulated_snapshot_24hrsplus_doi i
+          right join  t_covid19_user_type_accumulated_snapshot_24hrsplus_doi tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = 1
+          and       i.user_type = tt.user_type;
+
+END;
