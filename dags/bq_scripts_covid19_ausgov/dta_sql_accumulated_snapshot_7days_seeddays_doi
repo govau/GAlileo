@@ -1,0 +1,196 @@
+/*
+BigQuery SQL Script -  australia.gov.au
+Script to output following dimensions of ausgov website - Daily Snapshot for past 7 days
+
+1- Total and unique visitors
+2- Outbound visitors
+3- Pageviews and timespent on page (total and average)
+4- Traffic source
+5- Local cities
+6- Device category
+7- User types i.e. new visitor and returning
+
+*/
+
+/* Schedule: Daily run for snapshot on ausgov dataset */
+
+
+BEGIN
+-- Pageviews and Time On Page
+-- Time Spent on Page of Registered Domain
+
+insert into dta_customers_ausgov.covid19_pageviews_timespent_accumulated_snapshot_7days_doi
+  select 
+    'australia.gov.au' as reg_domain,
+    0 as total_pageviews,
+    0 as total_time_on_page,
+    0 as avg_time_on_page,
+    cast(COVID_DAY_TIMESTAMP as date) as record_date,
+    COVID_DAY_TIMESTAMP as posted_timestamp,
+    concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+    FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+order by record_Date;
+
+END;
+
+BEGIN
+
+--total and unique visitors         
+create temp table t_covid19_total_unique_visitors_accumulated_snapshot_7days_doi
+as
+select
+      reg_domain,
+      total_visitors,
+      unique_visitors,
+      posted_date,
+      posted_timestamp,
+      intraday_date,
+      earliest_date
+from dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_7days_doi
+  ;
+
+create or replace table dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_7days_doi 
+   OPTIONS (
+        description = "Full accumulated snapshot of past 7 days and intra day"
+    )
+as
+select
+      reg_domain,
+      total_visitors,
+      unique_visitors,
+      posted_date,
+      posted_timestamp,
+      intraday_date,
+      earliest_date
+from t_covid19_total_unique_visitors_accumulated_snapshot_7days_doi;
+
+insert into dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_7days_doi
+  select 
+    'australia.gov.au' as reg_domain,
+    0,
+    0,
+    cast(COVID_DAY_TIMESTAMP as date) as record_date,
+    COVID_DAY_TIMESTAMP as posted_timestamp,
+    concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+    FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+
+END;    
+    
+
+BEGIN              
+-- visitors going to, outbound
+insert into dta_customers_ausgov.covid19_users_outbound_accumulated_snapshot_7days_doi
+  select 
+    'australia.gov.au',
+    '',
+    '',
+    0,
+    cast(COVID_DAY_TIMESTAMP as date) as record_date,
+    COVID_DAY_TIMESTAMP as posted_timestamp,
+    concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+    FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+              
+END;              
+            
+
+BEGIN
+-- traffic source
+insert into dta_customers_ausgov.covid19_traffic_source_accumulated_snapshot_7days_doi
+ select
+        '',
+        0,
+         'australia.gov.au',
+     cast(COVID_DAY_TIMESTAMP as date) as record_date,
+    COVID_DAY_TIMESTAMP as posted_timestamp,
+    concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+    FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+
+END;                
+                
+
+BEGIN
+-- City Location across Australia
+insert into dta_customers_ausgov.covid19_localcity_accumulated_snapshot_7days_doi
+  select
+        '',
+        '0',
+        '0',
+        0,
+        'australia.gov.au',
+        cast(COVID_DAY_TIMESTAMP as date) as record_date,
+        COVID_DAY_TIMESTAMP as posted_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+        FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+  
+END;
+
+
+BEGIN
+-- Device category
+insert into dta_customers_ausgov.covid19_devices_accumulated_snapshot_7days_doi
+  select
+        '',
+        0,
+        'australia.gov.au',
+        cast(COVID_DAY_TIMESTAMP as date) as record_date,
+        COVID_DAY_TIMESTAMP as posted_timestamp,
+        concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+        FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+
+END;
+
+
+BEGIN
+  
+  -- User types; Returning Users
+create temp table t_covid19_user_type_accumulated_snapshot_7days_doi
+as
+    select
+        user_type,
+        users,
+        pageview_hits,
+        reg_domain,
+        record_date,
+        posted_timestamp,
+        intraday_date,
+        earliest_date
+    from dta_customers_ausgov.covid19_user_type_accumulated_snapshot_7days_doi;
+    
+create or replace table dta_customers_ausgov.covid19_user_type_accumulated_snapshot_7days_doi
+as
+ select
+        user_type,
+        users,
+        pageview_hits,
+        reg_domain,
+        record_date,
+        posted_timestamp,
+        intraday_date,
+        earliest_date
+  from  t_covid19_user_type_accumulated_snapshot_7days_doi;
+
+insert into dta_customers_ausgov.covid19_user_type_accumulated_snapshot_7days_doi
+  select
+      '',
+      0,
+      0,
+      'australia.gov.au',
+      cast(COVID_DAY_TIMESTAMP as date) as record_date,
+      COVID_DAY_TIMESTAMP as posted_timestamp,
+      concat('intraday_', FORMAT_DATE('%Y%m%d',cast(COVID_DAY_TIMESTAMP as date))) as intraday_date,
+      FORMAT_DATE('%Y%m%d',DATE_SUB(cast(COVID_DAY_TIMESTAMP as date), INTERVAL 7 DAY))  as earliest_date
+  from UNNEST(GENERATE_TIMESTAMP_ARRAY(timestamp_add ( current_timestamp, interval 1 DAY ), '2020-10-31', INTERVAL 1 DAY)) AS COVID_DAY_TIMESTAMP
+  order by record_Date;
+
+END;

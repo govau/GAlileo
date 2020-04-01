@@ -1,0 +1,136 @@
+--patch up script for delta counts
+
+Begin
+
+declare day_num int64 default 0;
+
+create table dta_customers_ausgov.t_covid19_user_type_accumulated_snapshot_180days_doi
+as
+    select
+         user_type,
+         users,
+         pageview_hits,
+         reg_domain,
+         record_date,
+         posted_timestamp,
+         intraday_date,
+         earliest_date,
+         session_users_delta,
+         pageview_hits_delta
+    from dta_customers_ausgov.covid19_user_type_accumulated_snapshot_180days_doi
+    ;
+
+
+create temp table t_covid19_user_type_accumulated_snapshot_180days_doi
+ as
+ with tt as (
+          select 
+                 reg_domain,
+                 user_type,
+                 users,
+                 pageview_hits,
+                 posted_timestamp,
+                 intraday_date,
+                 earliest_date
+          from   dta_customers_ausgov.covid19_user_type_accumulated_snapshot_180days_doi 
+          where  datetime_diff(datetime(current_timestamp),
+          cast(posted_timestamp as datetime), DAY) = day_num + 1
+        )   
+ select 
+              tt.user_type,
+              tt.users as users,
+              tt.pageview_hits as pageview_hits,
+              tt.reg_domain,
+              tt.record_date,
+              tt.posted_timestamp,
+              tt.intraday_date,
+              tt.earliest_date,
+              tt.users-i.users as session_users_delta,
+              tt.pageview_hits-i.pageview_hits as pageview_hits_delta
+          from        dta_customers_ausgov.covid19_user_type_accumulated_snapshot_180days_doi i
+          right join  t_covid19_user_type_accumulated_snapshot_180days_doi tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = day_num + 1
+          and       i.user_type = tt.user_type;
+
+
+end;
+
+
+
+BEGIN
+
+-- declare day_num int64 default 0;
+
+create temp table t_covid19_total_unique_visitors_accumulated_snapshot_24hrsplus_doi
+as
+--total and unique visitors            
+select
+      reg_domain,
+      total_visitors,
+      case 
+           when unique_visitors > unique_visitors_approx then unique_visitors
+           else unique_visitors_approx
+       end as unique_visitors,
+       cast(current_timestamp as date) as posted_date,
+       CURRENT_TIMESTAMP() as posted_timestamp,
+       concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as intraday_date,
+       FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)) as earliest_date
+from (
+ select
+        net.reg_domain(hostname) as reg_domain,
+        COUNT(fullVisitorId) as total_visitors,
+        COUNT(distinct fullVisitorId) as unique_visitors,
+        APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
+--         datetime_diff(datetime(current_timestamp),datetime(timestamp_seconds(min(visitStartTime))), DAY)  as total_days
+    from
+    (
+/* Start - Datasets of Interest websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE 
+            and _table_suffix = FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+            union all
+            select
+              fullVisitorId,
+              visitStartTime,
+              hits.page.hostname as hostname,
+              hits.type
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and _table_suffix = concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE()))
+      )
+        WHERE
+        type = 'PAGE'
+    GROUP BY reg_domain
+    );
+
+insert into dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_24hrsplus_doi
+          select 
+              tt.reg_domain,
+              tt.total_visitors as total_visitors,
+              tt.unique_visitors as unique_visitors,
+              tt.posted_date,
+              tt.posted_timestamp,
+              tt.intraday_date,
+              tt.earliest_date,
+              tt.total_visitors-i.total_visitors as total_visitors_delta,
+              tt.unique_visitors-i.unique_visitors as unique_visitors_delta
+          from             dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_24hrsplus_doi i
+          right join       t_covid19_total_unique_visitors_accumulated_snapshot_24hrsplus_doi tt
+          on    
+                      i.reg_domain = tt.reg_domain
+          where  datetime_diff(datetime(current_timestamp),cast(i.posted_timestamp as datetime), DAY) = 1;
+
+END;

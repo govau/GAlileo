@@ -1,0 +1,105 @@
+/*
+BigQuery SQL Script -  australia.gov.au
+Script to clear data from ausgov dataset - Daily Snapshot for past 7 days
+
+1- Total and unique visitors
+2- Outbound visitors
+3- Pageviews and timespent on page (total and average)
+4- Traffic source
+5- Local cities
+6- Device category
+7- User types i.e. new visitor and returning
+
+*/
+
+/* Schedule: Daily run for snapshot on ausgov dataset */
+
+
+BEGIN
+-- Pageviews and Time On Page
+-- Time Spent on Page of Registered Domain
+
+delete from dta_customers_ausgov.covid19_pageviews_timespent_accumulated_snapshot_7days_doi
+where 
+        record_date = CURRENT_DATE
+and   total_pageviews = 0
+and   total_time_on_page = 0 
+and   avg_time_on_page = 0;
+
+END;
+
+BEGIN
+
+--total and unique visitors         
+delete from dta_customers_ausgov.covid19_total_unique_visitors_accumulated_snapshot_7days_doi   
+where 
+        posted_date = CURRENT_DATE
+and   total_visitors = 0
+and   unique_visitors = 0
+;
+
+END;    
+    
+
+BEGIN              
+-- visitors going to, outbound
+delete from dta_customers_ausgov.covid19_users_outbound_accumulated_snapshot_7days_doi
+  where 
+        record_date = CURRENT_DATE
+  and  eventCategory = ''
+  and  eventLabel =  ''
+  and   count_users =  0
+;
+              
+END;              
+            
+
+BEGIN
+-- traffic source
+delete from dta_customers_ausgov.covid19_traffic_source_accumulated_snapshot_7days_doi
+ where 
+        record_date = CURRENT_DATE
+  and traffic_source =  ''
+  and source_count = 0
+  ;
+
+END;                
+                
+
+BEGIN
+-- City Location across Australia
+delete from dta_customers_ausgov.covid19_localcity_accumulated_snapshot_7days_doi
+  where 
+        record_date = CURRENT_DATE
+  and local_city = ''
+  and geo_y = '0'
+  and geo_x = '0'
+  and local_city_count = 0
+  ;
+  
+END;
+
+
+BEGIN
+-- Device category
+delete from dta_customers_ausgov.covid19_devices_accumulated_snapshot_7days_doi
+  where 
+        record_date = CURRENT_DATE
+  and device_category = ''
+  and device_category_count = 0
+  ;
+
+END;
+
+
+BEGIN
+  -- User types; Returning Users
+delete from dta_customers_ausgov.covid19_user_type_accumulated_snapshot_7days_doi
+   where 
+            record_date = CURRENT_DATE
+   and    user_type = ''
+   and     users =  0
+   and      pageview_hits = 0
+  ;
+
+END;
