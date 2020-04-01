@@ -1,0 +1,8 @@
+--Seeding table for future dates since 18th March 2020 to Oct 2020 i.e. 180 days
+
+select *
+from UNNEST(GENERATE_TIMESTAMP_ARRAY('2020-03-18', '2020-10-31', INTERVAL 24 HOUR)) AS Day
+
+
+select *
+from UNNEST(GENERATE_TIMESTAMP_ARRAY('2015-10-01', '2015-10-03', INTERVAL 1 HOUR)) AS hour
