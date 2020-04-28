@@ -1,0 +1,862 @@
+/*
+BigQuery SQL Script
+Script to output device brands being used to access agency's websites - Daily Snapshot
+*/
+
+/* Schedule: Daily run for snapshot on device brands count in agencies' datasets */
+
+BEGIN 
+ 
+    create temp table t_12months_snapshot_device_brand_monthlydelta_doi
+    as
+        select
+            device_brand,
+            count(*) as device_brand_count,
+            extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
+            extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
+            format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year,
+            current_timestamp as post_stamp
+        from
+        (
+/*  Start - Datasets of agencies' websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+*/
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              visitStartTime,
+              device.mobileDeviceBranding as device_brand
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where hits.type = 'PAGE'
+             and regexp_contains(hits.page.hostname, ".*.gov.au$") = true
+             and totals.visits =1
+             and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+/* End - Datasets of agencies' websites */
+    )
+    GROUP BY   
+                        device_brand,
+                        visit_year,
+                        visit_month,
+                        month_year
+;
+
+
+create or replace table dta_project_ursa_major.device_brand_yearly_snapshot_month_delta_doi
+    OPTIONS (
+        description = "Monthly delta snapshot of past 12 months",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+      select 
+        t.device_brand,
+        t.month_year,
+        t.device_brand_count,
+        round((t.device_brand_count / (sum(t.device_brand_count) over (partition by t.month_year order by t.month_year)) * 100),2) as percent_month,
+        t.post_stamp
+      from  t_12months_snapshot_device_brand_monthlydelta_doi t
+;
+
+END;
