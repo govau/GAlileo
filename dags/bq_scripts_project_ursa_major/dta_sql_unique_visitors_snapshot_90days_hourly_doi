@@ -7,7 +7,8 @@ Schedule: Daily run
 Outputs
     total people visiting domains per day
     unique people visiting domains per day
-    current date
+    visiting hour
+    visit week day
     current posted timestamp
     delta_day_date
 */
