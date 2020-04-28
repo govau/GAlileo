@@ -1,0 +1,882 @@
+/*
+BigQuery SQL Script
+Delta script for counting total unique visitors visiting registered domain websites hourly
+
+Schedule: Daily run
+
+Outputs
+    total people visiting domains per day
+    unique people visiting domains per day
+    current date
+    current posted timestamp
+    delta_day_date
+*/
+
+/* Schedule: Daily run for hourly snapshot on unique and total visitors count of agencies' website */
+
+
+BEGIN
+
+  create temp table t_unique_visitors_90days_hourly
+  as
+    select
+        COUNT(fullVisitorId) as total_visitors,
+        COUNT(distinct fullVisitorId) as unique_visitors,
+        APPROX_COUNT_DISTINCT(fullVisitorId) as unique_visitors_approx,
+        extract(HOUR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_hour,
+        format_date('%A', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as visit_weekday,
+        -- date(timestamp_seconds(visitStartTime), 'Australia/Sydney') as visit_date,
+        current_timestamp as posted_timestamp
+    from
+    (
+/* Start - Datasets of Interest websites
+    Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
+ */
+    select
+            fullVisitorId,
+            visitStartTime
+            from
+              `122829809.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `6533313.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `73191096.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `103904192.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `37548566.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `39020822.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `121386494.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `114274207.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `121638199.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `149444086.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `122418128.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `135989789.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `162370350.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `178909235.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `5426088.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `6059849.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `106413345.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `117865571.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `117867575.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `53678167.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `77559172.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `77562775.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `80703744.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `100585217.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `111564569.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `124827135.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `174497994.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `179394289.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `72008433.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `77614012.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `86630641.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `69522323.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `70856817.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `71597546.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `77664740.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `129200625.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `82020118.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `88992271.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `98349897.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `100095166.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `100095673.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `74070468.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `133849100.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `175671120.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `175869519.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `48099294.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `78700159.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `94174429.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `94178846.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `100180008.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `100832347.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `104411629.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `34938005.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `77084214.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `85844330.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `86149663.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `90974611.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `95014024.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `118336527.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `130142010.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `170387771.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `99993137.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `80842702.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `199921542.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `23233927.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `2802109.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `70635257.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `73966990.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `191126238.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `203109603.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `47586269.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `5289745.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `93868316.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+            union all
+    select
+              fullVisitorId,
+              visitStartTime
+            from
+              `94241432.ga_sessions_*` AS GA,
+              UNNEST(GA.hits) AS hits
+            where regexp_contains( hits.page.hostname, "^.*.gov.au$") = TRUE
+            and    type = 'PAGE'
+            and   totals.visits = 1
+            and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+/* End - Datasets of Interest websites */
+    )
+    GROUP BY visit_hour,
+                      -- visit_date,
+                      visit_weekday
+
+    ;
+
+    create or replace table dta_project_ursa_major.unique_visitors_90days_hourly_delta_doi
+    OPTIONS (
+        description = "Daily delta hourly snapshot of past 90 day for Project URSA Major",
+        expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
+    )
+    as
+    select   
+            case 
+                when i.unique_visitors > i.unique_visitors_approx then i.unique_visitors
+                else i.unique_visitors_approx
+            end as total_unique_users,
+            case 
+                when i.unique_visitors > i.unique_visitors_approx then round(i.unique_visitors/100000,1)
+                else round(i.unique_visitors_approx/100000, 1)
+            end as total_unique_users_scale,
+            -- i.visit_date,
+            i.visit_hour,
+            i.visit_weekday,
+            i.posted_timestamp as posted_stamp
+    from  t_unique_visitors_90days_hourly i
+    order by 
+              i.visit_weekday,
+              i.visit_hour     
+    ;
+
+
+END;
