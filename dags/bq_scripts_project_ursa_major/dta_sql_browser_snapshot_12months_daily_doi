@@ -6,21 +6,30 @@ Script to output device operating system and browser to interact with agency's w
 /* Schedule: Daily run for full snapshot of agencies' dataset */
 
 BEGIN
-    create temp table t_12months_snapshot_device_browser_montlydelta_doi
+    create temp table t_12months_snapshot_device_browser_monthlydelta_doi
     as
-    select
-        device_browser,
-        count(*) as browser_count,
-        extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
-        extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
-        format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year,
-        current_timestamp as post_stamp
+     select 
+        t.device_browser,
+        t.month_year,
+        t.browser_count,
+        round((t.browser_count / (sum(t.browser_count) over (partition by t.visit_year, t.visit_month order by t.visit_year, t.visit_month)) * 100),2) as percent_month,
+        dense_rank() over (partition by t.visit_year, t.visit_month order by t.visit_year, t.visit_month ,t.browser_count desc) as top_browser,
+        t.visit_year,
+        t.visit_month
+      from (
+        select
+            device_browser,
+            count(distinct fullvisitorid) as browser_count,
+            extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
+            extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
+            format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year
     from
     (
 /* Start - Datasets of agencies' websites
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
  */
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -32,6 +41,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -43,6 +53,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -54,6 +65,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -65,6 +77,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -76,6 +89,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -87,6 +101,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -98,6 +113,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -109,6 +125,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -120,6 +137,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -131,6 +149,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -142,6 +161,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -153,6 +173,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -164,6 +185,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -175,6 +197,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -186,6 +209,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -197,6 +221,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -208,6 +233,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -219,6 +245,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -230,6 +257,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -241,6 +269,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -252,6 +281,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -263,6 +293,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -274,6 +305,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -285,6 +317,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -296,6 +329,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -307,6 +341,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -318,6 +353,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -329,6 +365,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -340,6 +377,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -351,6 +389,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -362,6 +401,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -373,6 +413,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -384,6 +425,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -395,6 +437,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -406,6 +449,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -417,6 +461,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -428,6 +473,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -439,6 +485,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -450,6 +497,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -461,6 +509,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -472,6 +521,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -483,6 +533,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -494,6 +545,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -505,6 +557,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -516,6 +569,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -527,6 +581,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -538,6 +593,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -549,6 +605,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -560,6 +617,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -571,6 +629,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -582,6 +641,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -593,6 +653,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -604,6 +665,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -615,6 +677,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -626,6 +689,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -637,6 +701,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -648,6 +713,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -659,6 +725,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -670,6 +737,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -681,6 +749,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -692,6 +761,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -703,6 +773,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -714,6 +785,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -725,6 +797,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -736,6 +809,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -747,6 +821,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -758,6 +833,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -769,6 +845,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -780,6 +857,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -791,6 +869,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -802,6 +881,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -813,6 +893,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -824,6 +905,7 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.browser as device_browser
             from
@@ -840,7 +922,8 @@ BEGIN
                         visit_year,
                         visit_month,
                         month_year
-   ;
+   ) as t
+;
 
    create or replace table dta_project_ursa_major.device_browser_yearly_snapshot_month_delta_doi
     OPTIONS (
@@ -848,16 +931,36 @@ BEGIN
         expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
     )
     as
-    select 
-        t.device_browser,
-        t.month_year,
-        t.browser_count,
-        round((t.browser_count / (sum(t.browser_count) over (partition by t.month_year order by t.month_year)) * 100),2) as percent_month,
-        t.post_stamp
-from  t_12months_snapshot_device_browser_montlydelta_doi  t
-order by 
-          t.visit_year desc,
-          t.visit_month desc
-;
-    
+    select
+      device_browser,
+      month_year,
+      browser_count,
+      percent_month,
+      current_timestamp as post_stamp
+      from (
+            select 
+                  device_browser,
+                  month_year,
+                  browser_count,
+                  percent_month,
+                  visit_year, visit_month
+            from  t_12months_snapshot_device_browser_monthlydelta_doi  
+            where top_browser < 6
+            union all
+            select  
+                  "Others" as device_browser,
+                  month_year,
+                  sum(browser_count) as browser_count,
+                  round(sum(percent_month),2) as percent_month,
+                  visit_year, visit_month
+            from  t_12months_snapshot_device_browser_monthlydelta_doi
+            where top_browser > 5
+            group by month_year, visit_year, visit_month
+    )
+    order by 
+          visit_year,
+          visit_month,
+          browser_count desc
+    ;
+
 END;
