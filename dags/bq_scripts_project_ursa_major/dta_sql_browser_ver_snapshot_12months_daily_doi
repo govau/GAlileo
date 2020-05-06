@@ -6,22 +6,32 @@ Script to output device browser version to interact with agency's websites - Dai
 /* Schedule: Daily run for full snapshot of agencies' dataset */
 
 BEGIN
-    create temp table t_12months_snapshot_device_browser_version_montlydelta_doi
+    create temp table t_12months_snapshot_device_browser_version_monthlydelta_doi
     as
-    select
-        device_browser_version,
-        count(*) as browser_version_count,
-        extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
-        extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
-        format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year,
-        current_timestamp as post_stamp
+      select 
+        t.device_browser_version,
+        t.month_year,
+        t.browser_version_count,
+        round((t.browser_version_count / (sum(t.browser_version_count) over (partition by t.visit_year, t.visit_month order by t.visit_year, t.visit_month)) * 100),2) as percent_month,
+        dense_rank() over (partition by t.visit_year, t.visit_month order by t.visit_year, t.visit_month ,t.browser_version_count desc) as top_browser_version,
+        t.visit_year,
+        t.visit_month
+      from (
+        select
+            concat(device_browser,"_",coalesce(regexp_extract(device_browser_version,"^[0-9]+"),"")) as device_browser_version,
+            count(distinct fullvisitorId) as browser_version_count,
+            extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
+            extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
+            format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year
     from
     (
 /* Start - Datasets of agencies' websites
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
  */
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `122829809.ga_sessions_*` AS GA,
@@ -32,7 +42,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `6533313.ga_sessions_*` AS GA,
@@ -43,7 +55,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `73191096.ga_sessions_*` AS GA,
@@ -54,7 +68,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `103904192.ga_sessions_*` AS GA,
@@ -65,7 +81,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `37548566.ga_sessions_*` AS GA,
@@ -76,7 +94,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `39020822.ga_sessions_*` AS GA,
@@ -87,7 +107,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `121386494.ga_sessions_*` AS GA,
@@ -98,7 +120,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `114274207.ga_sessions_*` AS GA,
@@ -109,7 +133,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `121638199.ga_sessions_*` AS GA,
@@ -120,7 +146,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `149444086.ga_sessions_*` AS GA,
@@ -131,7 +159,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `122418128.ga_sessions_*` AS GA,
@@ -142,7 +172,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `135989789.ga_sessions_*` AS GA,
@@ -153,7 +185,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `162370350.ga_sessions_*` AS GA,
@@ -164,7 +198,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `178909235.ga_sessions_*` AS GA,
@@ -175,7 +211,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `5426088.ga_sessions_*` AS GA,
@@ -186,7 +224,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `6059849.ga_sessions_*` AS GA,
@@ -197,7 +237,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `106413345.ga_sessions_*` AS GA,
@@ -208,7 +250,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `117865571.ga_sessions_*` AS GA,
@@ -219,7 +263,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `117867575.ga_sessions_*` AS GA,
@@ -230,7 +276,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `53678167.ga_sessions_*` AS GA,
@@ -241,7 +289,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `77559172.ga_sessions_*` AS GA,
@@ -252,7 +302,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `77562775.ga_sessions_*` AS GA,
@@ -263,7 +315,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `80703744.ga_sessions_*` AS GA,
@@ -274,7 +328,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `100585217.ga_sessions_*` AS GA,
@@ -285,7 +341,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `111564569.ga_sessions_*` AS GA,
@@ -296,7 +354,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `124827135.ga_sessions_*` AS GA,
@@ -307,7 +367,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `174497994.ga_sessions_*` AS GA,
@@ -318,7 +380,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `179394289.ga_sessions_*` AS GA,
@@ -329,7 +393,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `72008433.ga_sessions_*` AS GA,
@@ -340,7 +406,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `77614012.ga_sessions_*` AS GA,
@@ -351,7 +419,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `86630641.ga_sessions_*` AS GA,
@@ -362,7 +432,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `69522323.ga_sessions_*` AS GA,
@@ -373,7 +445,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `70856817.ga_sessions_*` AS GA,
@@ -384,7 +458,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `71597546.ga_sessions_*` AS GA,
@@ -395,7 +471,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `77664740.ga_sessions_*` AS GA,
@@ -406,7 +484,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `129200625.ga_sessions_*` AS GA,
@@ -417,7 +497,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `82020118.ga_sessions_*` AS GA,
@@ -428,7 +510,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `88992271.ga_sessions_*` AS GA,
@@ -439,7 +523,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `98349897.ga_sessions_*` AS GA,
@@ -450,7 +536,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `100095166.ga_sessions_*` AS GA,
@@ -461,7 +549,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `100095673.ga_sessions_*` AS GA,
@@ -472,7 +562,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `74070468.ga_sessions_*` AS GA,
@@ -483,7 +575,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `133849100.ga_sessions_*` AS GA,
@@ -494,7 +588,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `175671120.ga_sessions_*` AS GA,
@@ -505,7 +601,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `175869519.ga_sessions_*` AS GA,
@@ -516,7 +614,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `48099294.ga_sessions_*` AS GA,
@@ -527,7 +627,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `78700159.ga_sessions_*` AS GA,
@@ -538,7 +640,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `94174429.ga_sessions_*` AS GA,
@@ -549,7 +653,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `94178846.ga_sessions_*` AS GA,
@@ -560,7 +666,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `100180008.ga_sessions_*` AS GA,
@@ -571,7 +679,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `100832347.ga_sessions_*` AS GA,
@@ -582,7 +692,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `104411629.ga_sessions_*` AS GA,
@@ -593,7 +705,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `34938005.ga_sessions_*` AS GA,
@@ -604,7 +718,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `77084214.ga_sessions_*` AS GA,
@@ -615,7 +731,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `85844330.ga_sessions_*` AS GA,
@@ -626,7 +744,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `86149663.ga_sessions_*` AS GA,
@@ -637,7 +757,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `90974611.ga_sessions_*` AS GA,
@@ -648,7 +770,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `95014024.ga_sessions_*` AS GA,
@@ -659,7 +783,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `118336527.ga_sessions_*` AS GA,
@@ -670,7 +796,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `130142010.ga_sessions_*` AS GA,
@@ -681,7 +809,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `170387771.ga_sessions_*` AS GA,
@@ -692,7 +822,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `99993137.ga_sessions_*` AS GA,
@@ -703,7 +835,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `80842702.ga_sessions_*` AS GA,
@@ -714,7 +848,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `199921542.ga_sessions_*` AS GA,
@@ -725,7 +861,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `23233927.ga_sessions_*` AS GA,
@@ -736,7 +874,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `2802109.ga_sessions_*` AS GA,
@@ -747,7 +887,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `70635257.ga_sessions_*` AS GA,
@@ -758,7 +900,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `73966990.ga_sessions_*` AS GA,
@@ -769,7 +913,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `191126238.ga_sessions_*` AS GA,
@@ -780,7 +926,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `203109603.ga_sessions_*` AS GA,
@@ -791,7 +939,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `47586269.ga_sessions_*` AS GA,
@@ -802,7 +952,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `5289745.ga_sessions_*` AS GA,
@@ -813,7 +965,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `93868316.ga_sessions_*` AS GA,
@@ -824,7 +978,9 @@ BEGIN
              and totals.visits =1 
             union all
     select
+              fullvisitorId,
               visitStartTime,
+              device.browser as device_browser,
               device.browserVersion as device_browser_version
             from
               `94241432.ga_sessions_*` AS GA,
@@ -840,7 +996,9 @@ BEGIN
                         visit_year,
                         visit_month,
                         month_year
+    ) as t
    ;
+
 
    create or replace table dta_project_ursa_major.device_browser_version_yearly_snapshot_month_delta_doi
     OPTIONS (
@@ -848,16 +1006,36 @@ BEGIN
         expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
     )
     as
-    select 
-        t.device_browser_version,
-        t.month_year,
-        t.browser_version_count,
-        round((t.browser_version_count / (sum(t.browser_version_count) over (partition by t.month_year order by t.month_year)) * 100),2) as percent_month,
-        t.post_stamp
-    from  t_12months_snapshot_device_browser_version_montlydelta_doi  t
+     select
+      device_browser_version,
+      month_year,
+      browser_version_count,
+      percent_month,
+      current_timestamp as post_stamp
+      from (
+            select 
+                  device_browser_version,
+                  month_year,
+                  browser_version_count,
+                  percent_month,
+                  visit_year, visit_month
+            from  t_12months_snapshot_device_browser_version_monthlydelta_doi  
+            where top_browser_version < 6
+            union all
+            select  
+                  "Others" as device_browser_version,
+                  month_year,
+                  sum(browser_version_count) as browser_version_count,
+                  round(sum(percent_month),2) as percent_month,
+                  visit_year, visit_month
+            from  t_12months_snapshot_device_browser_version_monthlydelta_doi
+            where top_browser_version > 5
+            group by month_year, visit_year, visit_month
+    )
     order by 
-          t.visit_year desc,
-          t.visit_month desc
+          visit_year,
+          visit_month,
+          browser_version_count desc
 ;
-    
+
 END;

@@ -11,7 +11,7 @@ BEGIN
     as
         select
             device_category,
-            count(*) as device_category_count,
+            count(distinct fullvisitorid) as device_category_count,
             extract(MONTH from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_month,
             extract(YEAR from timestamp_seconds(visitStartTime) at Time Zone 'Australia/Sydney') as visit_year,
             format_date('%b %Y', (date(timestamp_seconds(visitStartTime), 'Australia/Sydney'))) as month_year,
@@ -22,6 +22,7 @@ BEGIN
     Insert Here Google Analytics Dataset of Websites of Interest and 'Union All' query result sets to get final result set
 */
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -33,6 +34,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -44,6 +46,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -55,6 +58,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -66,6 +70,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -77,6 +82,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -88,6 +94,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -99,6 +106,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -110,6 +118,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -121,6 +130,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -132,6 +142,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -143,6 +154,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -154,6 +166,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -165,6 +178,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -176,6 +190,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -187,6 +202,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -198,6 +214,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -209,6 +226,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -220,6 +238,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -231,6 +250,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -242,6 +262,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -253,6 +274,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -264,6 +286,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -275,6 +298,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -286,6 +310,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -297,6 +322,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -308,6 +334,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -319,6 +346,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -330,6 +358,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -341,6 +370,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -352,6 +382,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -363,6 +394,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -374,6 +406,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -385,6 +418,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -396,6 +430,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -407,6 +442,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -418,6 +454,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -429,6 +466,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -440,6 +478,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -451,6 +490,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -462,6 +502,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -473,6 +514,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -484,6 +526,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -495,6 +538,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -506,6 +550,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -517,6 +562,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -528,6 +574,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -539,6 +586,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -550,6 +598,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -561,6 +610,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -572,6 +622,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -583,6 +634,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -594,6 +646,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -605,6 +658,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -616,6 +670,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -627,6 +682,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -638,6 +694,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -649,6 +706,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -660,6 +718,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -671,6 +730,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -682,6 +742,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -693,6 +754,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -704,6 +766,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -715,6 +778,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -726,6 +790,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -737,6 +802,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -748,6 +814,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -759,6 +826,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -770,6 +838,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -781,6 +850,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -792,6 +862,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -803,6 +874,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -814,6 +886,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -825,6 +898,7 @@ BEGIN
              and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
             union all
     select
+              fullvisitorId,
               visitStartTime,
               device.deviceCategory as device_category
             from
@@ -857,6 +931,9 @@ create or replace table dta_project_ursa_major.device_category_yearly_snapshot_m
         round((t.device_category_count / (sum(t.device_category_count) over (partition by t.month_year order by t.month_year)) * 100),2) as percent_month,
         t.post_stamp
       from  t_12months_snapshot_device_category_monthlydelta_doi t
+      order by 
+          t.visit_year,
+          t.visit_month
 ;
 
 END;
