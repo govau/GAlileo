@@ -13,9 +13,7 @@ BEGIN
         traffic_source,
         traffic_medium,
         count(*) as source_medium_count,
-        net.reg_domain(hostname) as reg_domain,
-        cast(current_timestamp as date) as record_date,
-        concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as delta_day_date
+        net.reg_domain(hostname) as reg_domain
     from
     (
 /* Start - Datasets of agencies' websites
@@ -1596,9 +1594,9 @@ BEGIN
     t.traffic_source,
     t.traffic_medium,
     t.source_medium_count,
-    t.record_date,
-    CURRENT_TIMESTAMP() as posted_timestamp,
-    t.delta_day_date
+    cast(current_timestamp as date) as record_date,
+    concat('intraday_', FORMAT_DATE('%Y%m%d',CURRENT_DATE())) as delta_day_date,
+    CURRENT_TIMESTAMP() as posted_timestamp
   from
   (
     with tt as (
@@ -1629,8 +1627,7 @@ BEGIN
       traffic_source,
       traffic_medium,
       source_medium_count,
-      reg_domain,
-      record_date
+      reg_domain
     from tt                        
   ) as t
   left join   dta_customers.domain_agency_map da
