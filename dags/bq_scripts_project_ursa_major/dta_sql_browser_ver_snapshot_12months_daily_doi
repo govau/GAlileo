@@ -1021,16 +1021,16 @@ BEGIN
                   visit_year, visit_month
             from  t_12months_snapshot_device_browser_version_monthlydelta_doi  
             where top_browser_version < 6
-            union all
-            select  
-                  "Others" as device_browser_version,
-                  month_year,
-                  sum(browser_version_count) as browser_version_count,
-                  round(sum(percent_month),2) as percent_month,
-                  visit_year, visit_month
-            from  t_12months_snapshot_device_browser_version_monthlydelta_doi
-            where top_browser_version > 5
-            group by month_year, visit_year, visit_month
+            -- union all
+            -- select  
+            --       "Others" as device_browser_version,
+            --       month_year,
+            --       sum(browser_version_count) as browser_version_count,
+            --       round(sum(percent_month),2) as percent_month,
+            --       visit_year, visit_month
+            -- from  t_12months_snapshot_device_browser_version_monthlydelta_doi
+            -- where top_browser_version > 5
+            -- group by month_year, visit_year, visit_month
     )
     order by 
           visit_year,

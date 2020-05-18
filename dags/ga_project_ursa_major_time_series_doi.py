@@ -27,7 +27,7 @@ default_dag_args = {
 with models.DAG(
         'project_ursa_major_daily_time_series',
         # schedule_interval=datetime.timedelta(days=1),
-        schedule_interval='0 2 * * *',
+        schedule_interval='0 20 * * *',
         catchup=False,
         default_args=default_dag_args) as dag:
     project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
@@ -41,7 +41,12 @@ with models.DAG(
     # total unique visitors 90 days hourly snapshot
     query_unique_visitors_90days_hourly_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_unique_visitors_90days_hourly_snapshot',
-        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts_ursa_major/dta_sql_unique_visitors_snapshot_90days_hourly_doi").read_text(), use_legacy_sql=False)
+        bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_ursa_major/dta_sql_unique_visitors_snapshot_90days_hourly_doi").read_text(), use_legacy_sql=False)
+
+    # total unique visitors 90 days hourly week split snapshot
+    query_unique_visitors_90days_hourly_weeksplit_snapshot = bigquery_operator.BigQueryOperator(
+        task_id='query_unique_visitors_90days_hourly_weeksplit_snapshot',
+        bql=pathlib.Path(galileo.DAGS_DIR+"/bq_scripts_ursa_major/dta_sql_unique_visitors_snapshot_90days_hourly_splitweek_doi").read_text(), use_legacy_sql=False)
 
     # browser past 12 months count daily snapshot
     query_browser_12months_daily_snapshot = bigquery_operator.BigQueryOperator(
@@ -72,8 +77,8 @@ with models.DAG(
     query_screen_resolution_12months_daily_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_screen_resolution_12months_daily_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_ursa_major/dta_sql_screen_res_snapshot_12months_daily_doi").read_text(), use_legacy_sql=False)
-    
-        # device brand past 12 months count daily snapshot
+
+    # device brand past 12 months count daily snapshot
     query_device_brand_12months_daily_snapshot = bigquery_operator.BigQueryOperator(
         task_id='query_device_brand_12months_daily_snapshot',
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_ursa_major/dta_sql_devicebrand_snapshot_12months_daily_doi").read_text(), use_legacy_sql=False)
@@ -132,6 +137,33 @@ with models.DAG(
                 models.Variable.get('AIRFLOW_BUCKET',
                                     'us-east1-dta-airflow-b3415db4-bucket'),
                 'uniquevisitors_90days_hourly_snapshot_doi')],
+        export_format='CSV')
+
+    # total unique visitors 90 days hourly week split snapshot
+    export_bq_to_gcs_json_uniquevisitors_hourly_weeksplit = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+        task_id='export_bq_to_gcs_json_uniquevisitors_hourly_weeksplit',
+        source_project_dataset_table="{{params.project_id}}.dta_project_ursa_major.unique_visitors_90days_hourly_weeksplit_delta_doi",
+        params={
+            'project_id': project_id
+        },
+        destination_cloud_storage_uris=[
+            "gs://%s/data/analytics/project_ursa_major/%s.json" % (
+                models.Variable.get('AIRFLOW_BUCKET',
+                                    'us-east1-dta-airflow-b3415db4-bucket'),
+                'uniquevisitors_90days_hourly_weeksplit_snapshot_doi')],
+        export_format='NEWLINE_DELIMITED_JSON')
+
+    export_bq_to_gcs_csv_uniquevisitors_hourly_weeksplit = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+        task_id='export_bq_to_gcs_csv_uniquevisitors_hourly_weeksplit',
+        source_project_dataset_table="{{params.project_id}}.dta_project_ursa_major.unique_visitors_90days_hourly_weeksplit_delta_doi",
+        params={
+            'project_id': project_id
+        },
+        destination_cloud_storage_uris=[
+            "gs://%s/data/analytics/project_ursa_major/%s.csv" % (
+                models.Variable.get('AIRFLOW_BUCKET',
+                                    'us-east1-dta-airflow-b3415db4-bucket'),
+                'uniquevisitors_90days_hourly_weeksplit_snapshot_doi')],
         export_format='CSV')
 
     # browser past 12 months count daily snapshot
@@ -296,7 +328,6 @@ with models.DAG(
                 'screen_resolution_12months_daily_snapshot_doi')],
         export_format='CSV')
 
-
     # device brand past 12 months count daily snapshot
     export_bq_to_gcs_json_devicebrand_monthly = bigquery_to_gcs.BigQueryToCloudStorageOperator(
         task_id='export_bq_to_gcs_json_devicebrand_monthly',
@@ -328,6 +359,8 @@ with models.DAG(
     query_unique_visitors_90days_daily_snapshot >> export_bq_to_gcs_csv_uniquevisitors
     query_unique_visitors_90days_hourly_snapshot >> export_bq_to_gcs_json_uniquevisitors_hourly
     query_unique_visitors_90days_hourly_snapshot >> export_bq_to_gcs_csv_uniquevisitors_hourly
+    query_unique_visitors_90days_hourly_weeksplit_snapshot >> export_bq_to_gcs_json_uniquevisitors_hourly_weeksplit
+    query_unique_visitors_90days_hourly_weeksplit_snapshot >> export_bq_to_gcs_csv_uniquevisitors_hourly_weeksplit
     query_browser_12months_daily_snapshot >> export_bq_to_gcs_json_browser_monthly
     query_browser_12months_daily_snapshot >> export_bq_to_gcs_csv_browser_monthly
     query_opsys_12months_daily_snapshot >> export_bq_to_gcs_json_opsys_monthly
