@@ -56,7 +56,8 @@ req10 = requests.get(url_q10).text
 # Extract dataset ID from query json
 ​
 data_1 = json.loads(req1)
-data_id_1 = data_1['latest_query_data_id']
+data_id_1 = re.search("\"latest_query_data_id\": ([0-9]+),", data_1)
+# data_id_1 = data_1['latest_query_data_id']
 ​
 print("Latest query ID for query 1:", data_id_1)
 
