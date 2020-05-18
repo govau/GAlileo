@@ -77,8 +77,8 @@ with models.DAG(
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_doi/bq_scripts_delta/dta_sql_geolocation_country_snapshot_delta_intraday_doi").read_text(), use_legacy_sql=False)
 
     # local city snapshot
-    query_local_city_delta_snapshot = bigquery_operator.BigQueryOperator(
-        task_id='query_local_city_delta_snapshot',
+    query_local_city_snapshot_intraday = bigquery_operator.BigQueryOperator(
+        task_id='query_local_city_snapshot_intraday',
         priority='BATCH',
         bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_doi/bq_scripts_delta/dta_sql_geolocation_localcity_snapshot_delta_intraday_doi").read_text(), use_legacy_sql=False)
 
@@ -87,10 +87,10 @@ with models.DAG(
     #     task_id='query_user_session_snapshot_intraday',
     #     bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_doi/dta_sql_sessions_user_daily_snapshot_delta_intraday_doi").read_text(), use_legacy_sql=False)
     
-    # # device operating system and browser snapshot
-    # query_device_opsbrowser_snapshot_intraday = bigquery_operator.BigQueryOperator(
-    #     task_id='query_device_opsbrowser_snapshot_intraday',
-    #     bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_doi/dta_sql_device_opsbrowser_daily_snapshot_delta_intraday_doi").read_text(), use_legacy_sql=False)
+    # device operating system and browser snapshot
+    query_device_opsbrowser_snapshot_intraday = bigquery_operator.BigQueryOperator(
+        task_id='query_device_opsbrowser_snapshot_intraday',
+        bql=pathlib.Path(galileo.DAGS_DIR + "/bq_scripts_doi/bq_scripts_delta/dta_sql_device_opsbrowser_snapshot_delta_intraday_doi").read_text(), use_legacy_sql=False)
     # ===================================================================================================
     # Export datasets
     # pageviews snapshot
@@ -342,32 +342,32 @@ with models.DAG(
     #         'session_users_daily_snapshot_doi')],
     # export_format='CSV')
 
-    # # device operating system and browser snapshot
-    # export_bq_to_gcs_json_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
-    #     task_id='export_bq_to_gcs_json_device_opsbrowser',
-    #     source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_device_opsbrowser_delta_doi",
-    #     params={
-    #         'project_id': project_id
-    #     },
-    #     destination_cloud_storage_uris=[
-    #         "gs://%s/data/analytics/json/%s.json" % (
-    #             models.Variable.get('AIRFLOW_BUCKET',
-    #                                 'us-east1-dta-airflow-b3415db4-bucket'),
-    #             'device_opsbrowser_daily_snapshot_doi')],
-    #     export_format='NEWLINE_DELIMITED_JSON')
+    # device operating system and browser snapshot
+    export_bq_to_gcs_json_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+        task_id='export_bq_to_gcs_json_device_opsbrowser',
+        source_project_dataset_table="{{params.project_id}}.dta_customers.device_opsbrowser_snapshot_intraday_doi",
+        params={
+            'project_id': project_id
+        },
+        destination_cloud_storage_uris=[
+            "gs://%s/data/analytics/delta_snapshot/%s.json" % (
+                models.Variable.get('AIRFLOW_BUCKET',
+                                    'us-east1-dta-airflow-b3415db4-bucket'),
+                'device_opsbrowser_daily_snapshot_doi_' + str(date.today()) + '_intraday')],
+        export_format='NEWLINE_DELIMITED_JSON')
 
-    # export_bq_to_gcs_csv_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
-    # task_id='export_bq_to_gcs_csv_device_opsbrowser',
-    # source_project_dataset_table="{{params.project_id}}.dta_customers.pageviews_daily_snapshot_device_opsbrowser_delta_doi", 
-    # params={
-    #     'project_id': project_id
-    # },
-    # destination_cloud_storage_uris=[
-    #     "gs://%s/data/analytics/csv/%s.csv" % (
-    #         models.Variable.get('AIRFLOW_BUCKET',
-    #                             'us-east1-dta-airflow-b3415db4-bucket'),
-    #         'device_opsbrowser_daily_snapshot_doi')],
-    # export_format='CSV')
+    export_bq_to_gcs_csv_device_opsbrowser = bigquery_to_gcs.BigQueryToCloudStorageOperator(
+    task_id='export_bq_to_gcs_csv_device_opsbrowser',
+    source_project_dataset_table="{{params.project_id}}.dta_customers.device_opsbrowser_snapshot_intraday_doi", 
+    params={
+        'project_id': project_id
+    },
+    destination_cloud_storage_uris=[
+        "gs://%s/data/analytics/delta_snapshot/%s.csv" % (
+            models.Variable.get('AIRFLOW_BUCKET',
+                                'us-east1-dta-airflow-b3415db4-bucket'),
+            'device_opsbrowser_daily_snapshot_doi_' + str(date.today()) + '_intraday')],
+    export_format='CSV')
     # ============================================================================================================
     query_pageviews_snapshot_intraday >> export_bq_to_gcs_json_pgviews
     query_pageviews_snapshot_intraday >> export_bq_to_gcs_csv_pgviews
@@ -381,11 +381,11 @@ with models.DAG(
     # query_device_ops_snapshot_intraday >> export_bq_to_gcs_csv_device_ops
     query_traffic_src_medium_snapshot_intraday >> export_bq_to_gcs_json_traffic_src_medium
     query_traffic_src_medium_snapshot_intraday >> export_bq_to_gcs_csv_traffic_src_medium
-    query_local_city_delta_snapshot >> export_bq_to_gcs_json_local_city
-    query_local_city_delta_snapshot >> export_bq_to_gcs_csv_local_city
+    query_local_city_snapshot_intraday >> export_bq_to_gcs_json_local_city
+    query_local_city_snapshot_intraday >> export_bq_to_gcs_csv_local_city
     query_country_snapshot_intraday >> export_bq_to_gcs_json_country
     query_country_snapshot_intraday >> export_bq_to_gcs_csv_country
     # query_user_session_snapshot_intraday >> export_bq_to_gcs_json_session_users
     # query_user_session_snapshot_intraday >> export_bq_to_gcs_csv_session_users
-    # query_device_opsbrowser_snapshot_intraday >> export_bq_to_gcs_json_device_opsbrowser
-    # query_device_opsbrowser_snapshot_intraday >> export_bq_to_gcs_csv_device_opsbrowser
+    query_device_opsbrowser_snapshot_intraday >> export_bq_to_gcs_json_device_opsbrowser
+    query_device_opsbrowser_snapshot_intraday >> export_bq_to_gcs_csv_device_opsbrowser

@@ -842,7 +842,7 @@ BEGIN
 
 create or replace table dta_customers.device_category_delta_snapshot_doi
     OPTIONS (
-        description = "Daily delta snapshot of past day and/or present intra day",
+        description = "Daily delta snapshot of past day",
         expiration_timestamp = TIMESTAMP_ADD(current_timestamp, INTERVAL 1 HOUR)
     )
     as
