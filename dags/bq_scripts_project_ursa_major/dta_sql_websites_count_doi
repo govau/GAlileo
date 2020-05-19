@@ -695,12 +695,11 @@ BEGIN
     as
     select 
         count(distinct t.reg_domain) + count(distinct t.hostname)  as registered_domain_count,
-        count(distinct COALESCE(da.agency,"")) as agency_count,
+        count(distinct da.agency) as agency_count,
         current_timestamp as post_stamp
 from        t_12months_snapshot_websites_montlydelta_doi  t
 left join   dta_customers.domain_agency_map da
 on           t.reg_domain = da.domain_name
-where da.agency not in ("","null")
 ;
     
 END;
