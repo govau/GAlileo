@@ -670,7 +670,12 @@ function showCluster(a) {
         );
 
         d.attr["drawBorder"] = false;
-        d.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
+        if (config.agency.websites.indexOf(a)> -1) {
+          d.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
+        } else {
+        d.color="red";
+
+        }
         d.attr["grey"] = false;
         toBeMoved.push(
           sigInst._core.graph.nodes.findIndex(function(e) {
@@ -685,7 +690,12 @@ function showCluster(a) {
         clusterIds.indexOf(edge.target) >= 0 ||
         clusterIds.indexOf(edge.source) >= 0
       ) {
-        edge.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
+        if (config.agency.websites.indexOf(a)>-1) {
+          d.color = colorBrewer2Set3[config.agency.websites.indexOf(a)];
+        } else {
+          d.color="red";
+
+        }
         edge.attr["grey"] = false;
       }
     });

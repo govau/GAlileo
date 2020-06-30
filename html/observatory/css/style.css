@@ -213,7 +213,7 @@ background-position: -11px -13px;
 	display: none;
 /*	border: 1px solid #999;*/
 	margin: 6px;
-	/*height: 150px;*/
+	height: 150px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
