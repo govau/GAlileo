@@ -164,3 +164,4 @@ Staticfile.auth
 *.ipr
 *.iws
 notebooks/*.html
+*.json

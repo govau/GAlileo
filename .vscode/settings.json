@@ -3,5 +3,5 @@
     "python.linting.pycodestyleEnabled": false,
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
-    "python.pythonPath": "/usr/local/opt/python@2/bin/python2.7"
+    "python.pythonPath": "/Users/mufaddal/.pyenv/versions/3.8.2/bin/python"
 }
