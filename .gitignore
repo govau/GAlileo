@@ -166,3 +166,5 @@ Staticfile.auth
 notebooks/*.html
 *.json
 google_searchconsole/parameters.py
+dags/galileo/galileo.py
+dags/galileo/galileo.py
