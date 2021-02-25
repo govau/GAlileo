@@ -165,3 +165,4 @@ Staticfile.auth
 *.iws
 notebooks/*.html
 *.json
+google_searchconsole/parameters.py

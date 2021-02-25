@@ -1,28 +1,18 @@
 import datetime
-import json
-import os
 import re
 
 import pandas as pd
-import requests
+
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
-########### SET YOUR PARAMETERS HERE ####################################
-PROPERTIES = ["https://www.dta.gov.au", "https://data.gov.au"]
-BQ_DATASET_NAME = 'search_console'
-BQ_TABLE_NAME = 'test_table'
-SERVICE_ACCOUNT_FILE = 'test-credentials.json'
-SERVICE_ACCOUNT_FILE_BQ = 'dta-ga-bigquery-fe73cf8a69f6.json'
-################ END OF PARAMETERS ######################################
-
+import parameters as pe
 
 # Authenticate and construct service.
-SCOPES = ['https://www.googleapis.com/auth/webmasters']
 credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    pe.SERVICE_ACCOUNT_FILE, scopes=pe.SCOPES)
 
 service = build(
     'webmasters',
@@ -31,13 +21,12 @@ service = build(
 )
 
 
-def domain_slug(domain):
-    return re.sub(r"http(s)|:|\/|www.?|\.", "", domain)
-
-
-def get_sc_df(site_url, start_date, end_date, start_row):
+def get_sc_df(site_url, start_row, end_date=datetime.date.today(), days=90):
     """Grab Search Console data for the specific property and send it to BigQuery."""
 
+    start_date = (end_date - datetime.timedelta(days=days)
+                  ).strftime('%Y-%m-%d')
+    end_date = end_date.strftime('%Y-%m-%d')
     request = {
         'startDate': start_date,
         'endDate': end_date,
@@ -70,19 +59,17 @@ def get_sc_df(site_url, start_date, end_date, start_row):
 
         # establish a BigQuery client
         client = bigquery.Client.from_service_account_json(
-            SERVICE_ACCOUNT_FILE_BQ)
-        dataset_id = BQ_DATASET_NAME
-        table_name = BQ_TABLE_NAME
+            pe.SERVICE_ACCOUNT_FILE_BQ)
+        dataset_id = pe.BQ_DATASET_NAME
+        table_name = pe.BQ_TABLE_NAME
         # create a job config
         job_config = bigquery.LoadJobConfig(
             write_disposition="WRITE_APPEND",
+            # write_disposition="WRITE_TRUNCATE",
             autodetect=True
         )
         # Set the destination table
         table_ref = client.dataset(dataset_id).table(table_name)
-        # job_config.destination = table_ref
-        # job_config.autodetect =TRUE
-        # job_config.write_disposition = 'WRITE_APPEND'
 
         load_job = client.load_table_from_dataframe(
             result, table_ref, job_config=job_config)
@@ -93,10 +80,10 @@ def get_sc_df(site_url, start_date, end_date, start_row):
         print("There are no more results to return.")
 
 
-# Loop through all defined properties, for up to 100,000 rows of data in each
-for p in PROPERTIES:
-    for x in range(0, 100000, 25000):
-        y = get_sc_df(p, "2021-01-01", "2021-01-31", x)
+# Loop through all defined properties, for up to 1000,000 rows of data in each
+for p in pe.PROPERTIES:
+    for x in range(0, 1000000, 25000):
+        y = get_sc_df(p, x)
         if len(y) < 25000:
             break
         else:
