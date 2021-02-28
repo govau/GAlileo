@@ -10,6 +10,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 import parameters as pe
 
+# Thank you Ben and Ansell
+# Code reference from following link https://github.com/benpowis/search-console-bq
+
 # Authenticate and construct service.
 credentials = service_account.Credentials.from_service_account_file(
     pe.SERVICE_ACCOUNT_FILE, scopes=pe.SCOPES)
@@ -52,7 +55,7 @@ def get_sc_df(site_url, start_row, end_date=datetime.date.today(), days=90):
         # Drop the key columns
         result = df.drop(['keys'], axis=1)
 
-        print(result)
+        # print(result)
 
         # Add a website identifier
         result['website'] = site_url
