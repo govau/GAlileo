@@ -164,3 +164,8 @@ Staticfile.auth
 *.ipr
 *.iws
 notebooks/*.html
+google_searchconsole/test-credentials.json
+google_searchconsole/parameters.py
+google_searchconsole/gsc_crendentials.json
+google_searchconsole/dta-ga-bigquery-fe73cf8a69f6.json
+google_searchconsole/credentials.json
