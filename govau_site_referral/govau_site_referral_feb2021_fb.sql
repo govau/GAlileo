@@ -1,13 +1,13 @@
 /*
 Dimensions: Referral sources to gov.au domains
 Metrics: users
-Date Range: 16 February 2021 to 28 February 2021
+Date Range: 09 February 2021 to current date
 Data Slice: Hourly
 */
 
 create or replace table dta_customers.govau_site_referral_feb_2021_fb
           OPTIONS (
-            description = "Gov.AU site referral in February 2021 for whole of government"
+            description = "Gov.AU site referral in February 2021 to current date for whole of government"
     )
 as
 select 
