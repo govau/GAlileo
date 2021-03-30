@@ -1,7 +1,7 @@
 # Now lets try looking at the stats for new and returning visitors
 
 select
-    visit_date
+    visit_date,
     total_visitors,
     unique_visitors,
     total_new_users,
@@ -18,6 +18,20 @@ select
     # bounce rate
     bounces_new_visitor/total_new_users as bounce_r_new_user,
     bounces_returning_visitor/(total_visitors - total_new_users) as bounce_r_returning_user,
+    # traffic mediums new
+    new_traffic_organic,
+    new_traffic_direct,
+    new_traffic_referral,
+    new_traffic_all_gov_referral,
+    new_traffic_fed_gov_referral,
+    new_traffic_other_gov_referral,
+    # traffic mediums returning
+    returning_traffic_organic,
+    returning_traffic_direct,
+    returning_traffic_referral,
+    returning_traffic_all_gov_referral,
+    returning_traffic_fed_gov_referral,
+    returning_traffic_other_gov_referral,
     #cast(current_timestamp as date) as t_date
 from
     (
@@ -35,6 +49,18 @@ from
         sum(pageviews_returning_visitor) as pageviews_returning_visitor,
         sum(bounces_new_visitor) as bounces_new_visitor,
         sum(bounces_returning_visitor) as bounces_returning_visitor,
+        sum(new_traffic_organic) as new_traffic_organic,
+        sum(new_traffic_direct) as new_traffic_direct,
+        sum(new_traffic_referral) as new_traffic_referral,
+        sum(new_traffic_all_gov_referral) as new_traffic_all_gov_referral,
+        sum(new_traffic_fed_gov_referral) as new_traffic_fed_gov_referral,
+        sum(new_traffic_other_gov_referral) as new_traffic_other_gov_referral,
+        sum(returning_traffic_organic) as returning_traffic_organic,
+        sum(returning_traffic_direct) as returning_traffic_direct,
+        sum(returning_traffic_referral) as returning_traffic_referral,
+        sum(returning_traffic_all_gov_referral) as returning_traffic_all_gov_referral,
+        sum(returning_traffic_fed_gov_referral) as returning_traffic_fed_gov_referral,
+        sum(returning_traffic_other_gov_referral) as returning_traffic_other_gov_referral,
         visit_date,
         # time on page
         avg(time_on_page) as avg_time_on_page
@@ -60,6 +86,30 @@ from
                 # bounce rate
                 case when newVisits = 1 then bounces else 0 end as bounces_new_visitor,
                 case when newVisits is null then bounces else 0 end as bounces_returning_visitor,
+                # find the number of new visitors for each type of traffic medium
+                case when newVisits=1 and medium = 'organic' then 1 else 0 end as new_traffic_organic,
+                case when newVisits=1 and medium = '(none)' then 1 else 0 end as new_traffic_direct,
+                case when newVisits=1 and medium = 'referral' then 1 else 0 end as new_traffic_referral,
+                case when newVisits=1 and medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then 1 else 0 end as new_traffic_all_gov_referral,
+                case when newVisits=1 and medium = 'referral' and 
+                    regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then 1 else 0 end as new_traffic_fed_gov_referral,
+                case when newVisits=1 and medium = 'referral' and 
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE
+                    then 1 else 0 end as new_traffic_other_gov_referral,
+                # find the number of returning visitors for each type of traffic medium
+                case when newVisits is null and medium = 'organic' then 1 else 0 end as returning_traffic_organic,
+                case when newVisits is null and medium = '(none)' then 1 else 0 end as returning_traffic_direct,
+                case when newVisits is null and medium = 'referral' then 1 else 0 end as returning_traffic_referral,
+                case when newVisits is null and medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then 1 else 0 end as returning_traffic_all_gov_referral,
+                case when newVisits is null and medium = 'referral' and 
+                    regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then 1 else 0 end as returning_traffic_fed_gov_referral,
+                case when newVisits is null and medium = 'referral' and 
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE
+                    then 1 else 0 end as returning_traffic_other_gov_referral                
             from (
 
             select
