@@ -1,9 +1,9 @@
 # Collecting data for the CPP analysis
-# we want to look at the past 90 days and averages across all the different government domains that we have the datasets for
+# 
 
 
 select
-    visit_date
+    visit_date,
     total_visitors,
     unique_visitors,
     total_new_users,
@@ -19,23 +19,27 @@ select
     traffic_medium_cpm,
     traffic_medium_email,
     total_sessions - traffic_medium_referral - traffic_medium_organic - traffic_medium_direct - traffic_medium_cpm - traffic_medium_email as traffic_medium_other,
-    total_gov_referral as traffic_medium_gov_referral,
+    total_gov_referral as traffic_medium_all_gov_referral,
+    total_fed_gov_referral as traffic_medium_fed_gov_referral,
     total_other_gov_referral as traffic_medium_other_gov_referral,
     # take total time on page and divide by total number of that type of traffic source
     case when traffic_medium_referral <> 0 then t_o_p_referral/traffic_medium_referral else 0 end as avg_t_o_p_referral,
-    case when total_gov_referral <> 0 then t_o_p_gov_referral/total_gov_referral else 0 end as avg_t_o_p_gov_referral,
+    case when total_gov_referral <> 0 then t_o_p_gov_referral/total_gov_referral else 0 end as avg_t_o_p_all_gov_referral,
+    case when total_fed_gov_referral <> 0 then t_o_p_fed_gov_referral/total_fed_gov_referral else 0 end as avg_t_o_p_fed_gov_referral,
     case when total_other_gov_referral <> 0 then t_o_p_other_gov_referral/total_other_gov_referral else 0 end as avg_t_o_p_other_gov_referral,
     case when traffic_medium_organic <> 0 then t_o_p_organic/traffic_medium_organic else 0 end as avg_t_o_p_organic,
     case when traffic_medium_direct <> 0 then t_o_p_direct/traffic_medium_direct else 0 end as avg_t_o_p_direct,
     # take total of pageviews and divide by total number of that type of traffic to find average pages per session
     case when traffic_medium_referral <> 0 then pageviews_referral/traffic_medium_referral else 0 end as pageviews_per_session_referral,
-    case when total_gov_referral <> 0 then pageviews_gov_referral/total_gov_referral else 0 end as pageviews_per_session_gov_referral,
+    case when total_gov_referral <> 0 then pageviews_gov_referral/total_gov_referral else 0 end as pageviews_per_session_all_gov_referral,
+    case when total_fed_gov_referral <> 0 then pageviews_fed_gov_referral/total_fed_gov_referral else 0 end as pageviews_per_session_fed_gov_referral,
     case when total_other_gov_referral <> 0 then pageviews_other_gov_referral/total_other_gov_referral else 0 end as pageviews_per_session_other_gov_referral,
     case when traffic_medium_organic <> 0 then pageviews_organics/traffic_medium_organic else 0 end as pageviews_per_session_organic,
     case when traffic_medium_direct <> 0 then pageviews_direct/traffic_medium_direct else 0 end as pageviews_per_session_direct,
     # bounce rate
     case when traffic_medium_referral <> 0 then bounces_referral/traffic_medium_referral else 0 end as bounce_r_referral,
-    case when total_gov_referral <> 0 then bounces_gov_referral/total_gov_referral  else 0 end as bounce_r_gov_referral,
+    case when total_gov_referral <> 0 then bounces_gov_referral/total_gov_referral  else 0 end as bounce_r_all_gov_referral,
+    case when total_fed_gov_referral <> 0 then bounces_fed_gov_referral/total_fed_gov_referral  else 0 end as bounce_r_fed_gov_referral,
     case when total_other_gov_referral <> 0 then bounces_other_gov_referral/total_other_gov_referral else 0 end as bounce_r_other_gov_referral,
     case when traffic_medium_organic <> 0 then bounces_organic/traffic_medium_organic else 0 end as bounce_r_organic,
     case when traffic_medium_direct <> 0 then bounces_direct/traffic_medium_direct else 0 end as bounce_r_direct
@@ -55,20 +59,24 @@ from
         sum(traffic_medium_cpm) as traffic_medium_cpm,
         sum(traffic_medium_email) as traffic_medium_email,
         sum(is_gov_referral) as total_gov_referral,
+        sum(is_fed_gov_referral) as total_fed_gov_referral,
         sum(is_state_local_gov_referral) as total_other_gov_referral,
         sum(bounces) as total_bounces,
         sum(t_o_p_referral) as t_o_p_referral,
+        sum(t_o_p_fed_gov_referral) as t_o_p_fed_gov_referral,
         sum(t_o_p_gov_referral) as t_o_p_gov_referral,
         sum(t_o_p_other_gov_referral) as t_o_p_other_gov_referral,
         sum(t_o_p_organic) as t_o_p_organic,
         sum(t_o_p_direct) as t_o_p_direct,
         sum(pageviews_referral) as pageviews_referral,
         sum(pageviews_gov_referral) as pageviews_gov_referral,
+        sum(pageviews_fed_gov_referral) as pageviews_fed_gov_referral,
         sum(pageviews_other_gov_referral) as pageviews_other_gov_referral,
         sum(pageviews_organics) as pageviews_organics,
         sum(pageviews_direct) as pageviews_direct,
         sum(bounces_referral) as bounces_referral,
         sum(bounces_gov_referral) as bounces_gov_referral,
+        sum(bounces_fed_gov_referral) as bounces_fed_gov_referral,
         sum(bounces_other_gov_referral) as bounces_other_gov_referral,
         sum(bounces_organic) as bounces_organic,
         sum(bounces_direct) as bounces_direct,
@@ -93,33 +101,43 @@ from
                 traffic_medium_cpm,
                 traffic_medium_email,
                 is_gov_referral,
+                is_fed_gov_referral,
                 is_state_local_gov_referral,
                 bounces,
                 visit_date,
                 # average time on pages for referrals
                 case when medium = 'referral' then time_on_page else 0 end as t_o_p_referral,
                 case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then time_on_page else 0 end as t_o_p_gov_referral,
+                case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then time_on_page else 0 end as t_o_p_fed_gov_referral,
                 case when medium = 'referral' and 
                     regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE 
                     then time_on_page else 0 end as t_o_p_other_gov_referral,
                 case when medium = 'organic' then time_on_page else 0 end as t_o_p_organic,
-                case when medium = 'direct' then time_on_page else 0 end as t_o_p_direct,
+                case when medium = '(none)' then time_on_page else 0 end as t_o_p_direct,
                 # total pageviews for different referrals
                 case when medium = 'referral' then pageviews else 0 end as pageviews_referral,
                 case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then pageviews else 0 end as pageviews_gov_referral,
+                case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then pageviews else 0 end as pageviews_fed_gov_referral,
                 case when medium = 'referral' and 
                     regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE 
                     then pageviews else 0 end as pageviews_other_gov_referral,
                 case when medium = 'organic' then pageviews else 0 end as pageviews_organics,
-                case when medium = 'direct' then pageviews else 0 end as pageviews_direct,
+                case when medium = '(none)' then pageviews else 0 end as pageviews_direct,
                 # bounce rate
                 case when medium = 'referral' then bounces else 0 end as bounces_referral,
                 case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then bounces else 0 end as bounces_gov_referral,
+                case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then bounces else 0 end as bounces_fed_gov_referral,
                 case when medium = 'referral' and 
                     regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE 
                     then bounces else 0 end as bounces_other_gov_referral,
                 case when medium = 'organic' then bounces else 0 end as bounces_organic,
-                case when medium = 'direct' then bounces else 0 end as bounces_direct,
+                case when medium = '(none)' then bounces else 0 end as bounces_direct,
             from (
 
             select
@@ -138,6 +156,9 @@ from
                 case when medium = 'cpm' then 1 else 0 end as traffic_medium_cpm,
                 case when medium = 'email' then 1 else 0 end as traffic_medium_email,
                 case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE then 1 else 0 end as is_gov_referral,
+                case when medium = 'referral' and regexp_contains(traffic_source, "^.*.gov.au$") = TRUE and
+                    regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = FALSE
+                    then 1 else 0 end as is_fed_gov_referral,
                 case when medium = 'referral' and 
                     regexp_contains(traffic_source, "^.*.(nsw.gov.au)|(vic.gov.au)|(qld.gov.au)|(tas.gov.au)|(sa.gov.au)|(wa.gov.au)|(nt.gov.au)|(act.gov.au)$") = TRUE 
                     then 1 else 0 end as is_state_local_gov_referral,
@@ -2972,11 +2993,9 @@ from
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
                                     and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
-                        )
-                    )    
-                )
-            )
-        )
+                        
+            ))
+        )))
     GROUP BY visit_date
 
     # , total_visitors, unique_visitors, total_new_users, percentage_new_visitors, total_sessions, total_pageviews, total_time_on_page, traffic_medium 
