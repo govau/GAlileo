@@ -236,7 +236,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is ABRWeb
@@ -262,7 +262,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is govcms
@@ -288,7 +288,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is ga.gov.au
@@ -314,7 +314,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is abf.gov.au
@@ -340,7 +340,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is abs.gov.au
@@ -366,7 +366,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is api.gov.au
@@ -392,7 +392,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is ato.gov.au
@@ -418,7 +418,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is dss.gov.au
@@ -444,7 +444,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is igt.gov.au
@@ -470,7 +470,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is myGov_beta
@@ -496,7 +496,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is nla.gov.au
@@ -522,7 +522,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is rba.gov.au
@@ -548,7 +548,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is tga.gov.au
@@ -574,7 +574,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is abcc.gov.au
@@ -600,7 +600,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is afsa.gov.au
@@ -626,7 +626,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is army.gov.au
@@ -652,7 +652,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is asic.gov.au
@@ -678,7 +678,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is atrc.com.au
@@ -704,7 +704,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is immi.gov.au
@@ -730,7 +730,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is FWBC On Site
@@ -756,7 +756,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is Style Manual
@@ -782,7 +782,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is govdex.gov.au
@@ -808,7 +808,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is health.gov.au
@@ -834,7 +834,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is defence.gov.au
@@ -860,7 +860,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is ebs.tga.gov.au
@@ -886,7 +886,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is mychild.gov.au
@@ -912,7 +912,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.aqf.edu.au
@@ -938,7 +938,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.asd.gov.au
@@ -964,7 +964,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.dta.gov.au
@@ -990,7 +990,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.fsc.gov.au
@@ -1016,7 +1016,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is Career Pathways
@@ -1042,7 +1042,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is [STRUCT(dta, )]
@@ -1068,7 +1068,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is airforce.gov.au
@@ -1094,7 +1094,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is beta.abs.gov.au
@@ -1120,7 +1120,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is industry.gov.au
@@ -1146,7 +1146,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.ihpa.gov.au
@@ -1172,7 +1172,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is Australia.gov.au
@@ -1198,7 +1198,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is data.wgea.gov.au
@@ -1224,7 +1224,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is jobaccess.gov.au
@@ -1250,7 +1250,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is jobsearch.gov.au
@@ -1276,7 +1276,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is scamwatch.gov.au
@@ -1302,7 +1302,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is trove.nla.gov.au
@@ -1328,7 +1328,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is cd.defence.gov.au
@@ -1354,7 +1354,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is domainname.gov.au
@@ -1380,7 +1380,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is engage.dss.gov.au
@@ -1406,7 +1406,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is guides.dss.gov.au
@@ -1432,7 +1432,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is joboutlook.gov.au
@@ -1458,7 +1458,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is moneysmart.gov.au
@@ -1484,7 +1484,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.asbfeo.gov.au
@@ -1510,7 +1510,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is Homeaffairs.gov.au
@@ -1536,7 +1536,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is m.directory.gov.au
@@ -1562,7 +1562,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is abr.business.gov.au
@@ -1588,7 +1588,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is business.tga.gov.au
@@ -1614,7 +1614,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is designsystem.gov.au
@@ -1640,7 +1640,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is news.defence.gov.au
@@ -1666,7 +1666,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.business.gov.au
@@ -1692,7 +1692,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is banknotes.rba.gov.au
@@ -1718,7 +1718,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is betterschools.gov.au
@@ -1744,7 +1744,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is catologue.nla.gov.au
@@ -1770,7 +1770,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is humanservices.gov.au
@@ -1796,7 +1796,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is video defence.gov.au
@@ -1822,7 +1822,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.education.gov.au
@@ -1848,7 +1848,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is ablis.business.gov.au
@@ -1874,7 +1874,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is docs.education.gov.au
@@ -1900,7 +1900,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is webarchive.nla.gov.au
@@ -1926,7 +1926,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.employment.gov.au
@@ -1952,7 +1952,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is [STRUCT(agency, artc)]
@@ -1978,7 +1978,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is data.gov.au - all data
@@ -2004,7 +2004,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is defenceindustry.gov.au
@@ -2030,7 +2030,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is osb.homeaffairs.gov.au
@@ -2056,7 +2056,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is superfundlookup.gov.au
@@ -2082,7 +2082,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.studyassist.gov.au
@@ -2108,7 +2108,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.tisnational.gov.au
@@ -2134,7 +2134,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is immi.homeaffairs.gov.au
@@ -2160,7 +2160,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is minister.defence.gov.au
@@ -2186,7 +2186,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.jobjumpstart.gov.au
@@ -2212,7 +2212,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is safeworkaustralia.gov.au
@@ -2238,7 +2238,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.studentsfirst.gov.au
@@ -2264,7 +2264,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is https://www.idpwd.com.au/
@@ -2290,7 +2290,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is onlineservices.ato.gov.au
@@ -2316,7 +2316,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is aeaguide.education.gov.au/
@@ -2342,7 +2342,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is covid19.homeaffairs.gov.au
@@ -2368,7 +2368,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is eduportal.education.gov.au
@@ -2394,7 +2394,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is familyrelationships.gov.au
@@ -2420,7 +2420,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is innovation.govspace.gov.au
@@ -2446,7 +2446,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is marketplace.service.gov.au
@@ -2472,7 +2472,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is intercountryadoption.gov.au
@@ -2498,7 +2498,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is minister.homeaffairs.gov.au
@@ -2524,7 +2524,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is whatsnext.employment.gov.au
@@ -2550,7 +2550,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is business.dmz.test.tga.gov.au
@@ -2576,7 +2576,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is consultation.business.gov.au
@@ -2602,7 +2602,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.learningpotential.gov.au
@@ -2628,7 +2628,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is librariesaustralia.nla.gov.au
@@ -2654,7 +2654,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is australianjobs.employment.gov.au
@@ -2680,7 +2680,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is http://www.companioncard.gov.au/
@@ -2706,7 +2706,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is [STRUCT(agency, inland_rail_map)]
@@ -2732,7 +2732,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is business.dmz.development.tga.gov.au
@@ -2758,7 +2758,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is communitybusinesspartnership.gov.au
@@ -2784,7 +2784,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is disabilityadvocacyfinder.dss.gov.au
@@ -2810,7 +2810,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is https://formerministers.dss.gov.au/
@@ -2836,7 +2836,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is https://serviceproviders.dss.gov.au/
@@ -2862,7 +2862,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is https://plan4womenssafety.dss.gov.au/
@@ -2888,7 +2888,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.tradesrecognitionaustralia.gov.au
@@ -2914,7 +2914,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is www.artc.com.au\nAustralian Rail Track Corporation
@@ -2940,7 +2940,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is maps.inlandrail.com.au/b2g-dec-2018#/\ninland rail map
@@ -2966,7 +2966,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                                 union all
                         select
                                 # the domain is covid19inlanguage.homeaffairs.gov.au (UA-61305954-25) – (View ID: 215803896)
@@ -2992,7 +2992,7 @@ from
                                 where type = 'PAGE'
                                     and regexp_contains(hits.page.hostname,".*.gov.au") = true
                                     and totals.visits = 1
-                                    and _table_suffix between FORMAT_DATE('%Y%m%d',DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)) and FORMAT_DATE('%Y%m%d',CURRENT_DATE())
+                                    and _table_suffix between '20210101' and '20210331'
                         
             ))
         )))
