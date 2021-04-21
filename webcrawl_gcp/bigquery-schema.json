@@ -1,0 +1,106 @@
+[
+  {
+    "description": "The URL initially requested for crawling.",
+    "name": "requested_url",
+    "type": "STRING"
+  },
+  {
+    "description": "The actual URL that was crawled (e.g. due to redirect).",
+    "name": "final_url",
+    "type": "STRING"
+  },
+  {
+    "description": "The HTTP status code.",
+    "name": "http_status",
+    "type": "INT64"
+  },
+  {
+    "description": "The Content-Type header of the response.",
+    "name": "content_type",
+    "type": "STRING"
+  },
+  {
+    "description": "If the URL was external to the crawled domain.",
+    "name": "external",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "The URL of the page which linked to the crawled URL.",
+    "name": "previous_url",
+    "type": "STRING"
+  },
+  {
+    "description": "Cookies set on the page",
+    "name": "cookies",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "value",
+        "type": "string"
+      },
+      {
+        "name": "domain",
+        "type": "string"
+      },
+      {
+        "name": "path",
+        "type": "string"
+      },
+      {
+        "name": "expires",
+        "type": "timestamp"
+      },
+      {
+        "name": "size",
+        "type": "int64"
+      },
+      {
+        "name": "httpOnly",
+        "type": "bool"
+      },
+      {
+        "name": "secure",
+        "type": "bool"
+      },
+      {
+        "name": "session",
+        "type": "bool"
+      },
+      {
+        "name": "sameSite",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "description": "localStorage keys set on the page",
+    "name": "localStorage",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "key",
+        "type": "string"
+      },
+      {
+        "name": "value",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "description": "Document title.",
+    "name": "document_title",
+    "type": "STRING"
+  },
+  {
+    "description": "Meta Description.",
+    "name": "meta_description",
+    "type": "STRING"
+  }
+]

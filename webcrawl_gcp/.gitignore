@@ -1,0 +1,11 @@
+node_modules
+.idea
+*.iml
+package-lock.json
+secret
+
+test.json
+config.json
+
+.nyc_output
+coverage
