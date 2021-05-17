@@ -33,7 +33,7 @@ from
     where
     -- define static and/or dynamic start and end date
     _table_suffix between '20210301' and format_date('%Y%m%d',date_sub(current_date(), interval 1 day))
-    and  key = 'outbound'
+    and (select value.string_value from unnest(event_params) where key = 'outbound')  = 'true'
     group by 
         -- user_pseudo_id,
         outbound_url
