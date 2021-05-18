@@ -21,8 +21,8 @@ from
     group by 
         -- user_pseudo_id,
         page_url,
-        page_visited,
-        pagereferral_url
+        traffic_from_url,
+        traffic_to_page
     order by referral_count desc;
 
 
