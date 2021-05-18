@@ -5,6 +5,10 @@
 select
     -- user_pseudo_id,
     (select value.string_value from unnest(event_params) where key = 'page_referrer' ) as pagereferral_url, 
+    (select case when trim((split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(4)])) = ''
+        then (split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(3)])
+        else (split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(4)])
+        end) as page_visited,
     (select value.string_value from unnest(event_params) where key = 'page_location' ) as page_url,
     count(*) as referral_count
 from
@@ -17,6 +21,7 @@ from
     group by 
         -- user_pseudo_id,
         page_url,
+        page_visited,
         pagereferral_url
     order by referral_count desc;
 
