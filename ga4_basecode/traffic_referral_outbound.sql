@@ -4,13 +4,13 @@
 -- page referrals count
 select
     -- user_pseudo_id,
-    (select value.string_value from unnest(event_params) where key = 'page_referrer' ) as pagereferral_url, 
+    (select value.string_value from unnest(event_params) where key = 'page_referrer' ) as traffic_from_url, 
     (select case when trim((split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(4)])) = ''
         then (split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(3)])
         else (split((select value.string_value from unnest(event_params) where key = 'page_location' ),'/')[safe_ordinal(4)])
-        end) as page_visited,
-    (select value.string_value from unnest(event_params) where key = 'page_location' ) as page_url,
-    count(*) as referral_count
+        end) as traffic_to_page,
+    count(*) as referral_count,
+    (select value.string_value from unnest(event_params) where key = 'page_location' ) as page_url
 from
     -- google analytics 4 export location in bigquery
     `analytics_264036411.events_*`
