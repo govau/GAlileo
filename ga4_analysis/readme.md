@@ -1,5 +1,5 @@
 
-### Hotdog Analysis
+# Hotdog Analysis
 
 The two files hotodog_extract.sql and hotdog_analysis.ipynb are both for the analysis to try and diagnose metrics most correlated to engagement. The SQL file is for bigquery to extract the feature data from the GA4 schema for the DTA site. The jupyter notebooks file is for the data preprocessing and for the visualisation as well as the machine learning model to find the metrics for engagement.
 
@@ -11,7 +11,7 @@ Features selected can be split into 2 categories:
 1. User Metrics
 2. Event Metrics
 
-# User Metrics
+### User Metrics
 
 The aggragation takes the most common category (mode) for each feature per user. For example, if a user visited with their mobile phone 60% of the time, they will count as a mobile user.
 User metrics include the following:
@@ -21,7 +21,7 @@ User metrics include the following:
 * traffic_medium 	
 * traffic_source
 
-# Event Metrics
+### Event Metrics
 
 The aggragation counts the number of occurances of these events per user.
 Event metrics include the following:
