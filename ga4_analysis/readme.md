@@ -3,6 +3,8 @@
 
 The two files hotodog_extract.sql and hotdog_analysis.ipynb are both for the analysis to try and diagnose metrics most correlated to engagement. The SQL file is for bigquery to extract the feature data from the GA4 schema for the DTA site. The jupyter notebooks file is for the data preprocessing and for the visualisation as well as the machine learning model to find the metrics for engagement.
 
+Note: the other two files in this folder are actually just trying to use ga4 for the first time.
+
 ## Feature Selection
 
 The features were essentially selected in the SQL code. Any adjustments in the features should be done on the SQL code.
