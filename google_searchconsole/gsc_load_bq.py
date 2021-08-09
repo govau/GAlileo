@@ -95,6 +95,7 @@ def read_ingestcount(siteurl):
 
 
 def write_bigQuery(result, write_option='WRITE_APPEND'):
+    # Future use function for Airflow pipeline
     # establish a BigQuery client
     client = bigquery.Client.from_service_account_json(
         pe.SERVICE_ACCOUNT_FILE_BQ)
@@ -114,7 +115,7 @@ def write_bigQuery(result, write_option='WRITE_APPEND'):
 
 
 def get_sc_df(site_url, start_row, end_date=datetime.date.today(), days=180):
-    """Grab Search Console data for the specific property and send it to BigQuery."""
+    """Read Search Console data for the specific property and send it to BigQuery."""
     start_date = (end_date - datetime.timedelta(days=days)
                   ).strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
@@ -180,21 +181,10 @@ def get_sc_df(site_url, start_row, end_date=datetime.date.today(), days=180):
         return 0
 
 
-# def extract_stream(verified_sites_urls, service):
-#     for site_url in verified_sites_urls:
-#         for x in range(0, 1000000000, 25000):
-#             y = get_sc_df(service, site_url, x)
-#             if (bool(y)) and len(y) < 25000:
-#                 break
-#             else:
-#                 continue
-
-# Loop through all defined properties, for up to 1000,000,000 rows of data in each
-# Retrieve list of properties in account
-
-
 def main():
+    # Script main function to drive the ingestion script execution
 
+    # fetch the list of verified urls from Google Search Console organisation account
     site_list = webmasters_service.sites().list().execute()
 
     # Filter for verified websites
@@ -231,6 +221,7 @@ def main():
     else:
         print("Function deactivated for all sites.\nPlease rerun the program and enter single siteurl for data extract.\n")
 
+    # Below script to operate for all verified sites, deactivated for future use
     # if site_url_i == "":
     #     for site_url in verified_sites_urls:
     #         # debug
@@ -246,8 +237,11 @@ def main():
 
 
 if __name__ == '__main__':
+    # Configure logging
     # log filename construct
     fname = 'logging/gsc_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + '.log'
     logging.basicConfig(filename=fname, filemode='w',
                         level=logging.INFO)
+
+    # call main function to execute data ingestion functions
     main()
