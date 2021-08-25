@@ -168,3 +168,4 @@ notebooks/*.html
 google_searchconsole/parameters.py
 dags/galileo/galileo.py
 dags/galileo/galileo.py
+twitter_data_ingest/tweet_parameters.py
