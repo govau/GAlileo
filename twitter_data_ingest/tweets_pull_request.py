@@ -1,6 +1,6 @@
 import requests
 import json
-import tweet_parameters as tp
+import tweet_parameters_ as tp
 import datetime
 import logging
 
