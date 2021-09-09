@@ -1,0 +1,172 @@
+{
+    "header": {
+        "id": "f6dc8668-d66b-4093-be90-a3085743de45",
+        "test": false,
+        "prepared": "2021-09-01T07:17:34.2698718Z",
+        "sender": {
+            "id": "OECD",
+            "name": "Organisation for Economic Co-operation and Development"
+        },
+        "links": [{
+            "href": "https://stats.oecd.org:443/sdmx-json/data/QNA/AUS+AUT.GDP+B1_GE.CUR+VOBARSA.Q/all?startTime=2009-Q2&endTime=2011-Q4",
+            "rel": "request"
+        }]
+    },
+    "dataSets": [{
+        "action": "Information",
+        "series": {
+            "0:0:0:0": {
+                "attributes": [0, 0, 0, 0],
+                "observations": {
+                    "0": [1398245.5, null],
+                    "1": [1402318.9, null],
+                    "2": [1412770.5, null],
+                    "3": [1419856.8, null],
+                    "4": [1427328.5, null],
+                    "5": [1437020.4, null],
+                    "6": [1451780.2, null],
+                    "7": [1447912.3, null],
+                    "8": [1465013.5, null],
+                    "9": [1484624.8, null],
+                    "10": [1501703.9, null]
+                }
+            },
+            "1:0:0:0": {
+                "attributes": [0, 1, 0, 0],
+                "observations": {
+                    "0": [318501.4, null],
+                    "1": [320054.4, null],
+                    "2": [321284.9, null],
+                    "3": [320296.1, null],
+                    "4": [324407.4, null],
+                    "5": [327364.6, null],
+                    "6": [330986.2, null],
+                    "7": [334074.0, null],
+                    "8": [334934.4, null],
+                    "9": [337420.4, null],
+                    "10": [337232.0, null]
+                }
+            }
+        }
+    }],
+    "structure": {
+        "links": [{
+            "href": "https://stats.oecd.org/sdmx-json/dataflow/QNA/all",
+            "rel": "dataflow"
+        }],
+        "name": "Quarterly National Accounts",
+        "description": "Quarterly National Accounts",
+        "dimensions": {
+            "series": [{
+                    "keyPosition": 0,
+                    "id": "LOCATION",
+                    "name": "Country",
+                    "values": [
+                        { "id": "AUS", "name": "Australia" },
+                        { "id": "AUT", "name": "Austria" }
+                    ],
+                    "role": "REF_AREA"
+                },
+                {
+                    "keyPosition": 1,
+                    "id": "SUBJECT",
+                    "name": "Subject",
+                    "values": [{
+                        "id": "B1_GE",
+                        "name": "Gross domestic product - expenditure approach"
+                    }]
+                },
+                {
+                    "keyPosition": 2,
+                    "id": "MEASURE",
+                    "name": "Measure",
+                    "values": [{
+                        "id": "VOBARSA",
+                        "name": "National currency, volume estimates, OECD reference year, annual levels, seasonally adjusted"
+                    }]
+                },
+                {
+                    "keyPosition": 3,
+                    "id": "FREQUENCY",
+                    "name": "Frequency",
+                    "values": [{ "id": "Q", "name": "Quarterly" }],
+                    "role": "FREQ"
+                }
+            ],
+            "observation": [{
+                "id": "TIME_PERIOD",
+                "name": "Period",
+                "values": [
+                    { "id": "2009-Q2", "name": "Q2-2009" },
+                    { "id": "2009-Q3", "name": "Q3-2009" },
+                    { "id": "2009-Q4", "name": "Q4-2009" },
+                    { "id": "2010-Q1", "name": "Q1-2010" },
+                    { "id": "2010-Q2", "name": "Q2-2010" },
+                    { "id": "2010-Q3", "name": "Q3-2010" },
+                    { "id": "2010-Q4", "name": "Q4-2010" },
+                    { "id": "2011-Q1", "name": "Q1-2011" },
+                    { "id": "2011-Q2", "name": "Q2-2011" },
+                    { "id": "2011-Q3", "name": "Q3-2011" },
+                    { "id": "2011-Q4", "name": "Q4-2011" }
+                ],
+                "role": "TIME_PERIOD"
+            }]
+        },
+        "attributes": {
+            "dataSet": [],
+            "series": [{
+                    "id": "TIME_FORMAT",
+                    "name": "Time Format",
+                    "values": [{ "id": "P3M", "name": "Quarterly" }]
+                },
+                {
+                    "id": "UNIT",
+                    "name": "Unit",
+                    "values": [
+                        { "id": "AUD", "name": "Australian Dollar" },
+                        { "id": "EUR", "name": "Euro" }
+                    ],
+                    "role": "UNIT_MEASURE"
+                },
+                {
+                    "id": "POWERCODE",
+                    "name": "Unit multiplier",
+                    "default": "0",
+                    "values": [{ "id": "6", "name": "Millions" }],
+                    "role": "UNIT_MULT"
+                },
+                {
+                    "id": "REFERENCEPERIOD",
+                    "name": "Reference period",
+                    "values": [{ "id": "2015", "name": "2015" }],
+                    "role": "BASE_PER"
+                }
+            ],
+            "observation": [
+                { "id": "OBS_STATUS", "name": "Observation Status", "values": [] }
+            ]
+        },
+        "annotations": [{
+                "title": "Copyright OECD - All rights reserved",
+                "uri": "",
+                "text": ""
+            },
+            {
+                "title": "Terms and Conditions",
+                "uri": "http://www.oecd.org/termsandconditions/",
+                "text": ""
+            },
+            {
+                "title": "Privacy Policy",
+                "uri": "http://www.oecd.org/privacy/",
+                "text": ""
+            },
+            { "title": "MyOECD", "uri": "https://www.oecd.org/login", "text": "" },
+            {
+                "title": "Contact Us",
+                "uri": "http://www.oecd.org/contact/",
+                "text": ""
+            }
+        ]
+    }
+}
