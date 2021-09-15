@@ -9,6 +9,9 @@ import datetime
 import logging
 from twitter import *
 
+# Define pagination for pulling tweets in batch of 100 per page
+pagination = 5
+
 
 def write_data(json_res, query):
     # Writing twitter data to log file in json format
@@ -22,7 +25,7 @@ def write_data(json_res, query):
 def search_twitter(query, tweet_fields, bearer_token=tp.BEARER_TOKEN_OBS):
 
     tweets_counter = 0
-    counter = 1
+    counter = 0
 
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
 
@@ -67,7 +70,7 @@ def search_twitter(query, tweet_fields, bearer_token=tp.BEARER_TOKEN_OBS):
 
         write_data(response.json(), query)
         counter = counter+1
-        if counter == 5:
+        if counter == pagination:
             break
 
 
