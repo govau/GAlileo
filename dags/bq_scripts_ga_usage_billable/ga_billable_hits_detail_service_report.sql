@@ -1,6 +1,6 @@
 -- Google Analytics data usage reporting script
 -- To use the scirpt replace the table name signature and execute 
--- Replace table names in 'create' and 'from' statements with latest billable usage table and agency mapping table
+-- Replace table names in 'create' and 'from' statements with latest billable usage table and latest agency mapping table
 
 create or replace table `dta_ga360_usage_billing.analytics_usage_202109_report_detail`
 as
@@ -12,7 +12,7 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
 FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` ba
-right join `dta_ga360_usage_billing.ua_agency_mapping_202109` am
+right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
@@ -26,7 +26,7 @@ SELECT
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
 FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` ba
-left join `dta_ga360_usage_billing.ua_agency_mapping_202109` am
+left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
 group by 
