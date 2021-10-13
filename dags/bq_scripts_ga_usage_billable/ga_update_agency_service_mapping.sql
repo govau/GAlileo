@@ -1,13 +1,14 @@
 -- BigQuery script to update agencies name to property services
 -- Data sourced from following
 -- 1 sharepoint https://dta1.sharepoint.com/:x:/g/DDD/DPS/DSA/Ed9Pk3zZ-6RItmv8vB4g2wUBrFokwEpwNgM2SUGIhVRCaA?e=TdhPKJ
--- 2 BigQuery table ua_agency_mapping_<date>
+-- 2 BigQuery table ua_agency_mapping_latest
 -- 3 Latest month usage billing csv extract and loaded into BigQuery table analytics_usage_<yearmonth>
 
--- The script needs to updated with latest billable usage table name and agency mapping table name 
+-- The script needs to updated with latest billable usage table name and latest agency mapping table name 
 -- for e.g. 
     -- replace 'analytics_usage_202109' with latest one
-    -- replace  'ua_agency_mapping_202103' with latest mapping table
+    -- reference latest mapping table with signature 'ua_agency_mapping_latest'
+
 
 -- Data report of a property that does not have proper agency name against it.
 select * 
@@ -23,7 +24,7 @@ with map as (
             coalesce(cast(base_UA as string),'') as Base_UA,
             coalesce(agency,'') as agency,
             coalesce(agency_long_name,'') as agency_long_name
-    from    `dta_ga360_usage_billing.ua_agency_mapping_202103`
+    from    `dta_ga360_usage_billing.ua_agency_mapping_latest`
     where   agency <> ''
 )
 SELECT 
@@ -47,7 +48,7 @@ with map as (
             coalesce(cast(base_UA as string),'') as Base_UA,
             coalesce(agency,'') as agency,
             coalesce(agency_long_name,'') as agency_long_name
-    from    `dta_ga360_usage_billing.ua_agency_mapping_202103`
+    from    `dta_ga360_usage_billing.ua_agency_mapping_latest`
 )
 SELECT 
     map.agency, 
@@ -68,7 +69,7 @@ with map as (
             coalesce(cast(base_UA as string),'') as Base_UA,
             coalesce(agency,'') as agency,
             coalesce(agency_long_name,'') as agency_long_name
-    from    `dta_ga360_usage_billing.ua_agency_mapping_202103`
+    from    `dta_ga360_usage_billing.ua_agency_mapping_latest`
 )
 SELECT 
     map.agency, 
