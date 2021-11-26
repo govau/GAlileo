@@ -2,9 +2,9 @@
 -- To use the scirpt replace the table name signature and execute 
 -- Replace table names in 'create' and 'from' statements with latest billable usage table and latest agency mapping table
 
--- Year 2019
+-- Year 2018
 -- 01
-create or replace table `dta_ga360_usage_billing.analytics_usage_201901_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201801_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -13,21 +13,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201901` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201801` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201901_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201801_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201901` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201801` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -41,7 +41,7 @@ order by
 
 
 -- 02
-create or replace table `dta_ga360_usage_billing.analytics_usage_201902_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201802_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -50,21 +50,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201902` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201802` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201902_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201802_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201902` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201802` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -78,7 +78,7 @@ order by
 
 
 -- 03 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201903_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201803_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -87,21 +87,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201903` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201803` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201903_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201803_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201903` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201803` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -115,7 +115,7 @@ order by
 
 
 -- 04
-create or replace table `dta_ga360_usage_billing.analytics_usage_201904_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201804_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -124,20 +124,20 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201904` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201804` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201904_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201804_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201904` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201804` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -150,7 +150,7 @@ order by
         ;
 
 -- 05
-create or replace table `dta_ga360_usage_billing.analytics_usage_201905_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201805_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -159,21 +159,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201905` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201805` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201905_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201805_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201905` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201805` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -187,7 +187,7 @@ order by
 
 
 -- 06
-create or replace table `dta_ga360_usage_billing.analytics_usage_201906_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201806_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -196,21 +196,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201906` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201806` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201906_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201806_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201906` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201806` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -224,7 +224,7 @@ order by
 
 
 -- 07
-create or replace table `dta_ga360_usage_billing.analytics_usage_201907_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201807_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -233,21 +233,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201907` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201807` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201907_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201807_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201907` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201807` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -261,7 +261,7 @@ order by
 
 
 --08 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201908_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201808_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -270,21 +270,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201908` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201808` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201908_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201808_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201908` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201808` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -298,7 +298,7 @@ order by
 
 
 -- 09
-create or replace table `dta_ga360_usage_billing.analytics_usage_201909_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201809_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -307,21 +307,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201909` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201809` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201909_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201809_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201909` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201809` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -335,7 +335,7 @@ order by
 
 
 -- 10
-create or replace table `dta_ga360_usage_billing.analytics_usage_201910_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201810_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -344,21 +344,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201910` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201810` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201910_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201810_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201910` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201810` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -372,7 +372,7 @@ order by
 
 
 -- 11
-create or replace table `dta_ga360_usage_billing.analytics_usage_201911_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201811_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -381,21 +381,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201911` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201811` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201911_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201811_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201911` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201811` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
@@ -409,7 +409,7 @@ order by
 
 
 -- 12
-create or replace table `dta_ga360_usage_billing.analytics_usage_201912_report_detail`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201812_report_detail`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
@@ -418,21 +418,21 @@ SELECT
     sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
     sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201912` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201812` ba
 right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
 
-create or replace table `dta_ga360_usage_billing.analytics_usage_201912_report`
+create or replace table `dta_ga360_usage_billing.analytics_usage_201812_report`
 as
 SELECT  
     coalesce(am.agency,"") as agency_name,
     sum( Total_Hit_Volume ) as total_hits,
     sum( Billable_Hit_Volume ) as total_billable_hits,
     am.type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201912` ba
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_201812` ba
 left join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
 on am.property_id = ba.id
 where Billable_Hit_Volume <> 0
