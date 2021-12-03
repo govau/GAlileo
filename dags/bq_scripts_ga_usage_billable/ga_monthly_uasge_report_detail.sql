@@ -2,6 +2,26 @@
 -- To use the scirpt replace the table name signature and execute 
 -- Replace table names in 'create' and 'from' statements with latest billable usage table and latest agency mapping table
 
+
+-- ABC and other exclusion report
+-- Data reporting billable hits of subscribed agencies excluding ABC for a month
+SELECT  
+type, sum(Billable_Hit_Volume) as billable_hits_sum
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` 
+where not regexp_contains(name,'ABC ')
+group by type
+;
+
+
+-- Data report of a property that does not have proper agency name against it.
+select * 
+from `dta_ga360_usage_billing.analytics_usage_202111_report_detail`
+where regexp_contains( agency_name,  'XXX')
+or agency_name is null;
+
+
+
+
 -- Year 2015
 -- 01
 create or replace table `dta_ga360_usage_billing.analytics_usage_201501_report_detail`
