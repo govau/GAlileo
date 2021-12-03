@@ -6,13 +6,13 @@
 
 -- The script needs to updated with latest billable usage table name and latest agency mapping table name 
 -- for e.g. 
-    -- replace 'analytics_usage_202109' with latest one
+    -- replace 'analytics_usage_202111' with latest one
     -- reference latest mapping table with signature 'ua_agency_mapping_latest'
 
 
 -- Data report of a property that does not have proper agency name against it.
 select * 
-from `dta_ga360_usage_billing.analytics_usage_202109_report_detail`
+from `dta_ga360_usage_billing.analytics_usage_202111_report_detail`
 where regexp_contains( agency_name,  'XXX')
 or agency_name is null;
 
@@ -34,7 +34,7 @@ SELECT
     ub.Name as property_name,
     ub.ID as property_id,
     ub.Type
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` as ub
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` as ub
  left join map
  ON regexp_substr(ub.id,'^UA-([0-9]+)-[0-9]+$') = map.Base_UA
  where  base_UA is not null
@@ -55,7 +55,7 @@ SELECT
     map.agency_long_name,
     map.base_UA,
     ub.*
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` as ub
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` as ub
  left join map
  ON regexp_substr(ub.id,'^UA-([0-9]+)-[0-9]+$') = map.Base_UA
  where  base_UA is not null
@@ -76,16 +76,16 @@ SELECT
     map.agency_long_name,
     map.base_UA,
     ub.*
-FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` as ub
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` as ub
  left join map
  ON regexp_substr(ub.id,'^UA-([0-9]+)-[0-9]+$') = map.Base_UA
  where  base_UA is null
 ;
 
 
-SELECT * FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109` 
+SELECT * FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` 
 WHERE regexp_contains(id,'6986514')
 and id not in(
-SELECT ga_id FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202109_report_detail` 
+SELECT ga_id FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111_report_detail` 
 WHERE regexp_contains(ga_id,'6986514')
 );
