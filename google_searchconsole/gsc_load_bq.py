@@ -38,8 +38,8 @@ def construct_service_old():
         pe.SERVICE_ACCOUNT_FILE_BQ, scopes=pe.SCOPES)
 
     service = build(
-        'webmasters',
-        'v3',
+        'searchconsole',
+        'v1',
         credentials=credentials
     )
 
