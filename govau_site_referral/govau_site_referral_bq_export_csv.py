@@ -25,7 +25,7 @@ default_dag_args = {
 with models.DAG(
         'govau_site_referral_since_oct2020',
         # schedule_interval=datetime.timedelta(days=1),
-        schedule_interval='0 8 * * 1',
+        schedule_interval='0 0 1 1-12 *',
         # email=['analytics@dta.gov.au', 'mufaddal.taiyab-ali@dta.gov.au'],
         # email_on_failure=True,
         catchup=False,
