@@ -28,7 +28,7 @@ with models.DAG(
         'project_ursa_major_daily_time_series',
         # schedule_interval=datetime.timedelta(days=1),
         schedule_interval='0 20 * * *',
-        catchup=False,
+        catchup=True,
         default_args=default_dag_args) as dag:
     project_id = models.Variable.get('GCP_PROJECT', 'dta-ga-bigquery')
 
