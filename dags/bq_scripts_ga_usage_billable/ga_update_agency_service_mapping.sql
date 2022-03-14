@@ -75,6 +75,7 @@ SELECT
     map.agency, 
     map.agency_long_name,
     map.base_UA,
+    regexp_substr(ub.id,'^UA-([0-9]+)-[0-9]+$') as unmap_base_UA,
     ub.*
 FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202111` as ub
  left join map
