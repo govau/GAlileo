@@ -17,6 +17,21 @@ on am.property_id = ba.id
 where Billable_Hit_Volume <> 0;
 
 
+create or replace table `dta_ga360_usage_billing.analytics_usage_202201_report_allaccounts`
+as
+SELECT  
+    coalesce(am.agency,"") as agency_name,
+    ba.ID as ga_id,
+    coalesce(ba.Name,"") as service_name,
+    sum( Billable_Hit_Volume ) over (partition by ba.Name order by ba.Name) as total_service_hits,
+    sum( Billable_Hit_Volume ) over (partition by am.agency order by am.agency) as total_agency_hits,
+    am.type
+FROM `dta-ga-bigquery.dta_ga360_usage_billing.analytics_usage_202201` ba
+right join `dta_ga360_usage_billing.ua_agency_mapping_latest` am
+on am.property_id = ba.id
+;
+
+
 
 create or replace table `dta_ga360_usage_billing.analytics_usage_202201_report`
 as
